@@ -1,0 +1,170 @@
+---
+title: "Figure of model performances"
+output: html_notebook
+date: 2017-11-10
+---
+```{r}
+library(caret)
+library(tidyverse)
+library(stringr)
+```
+
+# Load the lists of models
+```{r}
+
+model_list_rf <- readRDS("C:/Users/benny_000/Dropbox/AAAKTUELLT/model_list_rf_r2.rds")
+model_list_glm <- readRDS("C:/Users/benny_000/Dropbox/AAAKTUELLT/model_list_glm_r4.rds")
+```
+
+Combine the two lists to one and pass it to 'caret:resamples'
+```{r}
+model_list        <- c(model_list_rf, model_list_glm)
+model_comparisons <- resamples(model_list)
+```
+
+Screen the results with boxplots
+```{r}
+bwplot(model_comparisons, metric = "ROC")
+```
+
+Create a table of confidence intervals for the cross-validation results. These will be narrower with more folds and is best interpreted as "what is the best cross-validated model in this sample".
+
+Confidence interval is calculated by first transformin AUC-values to logits of the AUC-values. After calculation of mean, and confidence intervals for the logit they are transformed back to AUC-values.
+
+```{r}
+auc_tbl_cv <-
+model_comparisons$values %>% 
+  select(Resample, ends_with(match = "ROC")) %>% 
+  gather(-Resample, key = model, value = ROC) %>%
+  mutate(logit_ROC = log(ROC / (1-ROC))) %>% 
+  group_by(model) %>% 
+  summarise(n = n(),
+            mean_logit  = mean(logit_ROC),
+            se_logit    = sqrt(var(logit_ROC) / n),
+            ci_lo_logit = mean_logit + qnorm(0.025) * se_logit,
+            ci_hi_logit = mean_logit + qnorm(0.975) * se_logit,
+            mean_auc_cv    = exp(mean_logit)  / (1 + exp(mean_logit)),
+            ci_lo_cv   = exp(ci_lo_logit) / (1 + exp(ci_lo_logit)),
+            ci_hi_cv   = exp(ci_hi_logit) / (1 + exp(ci_hi_logit))) %>% 
+  select(model, mean_auc_cv, ci_lo_cv, ci_hi_cv) %>% 
+  mutate(model = as.factor(str_replace(model, pattern = "~ROC", "")))
+
+```
+
+To estimate the generalizability to other samples we predict scores on the test set and calcualte ROC scores there.
+
+Predict scores in test_set
+```{r}
+
+# Create a function to extract predictions for a given model
+predict_test_set<- function(model) {
+  predict.train(model, newdata = test_set, type = "prob")[[2]]
+}
+
+# Apply this function to all models in the list
+predictions <- map_df(model_list, .f = ~ predict_test_set(.x))
+
+```
+
+
+Calculate AUCs and confidence intervals
+```{r}
+require(pROC)
+# Get the names of predictions of violent and generalised recidivism seperately.
+model_names_V <- str_subset(names(predictions), pattern = "_V_") 
+model_names_G <- str_subset(names(predictions), pattern = "_G_") 
+
+# Do ROC analysis using predictions with the relevant outcome
+# First all predictions of violent recidivism
+# (ts stands for 'test set')
+roc_list_ts_V <- map(.x = predictions[model_names_V],
+                   .f = ~roc(test_set$newO_violent, .x))
+
+# Then all predictions of general recidivism
+roc_list_ts_G <- map(.x = predictions[model_names_G],
+                   .f = ~roc(test_set$reoffenceThisTerm, .x))
+
+# Combine the two lists
+roc_list_ts   <- c(roc_list_ts_V, roc_list_ts_G)
+
+# Bootstrap confidence intervals for all AUC-values
+auc_ci_list   <- map(roc_list_ts, .f = ~ci.auc(.x, method = "bootstrap"))
+
+```
+
+```{r}
+#(_ts stands for "test set")
+# Create a function to extract auc and its confidence interval
+get_ci <- function(ci.auc_result) {
+  data_frame(auc_ts      = ci.auc_result[2], 
+             ci_lower_ts = ci.auc_result[1], 
+             ci_upper_ts = ci.auc_result[3])
+}
+
+# Apply this function to all results in 'the 'auc_tbl_ts'
+auc_tbl_ts <- map_df(auc_ci_list, get_ci)
+
+# Amend the data frame with the names of the models
+auc_tbl_ts <- data.frame(model = names(auc_ci_list), auc_tbl_ts)
+```
+
+Join the results of training set analyses and test set analyses
+
+```{r}
+auc_tbl <- full_join(auc_tbl_cv, auc_tbl_ts, by = "model") %>% 
+  mutate(newO_type = ifelse(str_detect(model, pattern = "_V_"), "Violent recidivism", 
+                            "General recidivism"),
+         model_type = ifelse(str_detect(model, pattern = "_rf"), "Random forest", 
+                             "Elastic net"),
+         Predictors = ifelse(str_detect(model, "^facto_"), "Dynamic factors",
+                       ifelse(str_detect(model, "^items"), "Dynamic items",
+                       ifelse(str_detect(model, "^stati_facto_"), 
+                              "Static variables and dynamic factors",
+                       ifelse(str_detect(model, "^stati_items_"), 
+                              "Static and dynamic items",
+                       ifelse(str_detect(model, "^full_items_"), "All predictors",
+                       ifelse(str_detect(model, "^full_facto_"), "All with factors",       
+                              "Static items")))))))
+   
+
+auc_tbl$Predictors <- factor(auc_tbl$Predictors, levels = 
+                                 c("All predictors", "Static and dynamic items", 
+                                   "Static items",  "Dynamic items",
+                                   "All with factors", "Static variables and dynamic factors",
+                                   "Dynamic factors"))                  
+
+```
+
+# Create plot
+
+```{r}
+# auc_tbl$model <-
+# factor(auc_ci_table$model, 
+#        levels = c("roc_factors_static_G", "roc_items_static_G", 
+#                   "roc_static_G", "roc_factors_G", "roc_items_G",
+#                   "roc_factors_static_V", "roc_items_static_V", "roc_static_V",
+#                   "roc_factors_V", "roc_items_V"))
+
+auc_plot <-
+  auc_tbl %>% 
+  filter(Predictors %in% c("Dynamic items", "Static items", 
+                           "Static and dynamic items", "All predictors")) %>% 
+ggplot(aes(x = auc_ts, y = mean_auc_cv)) + 
+  geom_point(aes(shape = Predictors), size = 3) +
+  geom_errorbar(aes(ymin = ci_lo_cv, ymax = ci_hi_cv)) +
+  geom_errorbarh(aes(xmin = ci_lower_ts, xmax = ci_upper_ts)) + 
+  scale_shape_manual(values = c(16, 4, 1, 17)) +
+  # scale_y_continuous(limits = c(0.55, 0.87)) +
+  geom_abline(lty = 2) +
+  facet_grid(newO_type ~ model_type) +
+  ylab("AUC in cross-validation samples") +
+  xlab("AUC in independent test sample") + 
+
+  theme_tufte() 
+  # theme(legend.position = "bottom")
+
+```
+```{r}
+saveRDS(auc_plot, "C:/Users/benny_000/Dropbox/AAAKTUELLT/Manuskript 2/auc_plot.rds")
+```
+

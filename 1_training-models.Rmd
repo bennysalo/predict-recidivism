@@ -1,0 +1,260 @@
+---
+title: "Training models"
+output: html_notebook
+date: 2017-11-07
+---
+
+
+
+
+# Setup
+
+Load packages
+
+```{r}
+library(caret)
+library(tidyverse)
+library(pROC)
+library(stringr)
+library(lavaan)
+```
+
+Load data including only males. We are not authorized to make raw data publicly available.
+
+```{r}
+rm(list = ls())
+FinPrisonMales <- 
+  readRDS("C:/Users/benny_000/Dropbox/AAAKTUELLT/FinPrisonData/FinPrisonMales.rds")
+```
+
+We define a violent crime as crimes that belong to the homicide or assault categories. Other offence categories include offences that are violent and offences that are not violent. In many cases the violent forms are also coded as assault. 
+
+We create variables for new violent crime
+
+```{r}
+FinPrisonMales <- 
+  FinPrisonMales %>% 
+  mutate(newO_violent = as.factor(ifelse(newO_homicide == 1 | newO_assault == 1, 
+                                         "new_violent_crime", 
+                                         "no_crime_or_not_violent")))
+
+FinPrisonMales$newO_violent <- relevel(FinPrisonMales$newO_violent, 
+                                       ref ="no_crime_or_not_violent")
+
+table(FinPrisonMales$newO_violent)
+```
+
+Of the 748 new convictions 278 are categorized as violent.
+
+Define predictor sets as character vectors 
+
+```{r}
+# These are the 15 categories for the current offence
+(offence_variables <- 
+  str_subset(names(FinPrisonMales), "^o_"))
+
+# Static predictors as used in training
+static_preds <- 
+   c("ageFirstSentence_mr", "ageFirst_missing", "ageAtRelease", 
+     "ps_escapeHistory", "ps_prisonTerms_mr", "ps_comServiceTerms_mr", 
+     "ps_remandTerms_mr", "ps_defaultTerms_mr", "ps_info_missing", 
+     offence_variables)
+
+# Dynamic predict
+(rita_items <- 
+  str_subset(names(FinPrisonMales), "^i_"))
+
+# Combined vector of all predictors
+all_predictors <- c(static_preds, rita_factors, rita_items)
+
+# Combined vector of all variables: outcomes and predictors
+all_variables  <- c("reoffenceThisTerm", "newO_violent", all_predictors, "openPrison", "conditionalReleaseOutcome")
+
+
+
+```
+
+
+# Creating subsets
+(it would be possible to make sure matched pairs are placed in the same fold - we chose not to do this.)
+
+First devide data into a training set and a test set in ratio 3 to 1
+
+```{r}
+set.seed(3010)
+four_folds <-createFolds(y = FinPrisonMales$reoffenceThisTerm, k = 4)
+
+test_set     <- FinPrisonMales[ (1:nrow(FinPrisonMales) %in% four_folds[[4]]), all_variables]
+training_set <- FinPrisonMales[!(1:nrow(FinPrisonMales) %in% four_folds[[4]]), all_variables]
+
+nrow(test_set)
+nrow(training_set)
+
+
+```
+
+Then make 10 sets of 10 folds 
+```{r}
+# ten_folds_training  <- createFolds(y = training_set$reoffenceThisTerm, k = 10)
+# twenty_by_ten_folds <- createMultiFolds(y = training_set$reoffenceThisTerm, k = 10, times = 20)
+ten_by_ten_folds <- createMultiFolds(y = training_set$reoffenceThisTerm, k = 10, times = 10)
+```
+
+
+Now set up the cross validation schemes using these folds. 
+
+
+```{r}
+
+myControl <- trainControl(
+  method = "repeatedcv",
+  number = 10,
+  repeats = 10,
+  summaryFunction = twoClassSummary,
+  classProbs = TRUE, # IMPORTANT!
+  verboseIter = TRUE,
+  savePredictions = "final",
+  index = ten_by_ten_folds)
+```
+
+Also create functions to do the training with random forest (rf) and elastic net (glmnet) according to our specifications. Building on the 'caret::train' function.
+
+Arguments for the functions:
+    +  outcome: the predicted outcome. This is going to be either 
+    + "reoffenceThisTerm" for general recidivism
+  
+
+```{r}
+
+# Function for random forest
+# 
+cv_rf <- function (outcome, predictors, M) {
+  require(caret)
+
+  # Use provided character vectors to write the formula to test
+  tested_formula <- as.formula(paste(outcome, " ~ ", 
+                                     paste(predictors, collapse = " + ")))
+  
+  train(form = tested_formula,
+        data = training_set,
+        metric = "ROC",
+        tuneGrid = expand.grid(mtry = M),
+        method = "rf",
+        trControl = myControl)
+  
+
+}
+
+cv_glmnet <- function (outcome, predictors, A) { 
+  # Use provided character vectors to write the formula to test
+  tested_formula <- as.formula(paste(outcome, " ~ ", 
+                                     paste(predictors, collapse = " + ")))
+  
+  train(form = tested_formula,
+        data = training_set,
+        metric = "ROC",
+        tuneGrid = expand.grid(alpha = A, lambda = seq(0, 2.5, by = 0.01)),
+        method = "glmnet",
+        trControl = myControl,
+        standardize = TRUE)
+  
+
+}
+```
+
+# Random forest models
+
+```{r}
+items_V_rf       <- cv_rf(outcome = "newO_violent", predictors = rita_items, 
+                          M = c(2, 3, 4, 5, 24, 27))
+facto_V_rf       <- cv_rf(outcome = "newO_violent", predictors = rita_factors, 
+                          M = c(1, 2))
+stati_V_rf       <- cv_rf(outcome = "newO_violent", predictors = static_preds, 
+                          M = c(2, 3, 4, 5))
+stati_items_V_rf <- cv_rf(outcome = "newO_violent", 
+                                predictors = c(rita_items, static_preds), 
+                                               M = c(13, 14, 15, 16, 17, 24, 27))
+stati_facto_V_rf <- cv_rf(outcome = "newO_violent", 
+                                predictors = c(rita_factors, static_preds), M = c(2, 3, 4, 5))
+plus_outcome_V_rf <- cv_rf(outcome = "newO_violent", 
+                                predictors = c(rita_factors, static_preds, "openPrison", "conditionalReleaseOutcome"), M = c(2, 3, 4, 5, 8, 12))
+plus_outcome_V_rf_i <- cv_rf(outcome = "newO_violent", 
+                                predictors = c(rita_items, static_preds, "openPrison", "conditionalReleaseOutcome"), M = c(18:24))
+
+
+items_G_rf       <- cv_rf(outcome = "reoffenceThisTerm", predictors = rita_items, M = c(4:8))
+facto_G_rf       <- cv_rf(outcome = "reoffenceThisTerm", predictors = rita_factors, M = c(1:2))
+stati_G_rf       <- cv_rf(outcome = "reoffenceThisTerm", predictors = static_preds, M = c(1:2))
+stati_items_G_rf <- cv_rf(outcome = "reoffenceThisTerm", 
+                                predictors = c(rita_items, static_preds), M = c(16:20, 24, 27))
+stati_facto_G_rf <- cv_rf(outcome = "reoffenceThisTerm", 
+                                predictors = c(rita_factors, static_preds), M = c(2, 3, 4, 5))
+
+plus_outcome_G_rf <- cv_rf(outcome = "reoffenceThisTerm", 
+                                predictors = c(rita_factors, static_preds, "openPrison", "conditionalReleaseOutcome"), M = c(2, 3, 4, 5, 8, 12))
+plus_outcome_G_rf_i <- cv_rf(outcome = "reoffenceThisTerm", 
+                                predictors = c(rita_items, static_preds, "openPrison", "conditionalReleaseOutcome"), M = c(2, 13:24, 27))
+```
+
+# Elastic net models
+
+```{r}
+items_V_glm       <- cv_glmnet(outcome = "newO_violent", predictors = rita_items, A = 0)
+facto_V_glm       <- cv_glmnet(outcome = "newO_violent", predictors = rita_factors, 
+                               A = c(0.04, 0.05, 0.06, 0.07))
+stati_V_glm       <- cv_glmnet(outcome = "newO_violent", predictors = static_preds,
+                               A = c(0.09, 0.1, 0.11, 0.15))
+stati_items_V_glm <- cv_glmnet(outcome = "newO_violent", 
+                                predictors = c(rita_items, static_preds),
+                               A = c(0.02, 0.03))
+stati_facto_V_glm <- cv_glmnet(outcome = "newO_violent", 
+                                predictors = c(rita_factors, static_preds),
+                               A = c(0.09, 0.1, 0.11))
+
+items_G_glm       <- cv_glmnet(outcome = "reoffenceThisTerm", predictors = rita_items,
+                               A = c(0.06, 0.7, 0.8, 0.9))
+facto_G_glm       <- cv_glmnet(outcome = "reoffenceThisTerm", predictors = rita_factors,
+                               A = c(0.02, 0.03, 0.04))
+stati_G_glm       <- cv_glmnet(outcome = "reoffenceThisTerm", predictors = static_preds,
+                               A = c(0.95, 0.99, 1))
+stati_items_G_glm <- cv_glmnet(outcome = "reoffenceThisTerm", 
+                                predictors = c(rita_items, static_preds),
+                               A = c(0.95, 0.99, 1))
+stati_facto_G_glm <- cv_glmnet(outcome = "reoffenceThisTerm", 
+                                predictors = c(rita_factors, static_preds),
+                               A = c(0.95, 0.99, 1))
+```
+
+# Place models in a list and save them
+
+```{r}
+model_list_rf <-   list(items_V_rf       = items_V_rf,
+                        facto_V_rf       = facto_V_rf,
+                        stati_V_rf       = stati_V_rf,
+                        stati_items_V_rf = stati_items_V_rf,
+                        stati_facto_V_rf = stati_facto_V_rf,
+                        
+                        items_G_rf       = items_G_rf,
+                        facto_G_rf       = facto_G_rf,
+                        stati_G_rf       = stati_G_rf,
+                        stati_items_G_rf = stati_items_G_rf,
+                        stati_facto_G_rf = stati_facto_G_rf)
+
+saveRDS(model_list_rf, "C:/Users/benny_000/Dropbox/AAAKTUELLT/manus2/model_list_rf.rds")
+
+model_list_glm <-  list(items_V_glm       = items_V_glm,
+                        facto_V_glm       = facto_V_glm,
+                        stati_V_glm       = stati_V_glm,
+                        stati_items_V_glm = stati_items_V_glm,
+                        stati_facto_V_glm = stati_facto_V_glm,
+
+                        items_G_glm       = items_G_glm,
+                        facto_G_glm       = facto_G_glm,
+                        stati_G_glm       = stati_G_glm,
+                        stati_items_G_glm = stati_items_G_glm,
+                        stati_facto_G_glm = stati_facto_G_glm
+                        )
+
+saveRDS(model_list_glm, "C:/Users/benny_000/Dropbox/AAAKTUELLT/manus2/model_list_glm.rds")
+```
+
