@@ -1,0 +1,9 @@
+Package: recidivismsl
+Type: Package
+Title: Analyses for prediction of recidivism in Finnish data using supervised learning
+Version: 0.0.0.9000
+Author: person("Benny", "Salo", email = "benny.salo@abo.com", c("aut", "cre"))
+Description: Analyses for prediction of recidivism in Finnish data using supervised learning
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
