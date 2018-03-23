@@ -1,11 +1,8 @@
 ---
 title: "Training models"
-output: html_notebook
+output: github_document
 date: 2017-11-07
 ---
-
-
-
 
 # Setup
 
@@ -19,39 +16,21 @@ library(stringr)
 library(lavaan)
 ```
 
-Load data including only males. We are not authorized to make raw data publicly available.
+# Load data. 
+Exclusion criteria are descibed in data-raw/analyzed_data.md. We are not authorized to make raw data publicly available and the data loaded here is unfortunately not publicly accessible.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 rm(list = ls())
-FinPrisonMales <- 
-  readRDS("C:/Users/benny_000/Dropbox/AAAKTUELLT/FinPrisonData/FinPrisonMales.rds")
+setwd("..")
+analyzed_data <- 
+  readRDS("data-raw/analyzed_data.rds")
 ```
-
-We define a violent crime as crimes that belong to the homicide or assault categories. Other offence categories include offences that are violent and offences that are not violent. In many cases the violent forms are also coded as assault. 
-
-We create variables for new violent crime
+These are the 15 categories for the current offence. They are included in the static predictors.
 
 ```{r}
-FinPrisonMales <- 
-  FinPrisonMales %>% 
-  mutate(newO_violent = as.factor(ifelse(newO_homicide == 1 | newO_assault == 1, 
-                                         "new_violent_crime", 
-                                         "no_crime_or_not_violent")))
 
-FinPrisonMales$newO_violent <- relevel(FinPrisonMales$newO_violent, 
-                                       ref ="no_crime_or_not_violent")
-
-table(FinPrisonMales$newO_violent)
-```
-
-Of the 748 new convictions 278 are categorized as violent.
-
-Define predictor sets as character vectors 
-
-```{r}
-# These are the 15 categories for the current offence
 (offence_variables <- 
-  str_subset(names(FinPrisonMales), "^o_"))
+  stringr::str_subset(names(analyzed_data), "^o_"))
 
 # Static predictors as used in training
 static_preds <- 
@@ -60,18 +39,54 @@ static_preds <-
      "ps_remandTerms_mr", "ps_defaultTerms_mr", "ps_info_missing", 
      offence_variables)
 
-# Dynamic predict
+# Dynamic predictors
 (rita_items <- 
-  str_subset(names(FinPrisonMales), "^i_"))
+  stringr::str_subset(names(analyzed_data), "^i_"))
 
-# Combined vector of all predictors
-all_predictors <- c(static_preds, rita_factors, rita_items)
+static_n_rita <- c(static_preds, rita_items)
+
+incl_term <- c(static_preds, rita_items, 
+               "openPrison", "conditionalReleaseOutcome", 
+               "crimeDuringSentence", "supervisedParole")
 
 # Combined vector of all variables: outcomes and predictors
-all_variables  <- c("reoffenceThisTerm", "newO_violent", all_predictors, "openPrison", "conditionalReleaseOutcome")
+all_variables  <- c(incl_term, "reoffenceThisTerm", "newO_violent")
+
+```
+
+# Create a data frame of all the combinations for the models
+
+
+```{r}
+model_type <- c("glm", "glmnet", "rf")
+outcomes   <- c("reoffenceThisTerm", "newO_violent")
+predictors <- c("static_preds", "rita_items","static_n_rita", "incl_term")
+model_grid <- expand.grid(model_type, outcomes, predictors, 
+                         stringsAsFactors = FALSE)
+colnames(model_grid) <- c("model_type", "outcome", "predictors")
+```
+
+Create a function for writing formulas used in `caret::train`
+```{r}
+write_formula <- function(outcome, predictors) {
+  rhs            <- eval(parse(text = model_grid$predictors))
+  tested_formula <- as.formula(paste(outcome, " ~ ", 
+                                     paste(rhs, collapse = " + ")))
+  return(tested_formula)
+}
+```
 
 
 
+```{r}
+model_grid$tested_formula <-
+  purrr::map2(
+    .x = model_grid$outcome,
+    .y = model_grid$predictors,
+    .f = ~ write_formula(.x, .y
+    )
+  )
+  
 ```
 
 
@@ -84,8 +99,10 @@ First devide data into a training set and a test set in ratio 3 to 1
 set.seed(3010)
 four_folds <-createFolds(y = FinPrisonMales$reoffenceThisTerm, k = 4)
 
-test_set     <- FinPrisonMales[ (1:nrow(FinPrisonMales) %in% four_folds[[4]]), all_variables]
-training_set <- FinPrisonMales[!(1:nrow(FinPrisonMales) %in% four_folds[[4]]), all_variables]
+test_set     <- FinPrisonMales[ (1:nrow(FinPrisonMales) %in% 
+                                   four_folds[[4]]), all_variables]
+training_set <- FinPrisonMales[!(1:nrow(FinPrisonMales) %in% 
+                                   four_folds[[4]]), all_variables]
 
 nrow(test_set)
 nrow(training_set)
