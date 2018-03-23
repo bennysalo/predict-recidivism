@@ -89,6 +89,35 @@ model_grid$tested_formula <-
   
 ```
 
+Add list of arguments to use with `caret::train`
+```{r}
+write_arg_list <- function(model_type) {
+  if (model_type == "glm") {
+    specific_args <- list(method = "glm",
+                          family = "binomial")
+  } else if (model_type == "glmnet") {
+    specific_args <- list(method = "glmnet",
+                          family = "binomial",
+                          standardize = TRUE,
+                          tuneGrid = expand.grid(c(0, 0.25, 0.5, 0.75, 1))
+  )
+  } else if (model_type == "rf") {
+    specific_args <- list(method = "rf",
+                          tuneGrid = expand.grid()) # SOLVE
+  }
+  
+return(specific_args)
+}
+
+
+model_grid$arg_list <-
+  purrr::map(
+    .x = model_grid$model_type,
+    .f = ~ write_arg_list(.x)
+    )
+
+```
+
 
 # Creating subsets
 (it would be possible to make sure matched pairs are placed in the same fold - we chose not to do this.)
@@ -128,11 +157,15 @@ myControl <- trainControl(
   number = 10,
   repeats = 10,
   summaryFunction = twoClassSummary,
-  classProbs = TRUE, # IMPORTANT!
+  classProbs = TRUE, 
   verboseIter = TRUE,
   savePredictions = "final",
   index = ten_by_ten_folds)
 ```
+
+
+
+
 
 Also create functions to do the training with random forest (rf) and elastic net (glmnet) according to our specifications. Building on the 'caret::train' function.
 
