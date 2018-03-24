@@ -99,8 +99,7 @@ write_arg_list <- function(model_type) {
     specific_args <- list(method = "glmnet",
                           family = "binomial",
                           standardize = TRUE,
-                          tuneGrid = expand.grid(c(0, 0.25, 0.5, 0.75, 1))
-  )
+                          tuneGrid = expand.grid(c(0, 0.25, 0.5, 0.75, 1)))
   } else if (model_type == "rf") {
     specific_args <- list(method = "rf",
                           tuneGrid = expand.grid()) # SOLVE
@@ -110,12 +109,11 @@ return(specific_args)
 }
 
 
-model_grid$arg_list <-
+model_grid$specific_args <-
   purrr::map(
     .x = model_grid$model_type,
     .f = ~ write_arg_list(.x)
     )
-
 ```
 
 
@@ -126,11 +124,11 @@ First devide data into a training set and a test set in ratio 3 to 1
 
 ```{r}
 set.seed(3010)
-four_folds <-createFolds(y = FinPrisonMales$reoffenceThisTerm, k = 4)
+four_folds <-createFolds(y = analyzed_data$reoffenceThisTerm, k = 4)
 
-test_set     <- FinPrisonMales[ (1:nrow(FinPrisonMales) %in% 
+test_set     <- analyzed_data[ (1:nrow(analyzed_data) %in% 
                                    four_folds[[4]]), all_variables]
-training_set <- FinPrisonMales[!(1:nrow(FinPrisonMales) %in% 
+training_set <- analyzed_data[!(1:nrow(analyzed_data) %in% 
                                    four_folds[[4]]), all_variables]
 
 nrow(test_set)
@@ -175,41 +173,25 @@ Arguments for the functions:
   
 
 ```{r}
+my_train <- function(outcome, predictors, specific_args) {
 
-# Function for random forest
-# 
-cv_rf <- function (outcome, predictors, M) {
-  require(caret)
-
-  # Use provided character vectors to write the formula to test
-  tested_formula <- as.formula(paste(outcome, " ~ ", 
-                                     paste(predictors, collapse = " + ")))
+   predictors <- eval(parse(text = predictors))  
   
-  train(form = tested_formula,
-        data = training_set,
-        metric = "ROC",
-        tuneGrid = expand.grid(mtry = M),
-        method = "rf",
-        trControl = myControl)
-  
-
+  shared_args <- list(
+    x         = training_set[predictors],
+    y         = training_set[[outcome]],
+    metric    = "ROC",
+    trControl = myControl
+    )
+ 
+  all_args <- c(shared_args, unlist(specific_args))
+  browser()
+  train_list <- do.call(caret::train, args = all_args)
+  return(train_list)
+    
 }
 
-cv_glmnet <- function (outcome, predictors, A) { 
-  # Use provided character vectors to write the formula to test
-  tested_formula <- as.formula(paste(outcome, " ~ ", 
-                                     paste(predictors, collapse = " + ")))
-  
-  train(form = tested_formula,
-        data = training_set,
-        metric = "ROC",
-        tuneGrid = expand.grid(alpha = A, lambda = seq(0, 2.5, by = 0.01)),
-        method = "glmnet",
-        trControl = myControl,
-        standardize = TRUE)
-  
 
-}
 ```
 
 # Random forest models
