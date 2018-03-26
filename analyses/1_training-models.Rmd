@@ -54,6 +54,55 @@ all_variables  <- c(incl_term, "reoffenceThisTerm", "newO_violent")
 
 ```
 
+# Creating subsets
+(it would be possible to make sure matched pairs are placed in the same fold - we chose not to do this.)
+
+First devide data into a training set and a test set in ratio 3 to 1
+
+```{r}
+set.seed(3010)
+four_folds <-createFolds(y = analyzed_data$reoffenceThisTerm, k = 4)
+
+test_set     <- analyzed_data[ (1:nrow(analyzed_data) %in% 
+                                   four_folds[[4]]), all_variables]
+training_set <- analyzed_data[!(1:nrow(analyzed_data) %in% 
+                                   four_folds[[4]]), all_variables]
+
+nrow(test_set)
+nrow(training_set)
+
+
+```
+
+Then make 10 sets of 10 folds 
+```{r}
+# ten_folds_training  <- createFolds(y = training_set$reoffenceThisTerm, k = 10)
+# twenty_by_ten_folds <- createMultiFolds(y = training_set$reoffenceThisTerm, k = 10, times = 20)
+ten_by_ten_folds <- createMultiFolds(y = training_set$reoffenceThisTerm, k = 10, times = 10)
+```
+
+
+Now set up the cross validation schemes using these folds. 
+
+
+```{r}
+
+myControl <- trainControl(
+  method = "repeatedcv",
+  number = 10,
+  repeats = 10,
+  summaryFunction = twoClassSummary,
+  classProbs = TRUE, 
+  verboseIter = TRUE,
+  savePredictions = "final",
+  index = ten_by_ten_folds)
+```
+
+
+
+
+
+
 # Create a data frame of all the combinations for the models
 
 
@@ -147,52 +196,6 @@ model_grid$specific_args <-
     .f = ~ write_arg_list(..1, ..2, ..3)
   )
 ```
-
-
-# Creating subsets
-(it would be possible to make sure matched pairs are placed in the same fold - we chose not to do this.)
-
-First devide data into a training set and a test set in ratio 3 to 1
-
-```{r}
-set.seed(3010)
-four_folds <-createFolds(y = analyzed_data$reoffenceThisTerm, k = 4)
-
-test_set     <- analyzed_data[ (1:nrow(analyzed_data) %in% 
-                                   four_folds[[4]]), all_variables]
-training_set <- analyzed_data[!(1:nrow(analyzed_data) %in% 
-                                   four_folds[[4]]), all_variables]
-
-nrow(test_set)
-nrow(training_set)
-
-
-```
-
-Then make 10 sets of 10 folds 
-```{r}
-# ten_folds_training  <- createFolds(y = training_set$reoffenceThisTerm, k = 10)
-# twenty_by_ten_folds <- createMultiFolds(y = training_set$reoffenceThisTerm, k = 10, times = 20)
-ten_by_ten_folds <- createMultiFolds(y = training_set$reoffenceThisTerm, k = 10, times = 10)
-```
-
-
-Now set up the cross validation schemes using these folds. 
-
-
-```{r}
-
-myControl <- trainControl(
-  method = "repeatedcv",
-  number = 10,
-  repeats = 10,
-  summaryFunction = twoClassSummary,
-  classProbs = TRUE, 
-  verboseIter = TRUE,
-  savePredictions = "final",
-  index = ten_by_ten_folds)
-```
-
 
 
 
