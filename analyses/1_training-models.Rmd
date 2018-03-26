@@ -89,9 +89,21 @@ model_grid$tested_formula <-
   
 ```
 
+
+```{r}
+model_grid$n_preds <-
+  purrr::map_int(
+    .x = model_grid$predictors,
+    .f = ~ length(eval(parse(text = .x)))
+    )
+  
+  
+```
+
+
 Add list of arguments to use with `caret::train`
 ```{r}
-write_arg_list <- function(model_type) {
+write_arg_list <- function(model_type, n_preds) {
   if (model_type == "glm") {
     specific_args <- list(method = "glm",
                           family = "binomial")
@@ -99,10 +111,15 @@ write_arg_list <- function(model_type) {
     specific_args <- list(method = "glmnet",
                           family = "binomial",
                           standardize = TRUE,
-                          tuneGrid = expand.grid(c(0, 0.25, 0.5, 0.75, 1)))
+                          tuneGrid = expand.grid(
+                            alpha  = c(0, 0.2, 0.4, 0.6, 0.8, 1),
+                            lambda = seq(0, 3, by = 0.02)))
   } else if (model_type == "rf") {
+    # m_try sequency depending on number of predictors
+    # includes sqrt() (i.e. 4/8), other powers are 1/8 increments
+    m_try_seq <- round(n_preds^((1:7)/8))
     specific_args <- list(method = "rf",
-                          tuneGrid = expand.grid()) # SOLVE
+                          tuneGrid = expand.grid(mtry = m_try_seq)) # SOLVE
   }
   
 return(specific_args)
@@ -110,9 +127,10 @@ return(specific_args)
 
 
 model_grid$specific_args <-
-  purrr::map(
+  purrr::map2(
     .x = model_grid$model_type,
-    .f = ~ write_arg_list(.x)
+    .y = model_grid$n_preds,
+    .f = ~ write_arg_list(.x, .y)
     )
 ```
 
@@ -184,7 +202,7 @@ my_train <- function(outcome, predictors, specific_args) {
     trControl = myControl
     )
  
-  all_args <- c(shared_args, unlist(specific_args))
+  all_args <- c(shared_args, specific_args[[1]])
   browser()
   train_list <- do.call(caret::train, args = all_args)
   return(train_list)
@@ -193,6 +211,32 @@ my_train <- function(outcome, predictors, specific_args) {
 
 
 ```
+
+Split into subsets of models for easier management
+```{r}
+glm_grid    <- model_grid %>% filter(model_type == "glm")
+glmnet_grid <- model_grid %>% filter(model_type == "glmnet")
+rf_grid     <- model_grid %>% filter(model_type == "rf")
+```
+
+```{r}
+run_all_in_grid <- function(grid_df) {
+  list(
+    outcomes = grid_df$outcome,
+    predictors = grid_df$predictors,
+    specific_args = grid_df$specific_args
+    )
+  
+  
+} 
+
+
+test3 <- my_train(outcome = rf_grid$outcome[1], 
+                  predictors = rf_grid$predictors[1], 
+                  specific_args = rf_grid$specific_args[1])
+```
+
+
 
 # Random forest models
 
