@@ -239,17 +239,84 @@ Sys.time() - start
 train_mods_glm <- map(train_mods_glm, strip_data)
 saveRDS(train_mods_glm, file = "train_mods_glm")
 rm(train_mods_glm)
+```
 
+```{r}
+train_mods_glmnet <-readRDS("train_mods_glmnet")
+```
+
+# Updating tuning grid for glmnet models
+
+```{r}
+plot(train_mods_glmnet[[1]], ylim = c(0.764, 0.77), xlim = c(0, 0.5))
+update_grid_1 <- expand.grid(alpha = seq(0.8, 1, by = 0.04), 
+                             lambda = seq(0, 0.05, by = 0.002))
+```
+```{r}
+plot(train_mods_glmnet[[2]], ylim = c(0.75, 0.78), xlim = c(0, 0.5))
+update_grid_2 <- expand.grid(alpha = seq(0, 0.2, by = 0.04), 
+                             lambda = seq(0, 0.5, by = 0.01))
+```
+```{r}
+plot(train_mods_glmnet[[3]], ylim = c(0.75, 0.76), xlim = c(0, 1))
+update_grid_3 <- expand.grid(alpha = seq(0.1, 0.3, by = 0.04), 
+                             lambda = seq(0, 0.4, by = 0.01))
+```
+
+```{r}
+plot(train_mods_glmnet[[4]], ylim = c(0.70, 0.75), xlim = c(0, 1))
+update_grid_4 <- expand.grid(alpha = seq(0, 0.2, by = 0.04), 
+                             lambda = seq(0, 0.6, by = 0.01))
+```
+```{r}
+plot(train_mods_glmnet[[5]], ylim = c(0.78, 0.80), xlim = c(0, 1))
+update_grid_5 <- expand.grid(alpha = seq(0.80, 1, by = 0.04), 
+                             lambda = seq(0, 0.2, by = 0.002))
+```
+
+
+```{r}
+plot(train_mods_glmnet[[6]], ylim = c(0.78, 0.80), xlim = c(0, 1))
+update_grid_6 <- expand.grid(alpha = seq(0, 0.2, by = 0.04), 
+                             lambda = seq(0, 0.4, by = 0.002))
+```
+```{r}
+plot(train_mods_glmnet[[7]], ylim = c(0.79, 0.83), xlim = c(0, 1))
+update_grid_7 <- expand.grid(alpha = seq(0.8, 1, by = 0.04), 
+                             lambda = seq(0, 0.2, by = 0.002))
+```
+
+```{r}
+plot(train_mods_glmnet[[8]], ylim = c(0.78, 0.81), xlim = c(0, 1))
+update_grid_8 <- expand.grid(alpha = seq(0, 0.2, by = 0.02), 
+                             lambda = seq(0, 0.3, by = 0.002))
+```
+```{r}
+glmnet_grid$specific_args_2 <- glmnet_grid$specific_args
+
+glmnet_grid$specific_args_2[[1]]$tuneGrid <- update_grid_1
+glmnet_grid$specific_args_2[[2]]$tuneGrid <- update_grid_2
+glmnet_grid$specific_args_2[[3]]$tuneGrid <- update_grid_3
+glmnet_grid$specific_args_2[[4]]$tuneGrid <- update_grid_4
+glmnet_grid$specific_args_2[[5]]$tuneGrid <- update_grid_5
+glmnet_grid$specific_args_2[[6]]$tuneGrid <- update_grid_6
+glmnet_grid$specific_args_2[[7]]$tuneGrid <- update_grid_7
+glmnet_grid$specific_args_2[[8]]$tuneGrid <- update_grid_8
+```
+
+
+
+```{r}
 # glmnet -------------
 
 start <- Sys.time()
-train_mods_glmnet <- map(.x = glmnet_grid$specific_args,
+train_mods_glmnet_2 <- map(.x = glmnet_grid$specific_args_2,
                         .f = ~do.call(caret::train, .x))
 Sys.time() - start
 
-train_mods_glmnet <- map(train_mods_glm, strip_data)
-saveRDS(train_mods_glmnet, file = "train_mods_glm")
-rm(train_mods_glmnet)
+train_mods_glmnet_2 <- map(train_mods_glmnet_2, strip_data)
+saveRDS(train_mods_glmnet_2, file = "train_mods_glmnet")
+rm(train_mods_glmnet_2)
 
 #rf ------------------
 
@@ -258,8 +325,8 @@ train_mods_rf     <- map(.x = rf_grid$specific_args,
                         .f = ~do.call(caret::train, .x))
 Sys.time() - start
 
-train_mods_rf <- map(train_mods_glm, strip_data)
-saveRDS(train_mods_rf, file = "train_mods_glm")
+train_mods_rf <- map(train_mods_rf, strip_data)
+saveRDS(train_mods_rf, file = "train_mods_rf")
 rm(train_mods_rf)
 
 
