@@ -162,13 +162,14 @@ write_arg_list <- function(model_type, outcome, predictors) {
                           method = "glm",
                           family = "binomial")
   } else if (model_type == "glmnet") {
-    specific_args <- list(trControl = myControl,
-                          metric    = "ROC",
-                          form      = as.formula(
+    specific_args <- list(form      = as.formula(
                             paste(outcome, " ~ ",
                                   paste(predictors, collapse = " + "))),
                           data      = training_set,
+                          method    = "glmnet",
                           family    = "binomial",
+                          trControl = myControl,
+                          metric    = "ROC",
                           standardize = TRUE,
                           tuneGrid = expand.grid(
                             alpha  = c(0, 0.2, 0.4, 0.6, 0.8, 1),
@@ -178,7 +179,8 @@ write_arg_list <- function(model_type, outcome, predictors) {
     # includes sqrt() (i.e. 4/8), other powers are 1/8 increments
     n_preds <- length(predictors)
     m_try_seq <- round(n_preds^((1:7)/8))
-    specific_args <- list(trControl = myControl,
+    specific_args <- list(method = "rf",
+                          trControl = myControl,
                           metric    = "ROC",
                           x         = training_set[predictors],
                           y         = training_set[[outcome]],method = "rf",
@@ -235,8 +237,7 @@ rf_grid     <- model_grid %>% filter(model_type == "rf")
 train_mods_glm    <- map(.x = glm_grid$specific_args, 
                         .f = ~do.call(caret::train, .x))
 
-# Does not run
-train_mods_glmnet <- map(.x = glmnet_grid$specific_args, 
+train_mods_glmnet <- map(.x = glmnet_grid$specific_args,
                         .f = ~do.call(caret::train, .x))
 
 train_mods_rf     <- map(.x = rf_grid$specific_args, 
