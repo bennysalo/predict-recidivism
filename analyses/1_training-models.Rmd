@@ -155,12 +155,15 @@ Add list of arguments to use with `caret::train`
 write_arg_list <- function(model_type, outcome, predictors) {
   predictors <- eval(parse(text = predictors))
   if (model_type == "glm") {
-    specific_args <- list(trControl = myControl,
-                          metric    = "ROC",
-                          x         = training_set[predictors],
+    specific_args <- list(x         = training_set[predictors],
                           y         = training_set[[outcome]],
                           method = "glm",
-                          family = "binomial")
+                          family = "binomial",
+                          metric    = "ROC",
+                          trControl = myControl
+                          )
+    # We seem to need to use the formula method of caret::train
+    # Might be because of the factors and ordinal predictors?
   } else if (model_type == "glmnet") {
     specific_args <- list(form      = as.formula(
                             paste(outcome, " ~ ",
@@ -168,23 +171,25 @@ write_arg_list <- function(model_type, outcome, predictors) {
                           data      = training_set,
                           method    = "glmnet",
                           family    = "binomial",
-                          trControl = myControl,
-                          metric    = "ROC",
                           standardize = TRUE,
+                          metric    = "ROC",
+                          trControl = myControl,
                           tuneGrid = expand.grid(
                             alpha  = c(0, 0.2, 0.4, 0.6, 0.8, 1),
-                            lambda = seq(0, 3, by = 0.02)))
+                            lambda = seq(0, 3, by = 0.02))
+                          )
   } else if (model_type == "rf") {
     # m_try sequency depending on number of predictors
     # includes sqrt() (i.e. 4/8), other powers are 1/8 increments
     n_preds <- length(predictors)
     m_try_seq <- round(n_preds^((1:7)/8))
-    specific_args <- list(method = "rf",
-                          trControl = myControl,
+    specific_args <- list(x         = training_set[predictors],
+                          y         = training_set[[outcome]],
+                          method = "rf",
                           metric    = "ROC",
-                          x         = training_set[predictors],
-                          y         = training_set[[outcome]],method = "rf",
-                          tuneGrid  = expand.grid(mtry = m_try_seq))
+                          trControl = myControl,
+                          tuneGrid  = expand.grid(mtry = m_try_seq)
+                          )
   }
   
 return(specific_args)
