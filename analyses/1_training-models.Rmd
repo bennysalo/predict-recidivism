@@ -214,23 +214,56 @@ glmnet_grid <- model_grid %>% filter(model_type == "glmnet")
 rf_grid     <- model_grid %>% filter(model_type == "rf")
 ```
 
+Strip data from the train output.
+
+function
 ```{r}
+strip_data <- function(train_output) {
+  train_output$call <- NA
+  train_output$trainingData <- NA
+  train_output
+}
+```
+
+
+
+```{r}
+
+
+
+# glm ---------------
 start <- Sys.time()
 train_mods_glm    <- map(.x = glm_grid$specific_args, 
                         .f = ~do.call(caret::train, .x))
 Sys.time() - start
 
+train_mods_glm <- map(train_mods_glm, strip_data)
+saveRDS(train_mods_glm, file = "train_mods_glm")
+rm(train_mods_glm)
+
+# glmnet -------------
 
 start <- Sys.time()
 train_mods_glmnet <- map(.x = glmnet_grid$specific_args,
                         .f = ~do.call(caret::train, .x))
 Sys.time() - start
 
+train_mods_glmnet <- map(train_mods_glm, strip_data)
+saveRDS(train_mods_glmnet, file = "train_mods_glm")
+rm(train_mods_glmnet)
+
+#rf ------------------
 
 start <- Sys.time()
 train_mods_rf     <- map(.x = rf_grid$specific_args, 
                         .f = ~do.call(caret::train, .x))
 Sys.time() - start
+
+train_mods_rf <- map(train_mods_glm, strip_data)
+saveRDS(train_mods_rf, file = "train_mods_glm")
+rm(train_mods_rf)
+
+
 ```
 
 
