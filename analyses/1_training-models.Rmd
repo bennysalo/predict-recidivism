@@ -203,7 +203,6 @@ my_train <- function(outcome, predictors, specific_args) {
     )
  
   all_args <- c(shared_args, specific_args[[1]])
-  browser()
   train_list <- do.call(caret::train, args = all_args)
   return(train_list)
     
@@ -221,19 +220,19 @@ rf_grid     <- model_grid %>% filter(model_type == "rf")
 
 ```{r}
 run_all_in_grid <- function(grid_df) {
-  list(
-    outcomes = grid_df$outcome,
+  arg_list <- list(
+    outcome = grid_df$outcome,
     predictors = grid_df$predictors,
     specific_args = grid_df$specific_args
     )
-  
-  
-} 
+  purrr::pmap(.l = arg_list, 
+              .f = ~my_train(..1, ..2, ..3)
+              )
+}
 
 
-test3 <- my_train(outcome = rf_grid$outcome[1], 
-                  predictors = rf_grid$predictors[1], 
-                  specific_args = rf_grid$specific_args[1])
+glm_grid$results <- run_all_in_grid(glm_grid)
+
 ```
 
 
