@@ -185,7 +185,7 @@ write_arg_list <- function(model_type, outcome, predictors) {
     m_try_seq <- round(n_preds^((1:7)/8))
     specific_args <- list(x         = training_set[predictors],
                           y         = training_set[[outcome]],
-                          method = "rf",
+                          method    = "rf",
                           metric    = "ROC",
                           trControl = myControl,
                           tuneGrid  = expand.grid(mtry = m_try_seq)
@@ -205,30 +205,6 @@ model_grid$specific_args <-
       ),
     .f = ~ write_arg_list(..1, ..2, ..3)
   )
-```
-
-
-
-
-```{r}
-my_train <- function(outcome, predictors, specific_args) {
-
-   predictors <- eval(parse(text = predictors))  
-  
-  shared_args <- list(
-    x         = training_set[predictors],
-    y         = training_set[[outcome]],
-    metric    = "ROC",
-    trControl = myControl
-    )
- 
-  all_args <- c(shared_args, specific_args[[1]])
-  train_list <- do.call(caret::train, args = all_args)
-  return(train_list)
-    
-}
-
-
 ```
 
 Split into subsets of models for easier management
