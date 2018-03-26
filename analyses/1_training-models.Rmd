@@ -103,13 +103,20 @@ model_grid$n_preds <-
 
 Add list of arguments to use with `caret::train`
 ```{r}
-write_arg_list <- function(model_type, n_preds) {
+write_arg_list <- function(model_type, outcome, predictors) {
   if (model_type == "glm") {
-    specific_args <- list(method = "glm",
+    specific_args <- list(trControl = myControl,
+                          metric    = "ROC",
+                          x         = training_set[predictors],
+                          y         = training_set[[outcome]],
+                          method = "glm",
                           family = "binomial")
   } else if (model_type == "glmnet") {
-    specific_args <- list(method = "glmnet",
-                          family = "binomial",
+    specific_args <- list(trControl = myControl,
+                          metric    = "ROC",
+                          form      = write_formula(outcome, predictors),
+                          data      = training_set,
+                          family    = "binomial",
                           standardize = TRUE,
                           tuneGrid = expand.grid(
                             alpha  = c(0, 0.2, 0.4, 0.6, 0.8, 1),
@@ -117,9 +124,13 @@ write_arg_list <- function(model_type, n_preds) {
   } else if (model_type == "rf") {
     # m_try sequency depending on number of predictors
     # includes sqrt() (i.e. 4/8), other powers are 1/8 increments
+    n_preds <- length(eval(parse(text = predictors)))
     m_try_seq <- round(n_preds^((1:7)/8))
-    specific_args <- list(method = "rf",
-                          tuneGrid = expand.grid(mtry = m_try_seq)) # SOLVE
+    specific_args <- list(trControl = myControl,
+                          metric    = "ROC",
+                          x         = training_set[predictors],
+                          y         = training_set[[outcome]],method = "rf",
+                          tuneGrid  = expand.grid(mtry = m_try_seq)) 
   }
   
 return(specific_args)
@@ -127,11 +138,14 @@ return(specific_args)
 
 
 model_grid$specific_args <-
-  purrr::map2(
-    .x = model_grid$model_type,
-    .y = model_grid$n_preds,
-    .f = ~ write_arg_list(.x, .y)
-    )
+  purrr::pmap(
+    .l = list(
+      model_type = model_grid$model_type,
+      outcome    = model_grid$outcome,
+      predictors = model_grid$predictors
+      ),
+    .f = ~ write_arg_list(..1, ..2, ..3)
+  )
 ```
 
 
