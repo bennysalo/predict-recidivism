@@ -11,14 +11,18 @@ library(stringr)
 
 # Load the lists of models
 ```{r}
+train_mods_glm <- readRDS("train_mods_glm.rds")
+names(train_mods_glm) <- glm_grid$model_name
+train_mods_glmnet <- readRDS("train_mods_glmnet")
+names(train_mods_glmnet) <- glmnet_grid$model_name
+train_mods_rf <- readRDS("train_mods_rf")
+names(train_mods_rf) <- rf_grid$model_name
 
-model_list_rf <- readRDS("C:/Users/benny_000/Dropbox/AAAKTUELLT/model_list_rf_r2.rds")
-model_list_glm <- readRDS("C:/Users/benny_000/Dropbox/AAAKTUELLT/model_list_glm_r4.rds")
 ```
 
 Combine the two lists to one and pass it to 'caret:resamples'
 ```{r}
-model_list        <- c(model_list_rf, model_list_glm)
+model_list        <- c(train_mods_glm, train_mods_glmnet, train_mods_rf)
 model_comparisons <- resamples(model_list)
 ```
 
