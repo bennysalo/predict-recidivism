@@ -237,8 +237,20 @@ train_mods_glm    <- map(.x = glm_grid$specific_args,
 Sys.time() - start
 
 train_mods_glm <- map(train_mods_glm, strip_data)
-saveRDS(train_mods_glm, file = "train_mods_glm")
+saveRDS(train_mods_glm, file = "train_mods_glm.rds")
 rm(train_mods_glm)
+
+# glmnet -------------
+
+start <- Sys.time()
+train_mods_glmnet <- map(.x = glmnet_grid$specific_args,
+                        .f = ~do.call(caret::train, .x))
+Sys.time() - start
+
+train_mods_glmnet <- map(train_mods_glmnet, strip_data)
+saveRDS(train_mods_glmnet, file = "train_mods_glmnet.rds")
+rm(train_mods_glmnet)
+
 ```
 
 ```{r}
