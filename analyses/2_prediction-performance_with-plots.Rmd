@@ -75,8 +75,8 @@ Calculate AUCs and confidence intervals
 ```{r}
 require(pROC)
 # Get the names of predictions of violent and generalised recidivism seperately.
-model_names_V <- str_subset(names(predictions), pattern = "_V_") 
-model_names_G <- str_subset(names(predictions), pattern = "_G_") 
+model_names_V <- str_subset(names(predictions), pattern = "V_") 
+model_names_G <- str_subset(names(predictions), pattern = "G_") 
 
 # Do ROC analysis using predictions with the relevant outcome
 # First all predictions of violent recidivism
@@ -116,26 +116,27 @@ Join the results of training set analyses and test set analyses
 
 ```{r}
 auc_tbl <- full_join(auc_tbl_cv, auc_tbl_ts, by = "model") %>% 
-  mutate(newO_type = ifelse(str_detect(model, pattern = "_V_"), "Violent recidivism", 
+  mutate(newO_type = ifelse(str_detect(model, pattern = "V_"), 
+                            "Violent recidivism", 
                             "General recidivism"),
-         model_type = ifelse(str_detect(model, pattern = "_rf"), "Random forest", 
-                             "Elastic net"),
-         Predictors = ifelse(str_detect(model, "^facto_"), "Dynamic factors",
-                       ifelse(str_detect(model, "^items"), "Dynamic items",
-                       ifelse(str_detect(model, "^stati_facto_"), 
-                              "Static variables and dynamic factors",
-                       ifelse(str_detect(model, "^stati_items_"), 
+         
+         model_type = ifelse(str_detect(model, pattern = "rf"), "Random forest", 
+                      ifelse(str_detect(model, pattern = "glmnet"), 
+                             "Elastic net","Logistic regression")),
+         
+         Predictors = ifelse(str_detect(model, "dynamic"), "Dynamic items",
+                       ifelse(str_detect(model, "all-bgn"), 
                               "Static and dynamic items",
-                       ifelse(str_detect(model, "^full_items_"), "All predictors",
-                       ifelse(str_detect(model, "^full_facto_"), "All with factors",       
-                              "Static items")))))))
+                       ifelse(str_detect(model, "incl-te"), "All predictors",
+                              "Static items"))))
    
 
 auc_tbl$Predictors <- factor(auc_tbl$Predictors, levels = 
                                  c("All predictors", "Static and dynamic items", 
-                                   "Static items",  "Dynamic items",
-                                   "All with factors", "Static variables and dynamic factors",
-                                   "Dynamic factors"))                  
+                                   "Static items",  "Dynamic items"))     
+
+auc_tbl$model_type <- factor(auc_tbl$model_type, levels = 
+                                 c("Logistic regression", "Elastic net", "Random forest"))   
 
 ```
 
@@ -164,11 +165,15 @@ ggplot(aes(x = auc_ts, y = mean_auc_cv)) +
   ylab("AUC in cross-validation samples") +
   xlab("AUC in independent test sample") + 
 
-  theme_tufte() 
+  ggthemes::theme_tufte(base_family = "sans") 
   # theme(legend.position = "bottom")
 
 ```
 ```{r}
 saveRDS(auc_plot, "C:/Users/benny_000/Dropbox/AAAKTUELLT/Manuskript 2/auc_plot.rds")
+```
+
+```{r}
+select(auc_tbl, model, model_type, Predictors)
 ```
 
