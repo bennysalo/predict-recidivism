@@ -206,6 +206,27 @@ model_grid$specific_args <-
     .f = ~ write_arg_list(..1, ..2, ..3)
   )
 ```
+Write a function for naming models
+
+```{r}
+write_mod_names <- function(model_grid) {
+  m <- model_grid$model_type
+  o <- model_grid$outcome
+  p <- model_grid$predictors
+  
+  o <- ifelse(o == "reoffenceThisTerm", "gen_", "viol_")
+  p <- ifelse(p == "static_preds", "stat_",
+              ifelse(p == "rita_items", "dyn_",
+                     ifelse(p == "static_n_rita", "all-begin_",
+                            "incl-term_")))
+  model_name <- paste(o, p, m, sep = "")
+  return(model_name)
+  
+  
+}
+
+model_grid$model_name <- write_mod_names(model_grid)
+```
 
 Split into subsets of models for easier management
 ```{r}
