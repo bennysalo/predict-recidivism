@@ -145,4 +145,3 @@ auc_tbl$model_type <- factor(auc_tbl$model_type, levels =
 ```{r}
 saveRDS(auc_tbl, "auc_tbl.rds")
 ```
-

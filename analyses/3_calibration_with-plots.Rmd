@@ -60,6 +60,7 @@ calibr_data <- data.frame(predictions, bins,
                           reoffenceThisTerm = test_set$reoffenceThisTerm, 
                           newO_violent = test_set$newO_violent)
 
+
 ```
 
 ```{r}
@@ -75,6 +76,23 @@ calibr_data <- data.frame(predictions, bins,
 #   nest(-model)
 ```
 Write a function to calculate the rate of an outcome per bin.
+```{r}
+
+sub_dframe <- data_frame(predictions[1], bins[1], test_set["reoffenceThisTerm"])
+
+sub_dframe %>% 
+  group_by(G_staticp_glm.bin) %>% 
+    summarise(n = n(), 
+              obs = sum(as.numeric(reoffenceThisTerm) == 2),
+              prop = obs/n * 100,
+              mean_rate = mean(G_staticp_glm)*100) %>% 
+    select(-n, -obs)
+
+get_bin_stats <- function(est_probs, quantile, outcome) {
+  bin_stats <- 
+}
+```
+
 
 ```{r}
 get_prop_per_bin <- function(dframe = calibr_data, probs, bin, outcome) {
