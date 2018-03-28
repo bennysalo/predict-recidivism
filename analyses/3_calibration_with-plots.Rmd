@@ -23,12 +23,12 @@ Put outcomes and predictions in same data frame
 
 
 ```{r}
-
-# calibr_data <- 
-  
 make_quintiles <- function(x) {
   quint_breaks <- (quantile(x, probs = seq(0, 1, 0.2)))
-  quintiles    <- cut(x, breaks = quint_breaks, include.lowest = TRUE, labels = FALSE)
+  quintiles    <- cut(x, 
+                      breaks = quint_breaks, 
+                      include.lowest = TRUE, 
+                      labels = FALSE)
   quintiles
 }
 
@@ -38,7 +38,9 @@ make_quintiles <- function(x) {
 
 ```
 
+Put each prediction into a bin (1 to 5) based on quitile
 ```{r}
+
 bins <-
   predictions %>%
   mutate_all(.funs = make_quintiles)
@@ -48,8 +50,14 @@ names(bins) <- paste(names(bins),".bin", sep = "")
 
 ```
 
+Put eveything in a single data frame: 
+- the predictions, 
+- corresponding quintile bin, and 
+- the two outcomes
+
 ```{r}
-calibr_data <- data.frame(predictions, bins, reoffenceThisTerm = test_set$reoffenceThisTerm, 
+calibr_data <- data.frame(predictions, bins, 
+                          reoffenceThisTerm = test_set$reoffenceThisTerm, 
                           newO_violent = test_set$newO_violent)
 
 ```
@@ -66,8 +74,7 @@ calibr_data <- data.frame(predictions, bins, reoffenceThisTerm = test_set$reoffe
 #   gather(key = "model", value = "bin") %>% 
 #   nest(-model)
 ```
-
-
+Write a function to calculate the rate of an outcome per bin.
 
 ```{r}
 get_prop_per_bin <- function(dframe = calibr_data, probs, bin, outcome) {
@@ -101,7 +108,7 @@ get_prop_per_bin <- function(dframe = calibr_data, probs, bin, outcome) {
 
 }
 
-get_prop_per_bin(calibr_data, items_G_glm, items_G_glm.bin, reoffenceThisTerm)
+get_prop_per_bin(calibr_data, G_staticp_glm, G_staticp_glm.bin, reoffenceThisTerm)
 
 
 ```
