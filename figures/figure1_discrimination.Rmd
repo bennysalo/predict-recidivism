@@ -1,0 +1,43 @@
+---
+title: "Plot discrimination values"
+output: github_document
+date: 2017-11-07
+---
+
+# Create plot
+
+```{r}
+# auc_tbl$model <-
+# factor(auc_ci_table$model, 
+#        levels = c("roc_factors_static_G", "roc_items_static_G", 
+#                   "roc_static_G", "roc_factors_G", "roc_items_G",
+#                   "roc_factors_static_V", "roc_items_static_V", "roc_static_V",
+#                   "roc_factors_V", "roc_items_V"))
+
+auc_plot <-
+  auc_tbl %>% 
+  filter(Predictors %in% c("Dynamic items", "Static items", 
+                           "Static and dynamic items", "All predictors")) %>% 
+ggplot(aes(x = auc_ts, y = mean_auc_cv)) + 
+  geom_point(aes(shape = Predictors), size = 3) +
+  geom_errorbar(aes(ymin = ci_lo_cv, ymax = ci_hi_cv)) +
+  geom_errorbarh(aes(xmin = ci_lower_ts, xmax = ci_upper_ts)) + 
+  scale_shape_manual(values = c(16, 4, 1, 17)) +
+  # scale_y_continuous(limits = c(0.55, 0.87)) +
+  geom_abline(lty = 2) +
+  facet_grid(newO_type ~ model_type) +
+  ylab("AUC in cross-validation samples") +
+  xlab("AUC in independent test sample") + 
+
+  ggthemes::theme_tufte(base_family = "sans") 
+  # theme(legend.position = "bottom")
+
+```
+```{r}
+saveRDS(auc_plot, "revised_auc_plot.rds")
+```
+
+```{r}
+select(auc_tbl, model, model_type, Predictors)
+```
+
