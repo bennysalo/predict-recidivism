@@ -92,6 +92,7 @@ roc_list_ts_G <- map(.x = predictions[model_names_G],
 roc_list_ts   <- c(roc_list_ts_V, roc_list_ts_G)
 
 # Bootstrap confidence intervals for all AUC-values
+set.seed(2803)
 auc_ci_list   <- map(roc_list_ts, .f = ~ci.auc(.x, method = "bootstrap"))
 
 ```
@@ -170,7 +171,7 @@ ggplot(aes(x = auc_ts, y = mean_auc_cv)) +
 
 ```
 ```{r}
-saveRDS(auc_plot, "C:/Users/benny_000/Dropbox/AAAKTUELLT/Manuskript 2/auc_plot.rds")
+saveRDS(auc_plot, "revised_auc_plot.rds")
 ```
 
 ```{r}
