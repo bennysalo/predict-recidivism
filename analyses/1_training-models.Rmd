@@ -214,11 +214,11 @@ write_mod_names <- function(model_grid) {
   o <- model_grid$outcome
   p <- model_grid$predictors
   
-  o <- ifelse(o == "reoffenceThisTerm", "gen_", "viol_")
-  p <- ifelse(p == "static_preds", "stat_",
-              ifelse(p == "rita_items", "dyn_",
-                     ifelse(p == "static_n_rita", "all-begin_",
-                            "incl-term_")))
+  o <- ifelse(o == "reoffenceThisTerm", "G_", "V_")
+  p <- ifelse(p == "static_preds", "staticp_",
+              ifelse(p == "rita_items", "dynamic_",
+                     ifelse(p == "static_n_rita", "all-bgn",
+                            "incl-te_")))
   model_name <- paste(o, p, m, sep = "")
   return(model_name)
   
