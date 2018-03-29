@@ -141,7 +141,38 @@ auc_tbl$model_type <- factor(auc_tbl$model_type, levels =
 
 ```
 
+Add column for predictors
+
+```{r}
+# model_patterns <- c("dynamic", 
+#                     "staticp", 
+#                     "all-bgn", 
+#                     "incl-te")
+# matched_preds  <- c("Rita-Items", 
+#                     "Static", 
+#                     "Static and RITA-Items", 
+#                     "All incl. term variables")
+
+auc_tbl %>% 
+  mutate(predictors = 
+           ifelse(str_detect(model, "dynamic"), "Rita-Items",
+           ifelse(str_detect(model, "staticp"), "RStatic",
+           ifelse(str_detect(model, "all-bgn"), "Static and RITA-Items",
+                  "All incl. term variables"))))
+
+
+
+```
+
+
 
 ```{r}
 saveRDS(auc_tbl, "auc_tbl.rds")
 ```
+
+Predictive Power of RITA-Items
+```{r}
+auc_tbl %>%  select(1:4) %>% filter(str_detect(model, "dynamic"))
+auc_tbl %>%  select(1:4) %>% filter(str_detect(model, "static"))
+```
+
