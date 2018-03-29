@@ -35,6 +35,47 @@ table(analyzed_data$newO_violent)
 
 Of the 748 new convictions 278 are categorized as prison terms for violent crimes.
 
+Compare distributions in follow-up time between those who committed a new crime and those who did not.
+
+```{r}
+followUp_G_yes <- analyzed_data[
+  analyzed_data$reoffenceThisTerm == "new_prison_sentence",
+  "followUpYears"]
+
+followUp_G_no <- analyzed_data[
+  analyzed_data$reoffenceThisTerm == "not_in_prison",
+  "followUpYears"]
+
+followUp_V_yes <- analyzed_data[
+  analyzed_data$newO_violent == "new_violent_crime",
+  "followUpYears"]
+
+followUp_V_no <- analyzed_data[
+  analyzed_data$newO_violent == "no_crime_or_not_violent",
+  "followUpYears"]
+  
+  
+qqplot(followUp_G_yes, followUp_G_no)
+qqplot(followUp_V_yes, followUp_V_no)
+```
+
+The similarity of distributions is close to perfect for general recidivism and very good for violent recidivism.
+
+Check means and standard deviations
+
+```{r}
+analyzed_data %>% 
+  group_by(reoffenceThisTerm) %>% 
+  summarise(M = mean(followUpYears),
+            SD = sd(followUpYears))
+
+analyzed_data %>% 
+  group_by(newO_violent) %>% 
+  summarise(M = mean(followUpYears),
+            SD = sd(followUpYears))
+
+```
+
 
 Save data. Will not be made public.
 ```{r}
