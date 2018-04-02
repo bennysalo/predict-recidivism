@@ -12,15 +12,7 @@ library(caret)
 library(ggthemes)
 ```
 
-
-
-
-
-
 Put outcomes and predictions in same data frame
-
-
-
 
 ```{r}
 make_quintiles <- function(x) {

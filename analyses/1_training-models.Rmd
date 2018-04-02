@@ -258,6 +258,7 @@ train_mods_glm    <- map(.x = glm_grid$specific_args,
 Sys.time() - start
 
 train_mods_glm <- map(train_mods_glm, strip_data)
+names(train_mods_glm) <- glm_grid$model_name
 saveRDS(train_mods_glm, file = "train_mods_glm.rds")
 rm(train_mods_glm)
 
@@ -348,6 +349,7 @@ train_mods_glmnet_2 <- map(.x = glmnet_grid$specific_args_2,
 Sys.time() - start
 
 train_mods_glmnet_2 <- map(train_mods_glmnet_2, strip_data)
+names(train_mods_glmnet_2) <- glmnet_grid$model_name
 saveRDS(train_mods_glmnet_2, file = "train_mods_glmnet")
 rm(train_mods_glmnet_2)
 
@@ -359,9 +361,17 @@ train_mods_rf     <- map(.x = rf_grid$specific_args,
 Sys.time() - start
 
 train_mods_rf <- map(train_mods_rf, strip_data)
-saveRDS(train_mods_rf, file = "train_mods_rf")
+names(train_mods_rf) <- rf_grid$model_name
+saveRDS(train_mods_rf, file = "train_mods_rf.rds")
 rm(train_mods_rf)
 
 
+```
+
+Save 'grid' data frames
+```{r}
+saveRDS(glm_grid, file = "glm_grid.rds")
+saveRDS(glmnet_grid, file = "glmnet_grid.rds")
+saveRDS(rf_grid, file = "rf_grid.rds")
 ```
 
