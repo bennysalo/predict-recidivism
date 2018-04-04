@@ -77,9 +77,28 @@ analyzed_data %>%
 ```
 
 
+```{r}
+set.seed(3010)
+four_folds   <- caret::createFolds(y = analyzed_data$reoffenceThisTerm, k = 4)
+
+training_set <- analyzed_data[!(1:nrow(analyzed_data) %in% 
+                                   four_folds[[4]]), all_variables]
+test_set     <- analyzed_data[ (1:nrow(analyzed_data) %in% 
+                                   four_folds[[4]]), all_variables]
+
+
+
+nrow(training_set)
+nrow(test_set)
+
+```
+
+
 Save data. Will not be made public.
 ```{r}
 saveRDS(analyzed_data, "analyzed_data.rds")
+saveRDS(training_set, "training_set.rds")
+saveRDS(test_set, "test_set.rds")
 ```
 
 

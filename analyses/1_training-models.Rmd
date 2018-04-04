@@ -16,14 +16,14 @@ library(stringr)
 library(lavaan)
 ```
 
-# Load data. 
+# Load training data. 
 Exclusion criteria are descibed in data-raw/analyzed_data.md. We are not authorized to make raw data publicly available and the data loaded here is unfortunately not publicly accessible.
 
 ```{r message=FALSE, warning=FALSE}
 rm(list = ls())
 setwd("..")
-analyzed_data <- 
-  readRDS("data-raw/analyzed_data.rds")
+training_data <- 
+  readRDS("data-raw/training_data.rds")
 ```
 These are the 15 categories for the current offence. They are included in the static predictors.
 
@@ -59,20 +59,7 @@ all_variables  <- c(incl_term, "reoffenceThisTerm", "newO_violent")
 
 First devide data into a training set and a test set in ratio 3 to 1
 
-```{r}
-set.seed(3010)
-four_folds <-createFolds(y = analyzed_data$reoffenceThisTerm, k = 4)
 
-test_set     <- analyzed_data[ (1:nrow(analyzed_data) %in% 
-                                   four_folds[[4]]), all_variables]
-training_set <- analyzed_data[!(1:nrow(analyzed_data) %in% 
-                                   four_folds[[4]]), all_variables]
-
-nrow(test_set)
-nrow(training_set)
-
-
-```
 
 Then make 10 sets of 10 folds 
 ```{r}
