@@ -9,6 +9,15 @@ library(tidyverse)
 library(stringr)
 ```
 
+Load grid data frames - contains model information
+```{r}
+glm_grid    <- readRDS(file = "glm_grid.rds")
+glmnet_grid <- readRDS(file = "glmnet_grid.rds")
+rf_grid     <- readRDS(file = "rf_grid.rds")
+```
+
+
+
 # Load the lists of models
 ```{r}
 train_mods_glm <- readRDS("train_mods_glm.rds")
@@ -18,13 +27,6 @@ names(train_mods_glmnet) <- glmnet_grid$model_name
 train_mods_rf <- readRDS("train_mods_rf")
 names(train_mods_rf) <- rf_grid$model_name
 
-```
-
-Load grid data frames - contains model information
-```{r}
-glm_grid    <- readRDS(file = "glm_grid.rds")
-glmnet_grid <- readRDS(file = "glmnet_grid.rds")
-rf_grid     <- readRDS(file = "rf_grid.rds")
 ```
 
 
@@ -77,6 +79,7 @@ predict_test_set<- function(model) {
 # Apply this function to all models in the list
 predictions <- map_df(model_list, .f = ~ predict_test_set(.x))
 
+saveRDS(predictions, "predictions.rds")
 ```
 
 
