@@ -1,6 +1,6 @@
 ---
 title: "Calibration 2"
-output: html_notebook
+output: github_document
 date: 2017-12-05
 ---
 
