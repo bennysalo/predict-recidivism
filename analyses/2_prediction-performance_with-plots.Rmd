@@ -76,10 +76,13 @@ predict_test_set<- function(model) {
   predict.train(model, newdata = test_set, type = "prob")[[2]]
 }
 
+setwd("..")
+test_set <- readRDS("data-raw/test_set.rds")
+
 # Apply this function to all models in the list
 predictions <- map_df(model_list, .f = ~ predict_test_set(.x))
 
-saveRDS(predictions, "predictions.rds")
+devtools::use_data(predictions)
 ```
 
 
