@@ -6,6 +6,7 @@ Imports:
   caret,
   dplyr,
   ggplot2,
+  magrittr (>= 1.5),
   pROC,
   stringr
 Author: person("Benny", "Salo", email = "benny.salo@abo.fi", c("aut", "cre"))
