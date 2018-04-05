@@ -4,13 +4,6 @@ output: html_notebook
 date: 2017-12-05
 ---
 
-```{r}
-library(tidyverse)
-library(stringr)
-library(broom)
-library(caret)
-library(ggthemes)
-```
 
 Put outcomes and predictions in same data frame
 
