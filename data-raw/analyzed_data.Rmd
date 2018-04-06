@@ -5,16 +5,18 @@ date: "`r format(Sys.Date())`"
 output: github_document
 ---
 
-```{r message=FALSE, warning=FALSE}
+
+```{r}
 library(dplyr)
 ```
 
-Load data including only males. We are not authorized to make raw data publicly available.
+Load raw data. At this point we are not authorized to make raw data publicly available. `FinPrisonMales.rds` includes only males.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 rm(list = ls())
+devtools::wd()
 FinPrisonMales <- 
-  readRDS("C:/Users/benny_000/Dropbox/AAAKTUELLT/FinPrisonData/FinPrisonMales.rds")
+  readRDS("not_public/FinPrisonMales.rds")
 ```
 
 We define a violent crime as crimes that belong to the homicide or assault categories. Other offence categories include offences that are violent and offences that are not violent. In many cases the violent forms are also coded as assault. 
@@ -95,10 +97,10 @@ nrow(test_set)
 
 
 Save data. Will not be made public.
-```{r}
-saveRDS(analyzed_data, "analyzed_data.rds")
-saveRDS(training_set, "training_set.rds")
-saveRDS(test_set, "test_set.rds")
+```{r message=FALSE, warning=FALSE}
+devtools::wd()
+saveRDS(training_set, "not_public/training_set.rds")
+saveRDS(test_set,     "not_public/test_set.rds")
 ```
 
 
