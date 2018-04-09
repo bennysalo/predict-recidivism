@@ -37,6 +37,8 @@ table(analyzed_data$newO_violent)
 
 Of the 748 new convictions 278 are categorized as prison terms for violent crimes.
 
+# Check follow-up time
+
 Compare distributions in follow-up time between those who committed a new crime and those who did not.
 
 ```{r}
@@ -78,6 +80,7 @@ analyzed_data %>%
 
 ```
 
+# Split data into a training set and a test set
 
 ```{r}
 set.seed(3010)
@@ -96,7 +99,8 @@ nrow(test_set)
 ```
 
 
-Save data. Will not be made public.
+# Save data for later use. 
+Will not be made public.
 ```{r message=FALSE, warning=FALSE}
 devtools::wd()
 saveRDS(training_set, "not_public/training_set.rds")
