@@ -2,7 +2,7 @@
 title: "Data used for this project"
 author: "Benny Salo"
 date: "`r format(Sys.Date())`"
-output: github_document
+output: rmarkdown::html_vignette
 ---
 
 
