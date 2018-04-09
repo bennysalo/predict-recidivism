@@ -76,13 +76,16 @@ predict_test_set<- function(model) {
   predict.train(model, newdata = test_set, type = "prob")[[2]]
 }
 
-setwd("..")
-test_set <- readRDS("data-raw/test_set.rds")
+devtools::wd()
+test_set <- readRDS("not_public/test_set.rds")
 
 # Apply this function to all models in the list
-predictions <- map_df(model_list, .f = ~ predict_test_set(.x))
+test_set_predictions <- map_df(model_list, .f = ~ predict_test_set(.x))
+test_set_predictions <- test_set %>% 
+  select(reoffenceThisTerm, newO_violent) %>% 
+  bind_cols(test_set_predictions)
 
-devtools::use_data(predictions)
+devtools::use_data(test_set_predictions, overwrite = TRUE)
 ```
 
 
@@ -108,7 +111,10 @@ roc_list_ts   <- c(roc_list_ts_V, roc_list_ts_G)
 
 # Bootstrap confidence intervals for all AUC-values
 set.seed(2803)
-auc_ci_list   <- map(roc_list_ts, .f = ~ci.auc(.x, method = "bootstrap"))
+auc_ci_list   <- map(roc_list_ts, 
+                     .f = ~pROC::ci.auc(.x, 
+                                        method = "bootstrap", 
+                                        progress = "text"))
 
 ```
 
@@ -182,7 +188,7 @@ auc_tbl <- auc_tbl %>%
 
 
 ```{r}
-saveRDS(auc_tbl, "auc_tbl.rds")
+devtools::use_data(auc_tbl, overwrite = TRUE)
 ```
 
 
@@ -204,4 +210,9 @@ write.csv2(best_cv_tbl, "best_cv_tbl.csv")
 
 
 ```
+
+
+
+
+
 
