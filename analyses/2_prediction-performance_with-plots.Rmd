@@ -1,6 +1,6 @@
 ---
 title: "Figure of model performances"
-output: html_notebook
+output: github_document
 date: 2017-11-10
 ---
 ```{r}

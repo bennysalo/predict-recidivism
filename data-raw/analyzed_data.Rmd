@@ -145,6 +145,7 @@ Will not be made public.
 ```{r message=FALSE, warning=FALSE}
 devtools::wd()
 saveRDS(training_set, "not_public/training_set.rds")
+saveRDS(training_set, "not_public/training_set.rds")
 saveRDS(test_set,     "not_public/test_set.rds")
 ```
 
