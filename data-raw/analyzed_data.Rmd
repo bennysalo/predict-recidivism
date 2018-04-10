@@ -33,6 +33,7 @@ analyzed_data <-
 
 
 table(analyzed_data$newO_violent)
+table(analyzed_data$newO_violent)/nrow(analyzed_data)
 ```
 
 Of the 748 new convictions 278 are categorized as prison terms for violent crimes.
@@ -111,15 +112,15 @@ incl_term <- c(static_preds, rita_items,
 all_variables  <- c(incl_term, "reoffenceThisTerm", "newO_violent")
 
 #Make sets of variables part of the package
-devtools::use_data(static_preds)
-devtools::use_data(rita_items)
-devtools::use_data(incl_term)
+devtools::use_data(static_preds, overwrite = TRUE)
+devtools::use_data(rita_items, overwrite = TRUE)
+devtools::use_data(incl_term, overwrite = TRUE)
 
 ```
 
 Only include the variables we will need
 ```{r}
-analyzed_data <- analyzed_data$all_variables
+analyzed_data <- analyzed_data[all_variables]
 ```
 
 
