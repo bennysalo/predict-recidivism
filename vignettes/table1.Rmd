@@ -1,0 +1,73 @@
+---
+title: "Table 1"
+author: "Benny Salo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r}
+library(furniture)
+
+analyzed_data <- 
+analyzed_data %>% 
+  mutate(category = 
+           ifelse(reoffenceThisTerm == "not_in_prison", "not_in_prison",
+            ifelse(newO_violent == "new_violent_crime", "violent_crime",
+                   "non_violent_crime")),
+         category = factor(category, levels = c("not_in_prison", 
+                                                "non_violent_crime",
+                                                "violent_crime")))
+
+
+variable_key <- c("Category"   = "category",
+                  "Homicide"   = "o_homicide",
+                  "Assault"    = "o_assault",
+                  "Sexual offence" = "o_sexual", 
+                  "Offence against official authorities" = "o_againstOfficer",
+                  "Other offence against the person" = "o_otherPerson", 
+                  "Robbery"    = "o_robbery", 
+                  "Theft"      = "o_theft", 
+                  "Auto theft" = "o_autoTheft", 
+                  "Other property offence" = "o_otherProperty",
+                  "Ciminal damage" = "o_damage",
+                  "Narcotic offence" = "o_narcotic",
+                  "Offence related to possession of weapon" = "o_weapon", 
+                  "Traffic offence" = "o_traffic", 
+                  "White-collar offence" = "o_whitecollar", 
+                  "Other offences" = "o_other",
+                  "Prison terms" = "ps_prisonTerms",
+                  "Community service terms" = "ps_comServiceTerms",
+                  "Remand terms" = "ps_remandTerms", 
+                  "Terms as substitute for unpaid fines" = "ps_defaultTerms",
+                  "Escape, unlawful absence or attempt thereof" = "ps_escapeHistory",
+                  "Age at first term" = "ageFirstSentence", 
+                  "Age at release" = "ageAtRelease",
+                  "Placement in open prison" = "openPrison",
+                  "Conditional release" = "conditionalReleaseOutcome",
+                  "Supervised parole" = "supervisedParole",
+                  "Crime during the sentence" = "crimeDuringSentence")
+
+
+descriptive_vars <- analyzed_data[c(variable_key)]
+
+descriptive_vars <-
+descriptive_vars %>% 
+  mutate_at(.vars = 1:15, as.factor)
+
+table1(descriptive_vars, splitby = category, type = "condenced")
+
+
+
+```
+
