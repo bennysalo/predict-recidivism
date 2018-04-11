@@ -3,7 +3,7 @@ title: "Predictor sets"
 output: github_document
 ---
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 devtools::wd()
 analyzed_data <- readRDS("not_public/analyzed_data.rds")
 ```
@@ -16,8 +16,6 @@ offence_variables <-
     "o_robbery", "o_theft", "o_autoTheft", "o_otherProperty",
     "o_whitecollar", "o_narcotic", "o_damage", "o_againstOfficer",
     "o_weapon", "o_other")
-
-
 ```
 
 Static predictors, including current offences.
@@ -34,7 +32,6 @@ RITA-items. The dynamic risk factors in this study.
 ```{r}
 (predset_rita <-
     stringr::str_subset(names(analyzed_data), "^i_"))
-
 ```
 
 
@@ -45,7 +42,7 @@ predset_term <- c("openPrison", "conditionalReleaseOutcome",
 ```
 
 Save and make available in package
-```{r}
+```{r message=FALSE}
 devtools::use_data(predset_static)
 devtools::use_data(predset_rita)
 devtools::use_data(predset_term)
