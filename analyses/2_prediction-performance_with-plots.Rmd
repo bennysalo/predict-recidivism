@@ -195,12 +195,12 @@ devtools::use_data(auc_tbl, overwrite = TRUE)
 ```{r}
 best_models_tbl <-
   auc_tbl %>% 
-  group_by (newO_type, predictors) %>% 
+  group_by (newO_type, Predictors) %>% 
   filter(mean_auc_cv == max(mean_auc_cv)) %>% 
   arrange(newO_type, mean_auc_cv)
 
 best_cv_tbl <- best_models_tbl %>% 
-  select(newO_type, predictors, 
+  select(newO_type, Predictors, 
          mean_auc_cv, ci_lo_cv, ci_hi_cv, 
          auc_ts, ci_lower_ts, ci_upper_ts) %>% 
   mutate_at(.vars = c(1:6), .funs = round, digits = 3)
@@ -211,50 +211,12 @@ write.csv2(best_cv_tbl, "best_cv_tbl.csv")
 
 ```
 
-# Calculate Cohens' d and r 
-
-```{r}
-calculate_logit <- function(prob) {
-  log(prob / (1 - prob))
-}
-
-test_set_predictions_logit <- test_set_predictions %>% 
-  transmute_at(.vars = 3:ncol(test_set_predictions), .f = calculate_logit)
-```
-
-```{r}
-test_set_predictions %>% select(newO_violent, model_names_V) %>% 
-  mutate(newO_violent = as.integer(newO_violent)) %>% 
-  cor() %>% 
-  as.data.frame() %>% 
-  rownames_to_column("model") %>% 
-  filter(model %in% best_models_tbl$model)
-
-test_set_predictions %>% select(reoffenceThisTerm, model_names_G) %>% 
-  mutate(reoffenceThisTerm = as.integer(reoffenceThisTerm)) %>% 
-  cor() %>% 
-  as.data.frame() %>% 
-  rownames_to_column("model") %>% 
-  filter(model %in% best_models_tbl$model)
-```
 Cohen's d
 
 ```{r}
-G_means <- 
-test_set_predictions %>% select(reoffenceThisTerm, model_names_G) %>% 
-  group_by(reoffenceThisTerm) %>% 
-  summarise_at(.vars = (-1), .funs = mean) %>% 
-  gather(key = "model", value = "M", -1) %>% 
-  spread(key = reoffenceThisTerm, value = "M")
-
-G_sds <-
-test_set_predictions %>% select(reoffenceThisTerm, model_names_G) %>% 
-  group_by(reoffenceThisTerm) %>% 
-  summarise_at(.vars = (-1), .funs = sd) %>% 
-  gather(key = "model", value = "SD", -1) %>% 
-  spread(key = reoffenceThisTerm, value = "SD")
-
-full_join(G_means, G_sds, by = "model", suffix = c("_M", "_SD"))
-
+auc_tbl
 ```
+
+
+
 
