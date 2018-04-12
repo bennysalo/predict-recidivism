@@ -84,6 +84,12 @@ model_grid$rhs[model_grid$predictors == "All including term"] <-
                                                      list(predset_all)
 ```
 
+Initiate a column of class `list` to store the results in.
+```{r}
+model_grid$train_result <- vector("list", length = nrow(model_grid))
+```
+
+
 Save and make available
 ```{r message=FALSE}
 devtools::use_data(model_grid, overwrite = TRUE)
