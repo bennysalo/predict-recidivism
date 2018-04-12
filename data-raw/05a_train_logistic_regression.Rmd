@@ -5,6 +5,7 @@ date: "2018-04-12"
 output: github_document
 ---
 
+Training set is defined in 01_analyzed_data.Rmd
 ```{r message=FALSE, warning=FALSE}
 devtools::wd()
 training_set <- readRDS("not_public/training_set.rds")
@@ -26,14 +27,15 @@ glm_grid$train_result <- purrr::map2(
   .f = ~ caret::train(
     x         = training_set[.x],
     y         = training_set[[.y]],
+    method    = "glm",
     family    = "binomial",
     metric    = "ROC",
     trControl = ctrl_fun_training
     )
   )
 
-Sys.time() - start
-
+time_to_run <- Sys.time() - start
+time_to_run
 
 ```
 
