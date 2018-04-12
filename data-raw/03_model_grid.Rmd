@@ -49,7 +49,7 @@ model_grid <- model_grid %>%
 
 Add columns of character strings for outcome (lhs)
 ```{r}
-model_grid$rhs <- vector("character", length = nrow(model_grid))
+model_grid$lhs <- vector("character", length = nrow(model_grid))
 model_grid$lhs[model_grid$outcome == "General recidivism"] <- "reoffenceThisTerm"
 model_grid$lhs[model_grid$outcome == "Violent recidivism"] <- "newO_violent"
 ```
@@ -86,6 +86,6 @@ model_grid$rhs[model_grid$predictors == "All including term"] <-
 
 Save and make available
 ```{r message=FALSE}
-devtools::use_data(model_grid)
+devtools::use_data(model_grid, overwrite = TRUE)
 ```
 
