@@ -1,0 +1,41 @@
+---
+title: "Setup of traincontrol"
+author: "Benny Salo"
+date: "2018-04-12"
+output: github_document
+---
+
+
+
+```{r message=FALSE, warning=FALSE}
+devtools::wd()
+training_set <- readRDS("not_public/training_set.rds")
+```
+
+Create ten repeats of ten folds for cross-validation.
+
+```{r}
+set.seed(120418)
+ten_by_ten_folds <- 
+  caret::createMultiFolds(y = training_set$reoffenceThisTerm, k = 10, times = 10)
+```
+
+
+Now set up the cross validation schemes using these folds. 
+
+
+```{r}
+
+ctrl_fun_training <- caret::trainControl(
+  method = "repeatedcv",
+  number = 10,
+  repeats = 10,
+  summaryFunction = caret::twoClassSummary,
+  classProbs = TRUE,
+  verboseIter = TRUE,
+  savePredictions = "final",
+  index = ten_by_ten_folds
+  )
+
+devtools::use_data(ctrl_fun_training)
+```
