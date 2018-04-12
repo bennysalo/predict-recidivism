@@ -1,0 +1,16 @@
+---
+title: "Creating data/variable_table.rda"
+author: "Benny Salo"
+output: github_document
+date: 2018-04-12
+---
+
+```{r}
+devtools::wd()
+variable_table <- 
+  readr::read_delim("data-raw/variable_table.csv", 
+    ";", escape_double = FALSE, trim_ws = TRUE)
+
+devtools::use_data(variable_table)
+```
+

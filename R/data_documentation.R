@@ -1,28 +1,20 @@
-#' Static predictors
+#' Variable table
 #'
-#' The static predictors used in the study
+#' Variable names, labels, the role they play in the analyses and comments.
+#' For RITA-items comments this includes the full wording of the item translated
+#' from english by the study authors.
 #'
-#' @format A vector of 24 variable names:
+#' @format A data frame with 53940 rows and 10 variables:
 #' \describe{
-#'   \item{ageFirstSentence_mr}{Age at first sentence}
-#'   \item{ageFirst_missing}{Was the information about 'ageFirstSentence' missing?}
+#'   \item{Variable}{Variable name as used in R scripts}
+#'   \item{Label}{Short descriptive label}
+#'   \item{Role}{The role the variable plays in the analyses.
+#'   Can be outcome, predictor_static, predictor_dynamic, predictor_term, or descriptive}
+#'   \item{Comment}{Additional comments.}
 #'   ...
 #' }
-#' @source Database
-"static_preds"
+#' @source variable_table.csv compiled by Benny Salo
+"variable_table"
 
 
-#' Predictions on test set
-#'
-#' Estimated probabilities of recidivism for the 374 individuals in the test set.
-#' Variables starting with 'G_' refer to probabilities of general recidivism and
-#' Variables starting with 'V_' refer to probabilities of violent recidivism
-#'
-#' @format A data frame with 374 observation of 24 variables
-#' \describe{
-#'   \item{}{}
-#'   \item{}{}
-#'   ...
-#' }
-#' @source Database
-"predictions"
+
