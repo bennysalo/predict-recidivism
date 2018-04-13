@@ -1,0 +1,92 @@
+---
+title: "Training logirandom forest stic regression models"
+author: "Benny Salo"
+date: "2018-04-12"
+output: github_document
+---
+
+Training set is defined in 01_analyzed_data.Rmd
+```{r message=FALSE, warning=FALSE}
+devtools::wd()
+training_set <- readRDS("not_public/training_set.rds")
+```
+
+Get the part of model_grid that are logistic regression models.
+```{r}
+library(dplyr)
+rf_grid <- model_grid %>% filter(model_type == "Random forest")
+```
+
+We test seven possible values for the tuning parameter mtry, including the often recommended square root of the number of predictors. We test three smaller and three bigger values in relation to this. The sequence of tested values are the number of predictors raised to the power of 1/8, 1/4, 3/8, 1/2 (i.e. the square root), 5/8, 3/4, and 7/8.
+
+We create a new column for this argument
+
+```{r}
+
+write_mtry_seq <- function(predictor_vector) {
+  n_preds  <- length(predictor_vector)
+  powers   <- (1:7)/8
+  mtry_seq <- as.integer(round(n_preds^powers))
+}
+
+rf_grid$mtry_seq <- 
+  purrr::map(
+    .x = rf_grid$rhs,
+    .f = ~ write_mtry_seq(.x)
+  )
+
+```
+Checks
+```{r}
+# All entries in rf_grid$mtry_seq should be of class numeric
+all(purrr::map_chr(rf_grid$mtry_seq, class) == "integer")
+# All entries in rf_grid$mtry_seq should have length 7.
+all(purrr::map_chr(rf_grid$mtry_seq, length) == 7)
+
+# The fourth element should be the sqrt of the number of predictors
+fourth  <- purrr::map_int(rf_grid$mtry_seq, 4)
+n_preds <- purrr::map_int(rf_grid$rhs, length)
+
+all(fourth == round(sqrt(n_preds)))
+```
+
+
+Train each model (rows) in the grid according to specifications in the grid. Place results in the train_result columns (previously intitiated).
+
+(Record how long it takes to run.)
+```{r}
+
+start <- Sys.time()
+
+rf_grid$train_result <- 
+  purrr::pmap(
+    .l = list(..1 = rf_grid$rhs,
+              ..2 = rf_grid$lhs,
+              ..3 = rf_grid$mtry_seq),
+    .f = ~ caret::train(
+      x         = training_set[..1],
+      y         = training_set[[..2]],
+      method    = "rf",
+      metric    = "ROC",
+      trControl = ctrl_fun_training,
+      tuneGrid  = expand.grid(mtry = ..3)
+      )
+    )
+
+time_to_run <- Sys.time() - start
+time_to_run
+
+```
+Save the results as a named list.
+
+```{r}
+trained_mods_rf <- rf_grid$train_result
+names(trained_mods_rf) <- rf_grid$model_name
+```
+
+
+```{r message=FALSE, warning=FALSE}
+devtools::wd()
+saveRDS(trained_mods_rf, "not_public/trained_mods_rf.rds")
+```
+
