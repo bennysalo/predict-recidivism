@@ -34,8 +34,14 @@ ctrl_fun_training <- caret::trainControl(
   classProbs = TRUE,
   verboseIter = TRUE,
   savePredictions = "final",
-  index = ten_by_ten_folds
+  index = ten_by_ten_folds,
+  returnData = FALSE
   )
 
-devtools::use_data(ctrl_fun_training)
+
 ```
+
+```{r message=FALSE, warning=FALSE}
+devtools::use_data(ctrl_fun_training, overwrite = TRUE)
+```
+
