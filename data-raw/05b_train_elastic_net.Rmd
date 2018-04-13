@@ -1,0 +1,129 @@
+---
+title: "Training elastic net models"
+author: "Benny Salo"
+date: "2018-04-13"
+output: github_document
+---
+
+Training set is defined in 01_analyzed_data.Rmd
+```{r message=FALSE, warning=FALSE}
+devtools::wd()
+training_set <- readRDS("not_public/training_set.rds")
+```
+
+Get the part of model_grid that are elastic net models.
+```{r}
+library(dplyr)
+glmnet_grid <- model_grid %>% filter(
+  model_type == "Elastic net")
+```
+
+We seem to need to use the formula method of caret::train for glmnet. (Might be because of the factors and ordinal predictors?)
+
+We introduce a new column where we write the formula.
+
+```{r}
+write_formula <- function(lhs, rhs) {
+  as.formula(paste(lhs, "~",  paste(rhs, collapse = " + ")))
+}
+
+glmnet_grid$formula <- 
+  purrr::map2(.x = glmnet_grid$lhs, 
+              .y = glmnet_grid$rhs,
+              .f = ~write_formula(.x, .y))
+
+
+```
+Checks. (Could be moved to a test file)
+
+```{r}
+# All entries in glmnet_grid$formula should be formulas
+all(purrr::map(glmnet_grid$formula, class) == "formula")
+
+# All formulas should include the corresponding outcome
+outcome_in_formula <-
+  purrr::map2_lgl(
+    .x = as.character(glmnet_grid$formula),
+    .y = glmnet_grid$lhs,
+    .f = ~ stringr::str_detect(string = .x, pattern = .y)
+    )
+all(outcome_in_formula)
+
+# The number of plusses in the formula should equal 
+# the number of predictors - 1
+
+n_plusses <- purrr::map2_int(
+  .x = as.character(glmnet_grid$formula),
+  .y = glmnet_grid$lhs,
+  .f = ~ stringr::str_count(string = .x, pattern = "\\+")
+  ) 
+
+n_preds <- purrr::map_dbl(.x = glmnet_grid$rhs,
+                      .f = ~ length(.x) - 1)
+                      
+
+all(n_plusses == n_preds)
+```
+
+We are also going to want to adjust the tested values for parameter alpha. We create a new column for this. The tested values in the first run will be 
+0, .2, .4, .6, .8, and 1.
+```{r}
+glmnet_grid$alpha <- vector("list", nrow(glmnet_grid))
+glmnet_grid$alpha <- purrr::map(.x = glmnet_grid$alpha, 
+                                .f = ~c(0, 0.2, 0.4, 0.6, 0.8, 1))
+
+
+```
+Checks
+```{r}
+length(glmnet_grid$alpha) == 8
+all(purrr::map(glmnet_grid$alpha, length) == 6)
+all(purrr::map(glmnet_grid$alpha, class) == "numeric")
+```
+
+
+Train each model (rows) in the grid according to specifications in the grid. Place results in the train_result columns (previously intitiated).
+
+The values of the following two columns are varied: formula and alpha.
+Predictors are standarized before training to make the penalty work the same way for all predictors. A sequence between 0 and 3 is tested for tuning parameter lambda.
+
+(Record how long it takes to run.)
+```{r}
+
+start <- Sys.time()
+
+glm_grid$train_result <- 
+  purrr::map2(
+    .x = glmnet_grid$formula,
+    .y = glmnet_grid$alpha,
+    .f = ~ caret::train(
+      form      = .x,
+      data      = training_set,
+      method    = "glmnet",
+      family    = "binomial", # passed to glmnet, define as logistic regression
+      standardize = TRUE,     # passed to glmnet, explicitly standardize  
+      metric    = "ROC",
+      trControl = ctrl_fun_training,
+      tuneGrid  = expand.grid(alpha  = .y,
+                              lambda = seq(0, 3, by = 0.02))
+      )
+    )
+    
+
+time_to_run <- Sys.time() - start
+time_to_run
+
+```
+Save the results as a named list.
+
+```{r}
+trained_mods_glmnet        <- glmnet_grid$train_result
+names(trained_mods_glmnet) <- glmnet_grid$model_name
+```
+
+
+```{r message=FALSE, warning=FALSE}
+devtools::wd()
+saveRDS(trained_mods_glmnet, "not_public/trained_mods_glmnet.rds")
+```
+
