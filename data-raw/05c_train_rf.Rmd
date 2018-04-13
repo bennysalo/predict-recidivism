@@ -36,18 +36,19 @@ rf_grid$mtry_seq <-
   )
 
 ```
-Checks
+Assertions
 ```{r}
-# All entries in rf_grid$mtry_seq should be of class numeric
-all(purrr::map_chr(rf_grid$mtry_seq, class) == "integer")
+library(assertthat)
+# All entries in rf_grid$mtry_seq should be of class integer
+assert_that(all(purrr::map_chr(rf_grid$mtry_seq, class) == "integer"))
 # All entries in rf_grid$mtry_seq should have length 7.
-all(purrr::map_chr(rf_grid$mtry_seq, length) == 7)
+assert_that(all(purrr::map_chr(rf_grid$mtry_seq, length) == 7))
 
 # The fourth element should be the sqrt of the number of predictors
 fourth  <- purrr::map_int(rf_grid$mtry_seq, 4)
 n_preds <- purrr::map_int(rf_grid$rhs, length)
 
-all(fourth == round(sqrt(n_preds)))
+assert_that(all(fourth == round(sqrt(n_preds))))
 ```
 
 
