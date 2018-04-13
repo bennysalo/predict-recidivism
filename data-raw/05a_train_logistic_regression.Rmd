@@ -40,9 +40,13 @@ time_to_run
 ```
 
 ```{r}
-train_mods_glm <- map(train_mods_glm, strip_data)
-names(train_mods_glm) <- glm_grid$model_name
-saveRDS(train_mods_glm, file = "train_mods_glm.rds")
-rm(train_mods_glm)
+trained_mods_glm <- glm_grid$train_result
+names(trained_mods_glm) <- glm_grid$model_name
+```
+
+
+```{r message=FALSE, warning=FALSE}
+devtools::wd()
+saveRDS(trained_mods_glm, "not_public/trained_mods_glm.rds")
 ```
 
