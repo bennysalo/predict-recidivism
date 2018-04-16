@@ -5,6 +5,12 @@ date: "2018-04-13"
 output: github_document
 ---
 
+Clear environment. Load previous results from the package.
+```{r}
+rm(list = ls())
+devtools::load_all(".")
+```
+
 Training set is defined in 01_analyzed_data.Rmd
 ```{r message=FALSE, warning=FALSE}
 devtools::wd()
@@ -92,7 +98,7 @@ Predictors are standarized before training to make the penalty work the same way
 
 start <- Sys.time()
 
-glm_grid$train_result <- 
+trained_mods_glmnet <- 
   purrr::map2(
     .x = glmnet_grid$formula,
     .y = glmnet_grid$alpha,
@@ -114,10 +120,9 @@ time_to_run <- Sys.time() - start
 time_to_run
 
 ```
-Save the results as a named list.
+Name models
 
 ```{r}
-trained_mods_glmnet        <- glmnet_grid$train_result
 names(trained_mods_glmnet) <- glmnet_grid$model_name
 ```
 
@@ -127,3 +132,99 @@ devtools::wd()
 saveRDS(trained_mods_glmnet, "not_public/trained_mods_glmnet.rds")
 ```
 
+# Update models
+
+Create a column with updated alpha-values
+```{r}
+glmnet_grid$alpha2 <- vector("list", nrow(glmnet_grid))
+```
+
+We narrow in our search for the best mixing parameter (alpha) based on the first search.
+
+```{r}
+plot_comprison <- function(model_list, nr, upper_xlim = 0.3, 
+                           lower_ylim_range = 0.005) {
+  model <- model_list[[nr]]
+  best_ROC <- max(model$results$ROC)
+  caret::plot.train(model, 
+                    xlim = c(0, upper_xlim),
+                    ylim = c(best_ROC - lower_ylim_range, best_ROC),
+                    main = names(model_list)[[nr]])
+}
+```
+
+
+```{r}
+plot_comprison(trained_mods_glmnet, 1)
+glmnet_grid$alpha2[[1]] <- c(0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+```
+```{r}
+plot_comprison(trained_mods_glmnet, 2)
+glmnet_grid$alpha2[[2]] <- c(0, 0.1, 0.2)
+```
+```{r}
+plot_comprison(trained_mods_glmnet, 3, upper_xlim = 1)
+glmnet_grid$alpha2[[3]]  <- c(0.1, 0.2, 0.3)
+```
+
+```{r}
+plot_comprison(trained_mods_glmnet, 4, upper_xlim = 0.8, lower_ylim_range = 0.03)
+glmnet_grid$alpha2[[4]]  <- c(0, 0.1)
+```
+```{r}
+plot_comprison(trained_mods_glmnet, 5)
+glmnet_grid$alpha2[[5]]  <- c(0.7, 0.8, 0.9, 1)
+```
+
+
+```{r}
+plot_comprison(trained_mods_glmnet, 6, upper_xlim = 0.8)
+glmnet_grid$alpha2[[6]]  <- c(0, 0.1)
+```
+```{r}
+plot_comprison(trained_mods_glmnet, 7)
+glmnet_grid$alpha2[[7]]  <- c(0.7, 0.8, 0.9, 1)
+```
+
+```{r}
+plot_comprison(trained_mods_glmnet, 8, upper_xlim = 0.8)
+glmnet_grid$alpha2[[8]]  <- c(0, 0.1)
+```
+
+```{r}
+summary(glmnet_grid$alpha2)
+```
+
+We update the analyses with the new alpha vectors and with a shorter but more exact vector for lambda.
+
+```{r}
+
+start <- Sys.time()
+
+trained_mods_glmnet2 <- 
+  purrr::map2(
+    .x = glmnet_grid$formula,
+    .y = glmnet_grid$alpha2, # updated
+    .f = ~ caret::train(
+      form      = .x,
+      data      = training_set,
+      method    = "glmnet",
+      family    = "binomial", # passed to glmnet, define as logistic regression
+      standardize = TRUE,     # passed to glmnet, explicitly standardize  
+      metric    = "ROC",
+      trControl = ctrl_fun_training,
+      tuneGrid  = expand.grid(alpha  = .y,
+                              lambda = seq(0, 0.6, by = 0.005)) #updated
+      )
+    )
+    
+
+time_to_run <- Sys.time() - start
+time_to_run
+
+```
+
+```{r message=FALSE, warning=FALSE}
+devtools::wd()
+saveRDS(trained_mods_glmnet2, "not_public/trained_mods_glmnet2.rds")
+```
