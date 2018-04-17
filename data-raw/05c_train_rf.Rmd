@@ -59,7 +59,7 @@ Train each model (rows) in the grid according to specifications in the grid. Pla
 
 start <- Sys.time()
 
-rf_grid$train_result <- 
+trained_mods_rf <- 
   purrr::pmap(
     .l = list(..1 = rf_grid$rhs,
               ..2 = rf_grid$lhs,
@@ -81,7 +81,6 @@ time_to_run
 Save the results as a named list.
 
 ```{r}
-trained_mods_rf <- rf_grid$train_result
 names(trained_mods_rf) <- rf_grid$model_name
 ```
 
