@@ -8,6 +8,7 @@ output: github_document
 Training set is defined in 01_analyzed_data.Rmd
 ```{r message=FALSE, warning=FALSE}
 devtools::wd()
+devtools::load_all(".")
 training_set <- readRDS("not_public/training_set.rds")
 ```
 
@@ -55,7 +56,7 @@ assert_that(all(fourth == round(sqrt(n_preds))))
 Train each model (rows) in the grid according to specifications in the grid. Place results in the train_result columns (previously intitiated).
 
 (Record how long it takes to run.)
-```{r}
+```{r eval=FALSE}
 
 start <- Sys.time()
 
@@ -80,13 +81,123 @@ time_to_run
 ```
 Save the results as a named list.
 
-```{r}
+```{r eval=FALSE}
 names(trained_mods_rf) <- rf_grid$model_name
 ```
 
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, eval=FALSE}
 devtools::wd()
 saveRDS(trained_mods_rf, "not_public/trained_mods_rf.rds")
+```
+
+# Update models
+
+```{r}
+rf_grid$mtry_seq2 <- vector("list", nrow(rf_grid))
+```
+
+
+```{r}
+plot(trained_mods_rf[[1]])
+rf_grid$mtry_seq2[[1]] <- 2
+```
+```{r}
+plot(trained_mods_rf[[2]])
+rf_grid$mtry_seq2[[2]] <- c(3, 4)
+```
+
+```{r}
+plot(trained_mods_rf[[3]])
+rf_grid$mtry_seq2[[3]] <- c(4, 5, 6)
+```
+```{r}
+plot(trained_mods_rf[[4]])
+rf_grid$mtry_seq2[[4]] <- c(1, 2)
+```
+```{r}
+plot(trained_mods_rf[[5]])
+rf_grid$mtry_seq2[[5]] <- c(11, 13, 15, 17, 19)
+```
+
+```{r}
+plot(trained_mods_rf[[6]])
+rf_grid$mtry_seq2[[6]] <- c(4, 5, 6, 7, 8)
+```
+```{r}
+plot(trained_mods_rf[[7]])
+rf_grid$mtry_seq2[[7]] <- c(12, 14, 16, 18, 20)
+```
+```{r}
+plot(trained_mods_rf[[8]])
+rf_grid$mtry_seq2[[8]] <- c(12, 14, 16, 18, 20)
+```
+
+```{r}
+rf_grid$mtry_seq2
+```
+
+
+```{r message=FALSE}
+
+start <- Sys.time()
+
+trained_mods_rf2 <- 
+  purrr::pmap(
+    .l = list(..1 = rf_grid$rhs,
+              ..2 = rf_grid$lhs,
+              ..3 = rf_grid$mtry_seq2),
+    .f = ~ caret::train(
+      x         = training_set[..1],
+      y         = training_set[[..2]],
+      method    = "rf",
+      metric    = "ROC",
+      trControl = ctrl_fun_training,
+      tuneGrid  = expand.grid(mtry = ..3)
+      )
+    )
+
+time_to_run <- Sys.time() - start
+time_to_run
+
+```
+
+```{r message=FALSE, warning=FALSE, eval=FALSE}
+devtools::wd()
+saveRDS(trained_mods_rf2, "not_public/trained_mods_rf2.rds")
+```
+
+```{r}
+rf_grid$mtry_seq3[[1]] <- 2
+```
+```{r}
+plot(trained_mods_rf2[[2]])
+rf_grid$mtry_seq2[[2]] <- c(3, 4)
+```
+
+```{r}
+plot(trained_mods_rf2[[3]])
+rf_grid$mtry_seq2[[3]] <- c(4, 5, 6)
+```
+```{r}
+plot(trained_mods_rf2[[4]])
+rf_grid$mtry_seq2[[4]] <- c(1, 2)
+```
+```{r}
+plot(trained_mods_rf2[[5]])
+rf_grid$mtry_seq2[[5]] <- c(11, 13, 15, 17, 19)
+```
+
+```{r}
+plot(trained_mods_rf2[[6]])
+rf_grid$mtry_seq2[[6]] <- c(4, 5, 6, 7, 8)
+```
+```{r}
+plot(trained_mods_rf2[[7]])
+rf_grid$mtry_seq2[[7]] <- c(12, 14, 16, 18, 20)
+```
+```{r}
+plot(trained_mods_rf2[[8]])
+rf_grid$mtry_seq2[[8]] <- c(12, 14, 16, 18, 20)
 ```
 
