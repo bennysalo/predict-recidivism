@@ -72,21 +72,20 @@ We use bootstrap to calculate the confidence intervals which means this chunk ta
 ```{r}
 library(pROC)
 # Get the names of predictions of violent and generalised recidivism seperately.
-model_names_V <- str_subset(names(test_set_predictions), pattern = "gen_") 
-model_names_G <- str_subset(names(test_set_predictions), pattern = "vio_") 
+model_names_G <- str_subset(names(test_set_predictions), pattern = "gen_") 
+model_names_V <- str_subset(names(test_set_predictions), pattern = "vio_") 
 
 # Do ROC analysis using predictions with the relevant outcome
-# First all predictions of violent recidivism
+# First all predictions of general recidivism
 # (ts stands for 'test set')
-roc_list_ts_V <- map(.x = test_set_predictions[model_names_V],
-                   .f = ~roc(test_set$newO_violent, .x))
-
-# Then all predictions of general recidivism
 roc_list_ts_G <- map(.x = test_set_predictions[model_names_G],
                    .f = ~roc(test_set$reoffenceThisTerm, .x))
 
+# Then all predictions of violent recidivism
+roc_list_ts_V <- map(.x = test_set_predictions[model_names_V],
+                   .f = ~roc(test_set$newO_violent, .x))
 # Combine the two lists
-roc_list_ts   <- c(roc_list_ts_V, roc_list_ts_G)
+roc_list_ts   <- c(roc_list_ts_G, roc_list_ts_V)
 
 # Bootstrap confidence intervals for all AUC-values
 set.seed(2803)
@@ -115,7 +114,51 @@ auc_tbl_ts <- data.frame(model = names(auc_ci_list), auc_tbl_ts)
 ```
 We join the tables with AUC-values in training and test set and then join these to the descriptive columns i model_grid.
 
-```{r}
+```{r message=FALSE}
 auc_tbl <- full_join(auc_tbl_cv, auc_tbl_ts, by = "model") %>% 
   full_join(model_desc, auc_tbl, by = c("model" = "model_name"))
+```
+
+We add to this table figures for Cohen's d calculated from AUC using a formula in Table 1 in Ruscio (2008): $d = \sqrt2 \phi^{-1}CL$ where CL refers to "Common Language Effect Size" which in this case is the same as AUC and $\phi^{-1}$ is the inverse of the normal cumulative distribution function (i.e. the z-score that correspond to a cumulative percentage in a normal distribution). 
+
+This is the formula assuming equal group sizes. This assumption does not hold for violent recidivism but retains the property of AUC of not being affected by base rates and thus makes comparison between violent and general recidivism more straight forward. 
+
+Cohen's d has the advantage over AUC in that it is an effect size that is linear. With that I mean that the difference between d = 0.1 and d = 0.2 is the same as the difference between d = 1.1 and d = 1.2. On the contrary, the difference between AUC = 0.60 and AUC = 0.65 is smaller than the difference between AUC = 0.90 and AUC = 0.95. This makes d more convinient for comparisons between pairs of models.
+
+The function below can be used to transform any AUC value to Cohen's d.
+
+```{r}
+calc_AUC_from_d <- function(AUC) {
+  sqrt(2) * qnorm(AUC) 
+}
+```
+
+We add Cohen's d calculated from the mean AUC in the training set and the estimated AUC in the test set.
+
+```{r}
+auc_tbl <- auc_tbl %>% 
+  mutate(d_cv = calc_AUC_from_d(mean_auc_cv),
+         d_ts = calc_AUC_from_d(auc_ts))
+```
+
+
+
+# Table 2
+
+Below we filter out the model with the best discrimination in the training set for each outcome - predictor set pair. We select the columns we report in Table 2 of the manuscript.
+
+```{r}
+best_models_tbl <-
+  auc_tbl %>% 
+  group_by (outcome, predictors) %>% 
+  filter(mean_auc_cv == max(mean_auc_cv)) %>% 
+  arrange(outcome, mean_auc_cv) %>% 
+  select(outcome, predictors, 
+         mean_auc_cv, ci_lo_cv, ci_hi_cv, d_cv,
+         auc_ts, ci_lower_ts, ci_upper_ts, d_ts, 
+         model_type) %>% 
+  mutate_at(.vars = c(1:8), .funs = round, digits = 3) %>% 
+  mutate_at(.vars = vars(d_cv, d_ts), .funs = round, digits = 2)
+
+write.csv2(best_cv_tbl, "best_cv_tbl.csv")
 ```
