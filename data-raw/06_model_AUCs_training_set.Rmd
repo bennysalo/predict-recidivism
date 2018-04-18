@@ -5,11 +5,11 @@ date: "2018-04-13"
 output: github_document
 ---
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 devtools::wd()
 trained_mods_glm    <- readRDS("not_public/trained_mods_glm.rds")
-trained_mods_glmnet <- readRDS("not_public/trained_mods_glmnet.rds")
-trained_mods_rf     <- readRDS("not_public/trained_mods_rf.rds")
+trained_mods_glmnet <- readRDS("not_public/trained_mods_glmnet3.rds")
+trained_mods_rf     <- readRDS("not_public/trained_mods_rf2.rds")
 ```
 
 Combine all models
@@ -18,10 +18,16 @@ Combine all models
 trained_mods_all <- c(trained_mods_glm, trained_mods_glmnet, trained_mods_rf)
 ```
 
+Save the combined models (used in 07)
+```{r}
+devtools::wd()
+saveRDS(trained_mods_all, "not_public/trained_mods_all.rds")
+```
+
 
 Extract the model performances in the 10 x 10 folds in the training data
 ```{r}
-model_AUCs_training_set <- caret::resamples(trained_mods_rf)
+model_AUCs_training_set <- caret::resamples(trained_mods_all)
 ```
 
 Save and make available via /data
