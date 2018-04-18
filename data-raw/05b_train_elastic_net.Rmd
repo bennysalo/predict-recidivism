@@ -224,6 +224,10 @@ time_to_run
 
 ```
 
+```{r}
+names(trained_mods_glmnet2) <- glmnet_grid$model_name
+```
+
 ```{r message=FALSE, warning=FALSE}
 devtools::wd()
 saveRDS(trained_mods_glmnet2, "not_public/trained_mods_glmnet2.rds")
@@ -299,6 +303,11 @@ time_to_run <- Sys.time() - start
 time_to_run
 
 ```
+
+```{r}
+names(trained_mods_glmnet3) <- glmnet_grid$model_name
+```
+
 ```{r message=FALSE, warning=FALSE}
 devtools::wd()
 saveRDS(trained_mods_glmnet3, "not_public/trained_mods_glmnet3.rds")

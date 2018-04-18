@@ -56,7 +56,7 @@ assert_that(all(fourth == round(sqrt(n_preds))))
 Train each model (rows) in the grid according to specifications in the grid. Place results in the train_result columns (previously intitiated).
 
 (Record how long it takes to run.)
-```{r eval=FALSE}
+```{r}
 
 start <- Sys.time()
 
@@ -81,7 +81,7 @@ time_to_run
 ```
 Save the results as a named list.
 
-```{r eval=FALSE}
+```{r}
 names(trained_mods_rf) <- rf_grid$model_name
 ```
 
@@ -160,6 +160,10 @@ trained_mods_rf2 <-
 time_to_run <- Sys.time() - start
 time_to_run
 
+```
+
+```{r}
+names(trained_mods_rf2) <- rf_grid$model_name
 ```
 
 ```{r message=FALSE, warning=FALSE, eval=FALSE}
