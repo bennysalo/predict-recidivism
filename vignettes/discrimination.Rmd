@@ -1,0 +1,121 @@
+---
+title: "Discrimination of trained models"
+author: "Benny Salo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r}
+library(tidyverse)
+```
+
+
+# Training set
+
+The package comes with the data frame `model_AUCs_training_set`. This is created by the function caret::resamples and can be used with caret functions to display the discrimination numbers in the 10 repeated 10-fold cross-validations. For example, we can make a box plot of all 100 AUV values for the 24 models.
+
+```{r message=FALSE}
+library(caret)
+bwplot(model_AUCs_training_set, metric = "ROC")
+```
+Model names can be looked up in the model_grid
+
+```{r}
+model_desc <- model_grid[c("model_name", "outcome", 
+                           "predictors", "model_type")]
+model_desc
+```
+
+The discrimination varies widely over the 100 cross-validation sets for all models. We are interested in the mean and standard errors of these.
+
+We create a table of confidence intervals for the cross-validation results. The standard errors, and thereby the confidence intervals, will be narrower with more folds and is best interpreted as "what is the best cross-validated model in this sample".
+
+Confidence interval is calculated by first transforming AUC-values to logits of the AUC-values. After calculation of mean, and confidence intervals for the logit they are transformed back to AUC-values.
+
+```{r}
+auc_tbl_cv <-
+model_AUCs_training_set$values %>% 
+  select(Resample, ends_with(match = "ROC")) %>% 
+  gather(-Resample, key = model, value = ROC) %>%
+  mutate(logit_ROC = log(ROC / (1-ROC))) %>% 
+  group_by(model) %>% 
+  summarise(n = n(),
+            mean_logit  = mean(logit_ROC),
+            se_logit    = sqrt(var(logit_ROC) / n),
+            ci_lo_logit = mean_logit + qnorm(0.025) * se_logit,
+            ci_hi_logit = mean_logit + qnorm(0.975) * se_logit,
+            mean_auc_cv    = exp(mean_logit)  / (1 + exp(mean_logit)),
+            ci_lo_cv   = exp(ci_lo_logit) / (1 + exp(ci_lo_logit)),
+            ci_hi_cv   = exp(ci_hi_logit) / (1 + exp(ci_hi_logit))) %>% 
+  select(model, mean_auc_cv, ci_lo_cv, ci_hi_cv) %>% 
+  mutate(model = as.factor(str_replace(model, pattern = "~ROC", "")))
+
+```
+The data frame `auc_tbl_cv` contains the mean AUC with 95% confidence intervals for all 24 models.
+
+# Test set
+
+Using the package `pROC` we can calculate the AUC with confidence intervals. For this we need the observed outcomes and the predicted probabilities. The predicted probabilities are included in the package in the data frame `test_set_predictions`.
+
+We use bootstrap to calculate the confidence intervals which means this chunk takes a few minutes to run.
+```{r}
+library(pROC)
+# Get the names of predictions of violent and generalised recidivism seperately.
+model_names_V <- str_subset(names(test_set_predictions), pattern = "gen_") 
+model_names_G <- str_subset(names(test_set_predictions), pattern = "vio_") 
+
+# Do ROC analysis using predictions with the relevant outcome
+# First all predictions of violent recidivism
+# (ts stands for 'test set')
+roc_list_ts_V <- map(.x = test_set_predictions[model_names_V],
+                   .f = ~roc(test_set$newO_violent, .x))
+
+# Then all predictions of general recidivism
+roc_list_ts_G <- map(.x = test_set_predictions[model_names_G],
+                   .f = ~roc(test_set$reoffenceThisTerm, .x))
+
+# Combine the two lists
+roc_list_ts   <- c(roc_list_ts_V, roc_list_ts_G)
+
+# Bootstrap confidence intervals for all AUC-values
+set.seed(2803)
+auc_ci_list   <- map(roc_list_ts, 
+                     .f = ~pROC::ci.auc(.x, 
+                                        method = "bootstrap", 
+                                        progress = "text"))
+
+```
+The results are at this point stored in a list (`auc_ci_list`). The following chunk places them in data_frame that we call `auc_tbl_ts`
+
+```{r}
+#(_ts stands for "test set")
+# Create a function to extract auc and its confidence interval
+get_ci <- function(ci.auc_result) {
+  data_frame(auc_ts      = ci.auc_result[2], 
+             ci_lower_ts = ci.auc_result[1], 
+             ci_upper_ts = ci.auc_result[3])
+}
+
+# Apply this function to all results in 'the 'auc_tbl_ts'
+auc_tbl_ts <- map_df(auc_ci_list, get_ci)
+
+# Amend the data frame with the names of the models
+auc_tbl_ts <- data.frame(model = names(auc_ci_list), auc_tbl_ts)
+```
+We join the tables with AUC-values in training and test set and then join these to the descriptive columns i model_grid.
+
+```{r}
+auc_tbl <- full_join(auc_tbl_cv, auc_tbl_ts, by = "model") %>% 
+  full_join(model_desc, auc_tbl, by = c("model" = "model_name"))
+```
