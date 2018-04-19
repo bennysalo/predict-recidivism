@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
+devtools::load_all(".")
 library(tidyverse)
 ```
 
@@ -79,11 +80,11 @@ model_names_V <- str_subset(names(test_set_predictions), pattern = "vio_")
 # First all predictions of general recidivism
 # (ts stands for 'test set')
 roc_list_ts_G <- map(.x = test_set_predictions[model_names_G],
-                   .f = ~roc(test_set$reoffenceThisTerm, .x))
+                   .f = ~roc(test_set_predictions$reoffenceThisTerm, .x))
 
 # Then all predictions of violent recidivism
 roc_list_ts_V <- map(.x = test_set_predictions[model_names_V],
-                   .f = ~roc(test_set$newO_violent, .x))
+                   .f = ~roc(test_set_predictions$newO_violent, .x))
 # Combine the two lists
 roc_list_ts   <- c(roc_list_ts_G, roc_list_ts_V)
 
@@ -93,6 +94,7 @@ auc_ci_list   <- map(roc_list_ts,
                      .f = ~pROC::ci.auc(.x, 
                                         method = "bootstrap", 
                                         progress = "text"))
+
 
 ```
 The results are at this point stored in a list (`auc_ci_list`). The following chunk places them in data_frame that we call `auc_tbl_ts`
@@ -114,7 +116,7 @@ auc_tbl_ts <- data.frame(model = names(auc_ci_list), auc_tbl_ts)
 ```
 We join the tables with AUC-values in training and test set and then join these to the descriptive columns i model_grid.
 
-```{r message=FALSE}
+```{r}
 auc_tbl <- full_join(auc_tbl_cv, auc_tbl_ts, by = "model") %>% 
   full_join(model_desc, auc_tbl, by = c("model" = "model_name"))
 ```
@@ -141,6 +143,53 @@ auc_tbl <- auc_tbl %>%
          d_ts = calc_AUC_from_d(auc_ts))
 ```
 
+We can compare the average Cohen's d between different model types
+```{r}
+mean_perf_by_type <-
+auc_tbl %>% 
+  group_by(model_type) %>% 
+  summarise(mean(d_cv), mean(d_ts))
+
+mean_perf_by_type
+```
+Average difference between elastic net and logistic regression models in the training set is...
+
+```{r}
+mean_perf_by_type %>% filter(model_type == "Elastic net") %>%
+  select(`mean(d_cv)`) -
+  mean_perf_by_type %>% filter(model_type == "Logistic regression") %>%
+  select(`mean(d_cv)`)
+```
+
+
+# Figure 1
+
+```{r}
+auc_plot <- auc_tbl %>% 
+  ggplot(aes(x = auc_ts, y = mean_auc_cv)) + 
+  geom_point(aes(shape = predictors), size = 3) +
+  geom_errorbar(aes(ymin = ci_lo_cv, ymax = ci_hi_cv)) +
+  geom_errorbarh(aes(xmin = ci_lower_ts, xmax = ci_upper_ts)) + 
+  scale_shape_manual(values = c(16, 4, 1, 17), 
+                     name   = "Predictor set") +
+  # scale_y_continuous(limits = c(0.55, 0.87)) +
+  geom_abline(lty = 2) +
+  facet_grid(outcome ~ model_type) +
+  ylab("AUC in cross-validation samples") +
+  xlab("AUC in independent test sample") + 
+
+  ggthemes::theme_tufte(base_family = "sans") +
+  theme(legend.position = "bottom")
+
+```
+```{r}
+auc_plot
+```
+
+
+
+
+
 
 
 # Table 2
@@ -160,5 +209,17 @@ best_models_tbl <-
   mutate_at(.vars = c(1:8), .funs = round, digits = 3) %>% 
   mutate_at(.vars = vars(d_cv, d_ts), .funs = round, digits = 2)
 
-write.csv2(best_cv_tbl, "best_cv_tbl.csv")
+
 ```
+
+Print
+```{r}
+knitr::kable(best_models_tbl)
+```
+
+```{r eval=FALSE, include=FALSE}
+devtools::wd()
+write.csv2(best_models_tbl, "output/best_models_tbl.csv")
+```
+
+
