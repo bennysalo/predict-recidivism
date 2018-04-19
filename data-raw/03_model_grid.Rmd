@@ -8,18 +8,25 @@ date: 2018-04-12
 library(dplyr)
 ```
 
+Define the levels of oucomes, predictors and model_type and make the factors with the levels the same as the order they are named.
 
 ```{r}
-outcomes       <- c("General recidivism", "Violent recidivism")
-predictors     <- c("Static", "Rita","All at start of sentence", 
-                    "All including term")
-model_type     <- c("Logistic regression", "Elastic net", "Random forest")
+outcomes   <- c("General recidivism", "Violent recidivism")
+outcomes   <- factor(outcomes, levels = outcomes)
 
+predictors <- c("Rita", "Static", "All at start of sentence", 
+                "All including term")
+predictors <- factor(predictors, levels = predictors)
 
-model_grid     <- expand.grid(outcomes, predictors, model_type, 
-                         stringsAsFactors = FALSE)
+model_type <- c("Logistic regression", "Elastic net", "Random forest")
+model_type <- factor(model_type, levels = model_type)                   
+
+model_grid           <- expand.grid(outcomes, predictors, model_type, 
+                                    stringsAsFactors = FALSE)
 colnames(model_grid) <- c("outcome", "predictors", "model_type")
 ```
+
+
 
 Write compact model names
 ```{r}
