@@ -22,9 +22,9 @@ rm(list = ls())
 devtools::load_all(".")
 ```
 
-Calculating expected and observed outcomes by quintile will be facilitated by having a seperate data frame for each model including the estimated probabilites, corresponding quintile, and pertinent outcome.
+Calculating expected and observed outcomes by quintile will be facilitated by having a separate data frame for each model including the estimated probabilities, corresponding quintile, and pertinent outcome.
 
-We start by making a list vectors of estimated probabilites that we then turn to a list of data frames - at this point with a single column.
+We start by making a list vectors of estimated probabilities that we then turn to a list of data frames - at this point with a single column.
 ```{r}
 gen_models <- stringr::str_subset(names(test_set_predictions), "^gen_")
 vio_models <- stringr::str_subset(names(test_set_predictions), "^vio_")
@@ -68,7 +68,7 @@ model_df_list_vio <-
 model_df_list <- c(model_df_list_gen, model_df_list_vio)
 ```
 
-Assertations
+Assertions
 ```{r}
 library(assertthat)
 # All data frames have 3 colmns
@@ -87,7 +87,7 @@ assert_that(all(
 
 ```
 
-For each data frame we caluclate the expected and observed recidivism rates. We get a list of data frames with 5 rows (one per quintile) and three columns (quintile, observed rate and expected rate.)
+For each data frame we calculate the expected and observed recidivism rates. We get a list of data frames with 5 rows (one per quintile) and three columns (quintile, observed rate and expected rate.)
 
 ```{r}
 # Function to use. 
