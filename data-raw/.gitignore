@@ -1,6 +1,3 @@
-analyzed_data.nb.html
-analyzed_data.rds
-test_set.rds
-training_set.rds
-analyzed_data.Rmd
-to split up and delete.Rmd
+writing_csv_file_with_predictors.R
+variable_table.csv
+variables.csv
