@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
 ```{r}
 rm(list = ls())
 devtools::load_all(".")
+library(tidyverse)
 ```
 
 Calculating expected and observed outcomes by quintile will be facilitated by having a separate data frame for each model including the estimated probabilities, corresponding quintile, and pertinent outcome.
@@ -150,7 +151,5 @@ calibration_dframe %>%
 
 ```
 
-```{r}
-saveRDS(calibration_plot, "C:/Users/benny_000/Dropbox/AAAKTUELLT/Manuskript 2/calibration_plot.rds")
-```
+
 
