@@ -1,3 +1,10 @@
+---
+title: "Update all analyses generating results in /data"
+output: github_document
+date: "`r Sys.Date()`"
+---
+
+```{r}
 library(knitr)
 
 devtools::wd(path = "/data-raw")
@@ -15,3 +22,11 @@ knit("05c_train_rf.Rmd")
 # Output data
 knit("06_model_AUCs_training_set.Rmd")
 knit("07_test_set_predictions.Rmd")
+```
+
+The analyses are updated `r Sys.Date()` with the following packages installed.
+
+```{r}
+sessionInfo()
+```
+
