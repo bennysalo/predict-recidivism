@@ -21,7 +21,7 @@ FinPrisonMales <-
 
 We define a violent crime as crimes that belong to the homicide or assault categories. Other offence categories include offences that are violent and offences that are not violent. In many cases the violent forms are also coded as assault. 
 
-We create variables for new violent crime
+We create variables for new violent crime 
 
 ```{r}
 analyzed_data <- 
@@ -37,6 +37,35 @@ table(analyzed_data$newO_violent)/nrow(analyzed_data)
 ```
 
 Of the 748 new convictions 278 are categorized as prison terms for violent crimes.
+
+For descriptive statistics we also want a variable that represents category of reoffending as a single variable with levels "no reoffence", "non-violent reoffence", and "violent reoffence".
+
+```{r}
+# Get indices
+no_reoff_i      <- 
+  which(analyzed_data$reoffenceThisTerm == "not_in_prison")
+
+non_vio_reoff_i <- 
+  which(analyzed_data$reoffenceThisTerm == "new_prison_sentence" &
+          analyzed_data$newO_violent == "no_crime_or_not_violent")
+
+vio_reoff_i     <-
+  which(analyzed_data$newO_violent == "new_violent_crime")
+
+# Assert that all rows are accounted for
+assertthat::assert_that(
+  identical(sort(c(no_reoff_i, non_vio_reoff_i, vio_reoff_i)),
+            1:nrow(analyzed_data))
+)
+
+analyzed_data$reoff_category[no_reoff_i]      <- "no_reoffence"
+analyzed_data$reoff_category[non_vio_reoff_i] <- "reoffence_nonviolent"
+analyzed_data$reoff_category[vio_reoff_i]     <- "reoffence_violent"
+
+analyzed_data$reoff_category <- factor(analyzed_data$reoff_category)
+
+```
+
 
 # Check follow-up time
 
