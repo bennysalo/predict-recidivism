@@ -130,7 +130,7 @@ Cohen's d has the advantage over AUC in that it is an effect size that is linear
 The function below can be used to transform any AUC value to Cohen's d.
 
 ```{r}
-calc_AUC_from_d <- function(AUC) {
+calc_d_from_AUC <- function(AUC) {
   sqrt(2) * qnorm(AUC) 
 }
 ```
@@ -139,8 +139,8 @@ We add Cohen's d calculated from the mean AUC in the training set and the estima
 
 ```{r}
 auc_tbl <- auc_tbl %>% 
-  mutate(d_cv = calc_AUC_from_d(mean_auc_cv),
-         d_ts = calc_AUC_from_d(auc_ts))
+  mutate(d_cv = calc_d_from_AUC(mean_auc_cv),
+         d_ts = calc_d_from_AUC(auc_ts))
 ```
 
 We can compare the average Cohen's d between different model types
