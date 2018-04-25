@@ -110,6 +110,20 @@ analyzed_data %>%
 
 ```
 
+# Time to offence
+
+```{r}
+median(analyzed_data$daysToNewO, na.rm = TRUE) 
+max(analyzed_data$daysToNewO, na.rm = TRUE) 
+sum(analyzed_data$daysToNewO <= 365, na.rm = TRUE) /748
+
+# Proportion under 1 year
+median(analyzed_data$followUpYears)
+min(analyzed_data$followUpYears)
+max(analyzed_data$followUpYears)
+```
+
+
 # Split data into a training set and a test set
 
 ```{r}
