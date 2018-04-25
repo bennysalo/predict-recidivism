@@ -10,22 +10,39 @@ devtools::wd()
 analyzed_data <- readRDS("not_public/analyzed_data.rds")
 ```
 
-Make offence variables factors.
+Make offence variables factors. Likewise with info missing variables.
 ```{r}
 library(dplyr)
 analyzed_data <-
 analyzed_data %>% 
-  mutate_at(.vars = vars(starts_with("o_")), factor)
+  mutate_at(.vars = vars(starts_with("o_"), ps_info_missing, ageFirst_missing),
+            factor)
 ```
 
 
 ```{r}
 vars_to_desc <- 
-  variable_table$Variable[variable_table$Desciptives == c("num", "cat")]
+  variable_table$Variable[variable_table$Desciptives %in% c("num", "cat")]
+
+
+# desc_var_names <- 
+#   variable_table$Label[match(vars_to_desc, variable_table$Variable)]
+
+# No new white collar crimes. Explicitely set the levels to 0 and 1.
+levels(analyzed_data$newO_whitecollar) <- c(0, 1)
+
 descriptive_stats <- 
   furniture::table1(analyzed_data[c(vars_to_desc, "reoff_category")],
                   splitby = reoff_category, type = c("condenced"))
+```
 
+```{r message=FALSE, warning=FALSE}
 devtools::use_data(descriptive_stats, overwrite = TRUE)
+```
+
+Save as .csv
+```{r}
+devtools::wd()
+write.csv2(data.frame(descriptive_stats), "output/descriptive_stats.csv") 
 ```
 
