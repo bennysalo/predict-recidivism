@@ -6,7 +6,7 @@ output: github_document
 ---
 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(dplyr)
 ```
 

@@ -1,8 +1,8 @@
 ---
 title: "Creating data/variable_table.rda"
 author: "Benny Salo"
+date: "`r format(Sys.Date())`"
 output: github_document
-date: 2018-04-12
 ---
 
 ```{r message=FALSE, warning=FALSE}
