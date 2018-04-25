@@ -184,7 +184,7 @@ auc_plot <- auc_tbl %>%
   theme(legend.position = "bottom")
 
 ```
-```{r}
+```{r fig.width=6.5}
 auc_plot
 ```
 
@@ -240,7 +240,7 @@ cross_pred_list <- c(cross_pred_G_by_V, cross_pred_V_by_G)
 
 # We use the same seed as in the correct analyses 
 set.seed(2803)
-cross_pred_ci_list   <- map(roc_list_ts, 
+cross_pred_ci_list   <- map(cross_pred_list, 
                      .f = ~pROC::ci.auc(.x, 
                                         method = "bootstrap", 
                                         progress = "none"))
