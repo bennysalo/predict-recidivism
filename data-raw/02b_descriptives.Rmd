@@ -1,0 +1,31 @@
+---
+title: "R Notebook"
+output: githuc_document
+---
+
+
+```{r message=FALSE}
+devtools::load_all(".")
+devtools::wd()
+analyzed_data <- readRDS("not_public/analyzed_data.rds")
+```
+
+Make offence variables factors.
+```{r}
+library(dplyr)
+analyzed_data <-
+analyzed_data %>% 
+  mutate_at(.vars = vars(starts_with("o_")), factor)
+```
+
+
+```{r}
+vars_to_desc <- 
+  variable_table$Variable[variable_table$Desciptives == c("num", "cat")]
+descriptive_stats <- 
+  furniture::table1(analyzed_data[c(vars_to_desc, "reoff_category")],
+                  splitby = reoff_category, type = c("condenced"))
+
+devtools::use_data(descriptive_stats, overwrite = TRUE)
+```
+
