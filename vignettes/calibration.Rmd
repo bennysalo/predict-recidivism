@@ -132,10 +132,10 @@ calibration_plot <-
 calibration_dframe %>% 
   filter(predictors != "All including term") %>% 
   ggplot(aes(x = exp_rate, y = obs_rate, group = predictors)) +
-  # geom_line(aes(lty = predictors), alpha = 0.5) +
+  geom_line(aes(lty = predictors), alpha = 0.5) +
   geom_point(aes(shape = predictors)) +
   geom_abline() +
-  # scale_linetype(name   = "Predictor set") +
+  scale_linetype(name   = "Predictor set") +
   scale_shape_manual(values = c(16, 4, 1, 17),
                      name   = "Predictor set") +
   scale_x_continuous(limits = c(0, 100)) +
