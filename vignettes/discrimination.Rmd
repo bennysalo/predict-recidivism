@@ -93,7 +93,7 @@ set.seed(2803)
 auc_ci_list   <- map(roc_list_ts, 
                      .f = ~pROC::ci.auc(.x, 
                                         method = "bootstrap", 
-                                        progress = "text"))
+                                        progress = "none"))
 
 
 ```
@@ -114,6 +114,8 @@ auc_tbl_ts <- map_df(auc_ci_list, get_ci)
 # Amend the data frame with the names of the models
 auc_tbl_ts <- data.frame(model = names(auc_ci_list), auc_tbl_ts)
 ```
+
+# Join tables
 We join the tables with AUC-values in training and test set and then join these to the descriptive columns i model_grid.
 
 ```{r}
@@ -222,4 +224,33 @@ devtools::wd()
 write.csv2(best_models_tbl, "output/best_models_tbl.csv")
 ```
 
+# The value of customization
+
+We believe that the good performance of the models is partly due to the customization of weights in the models. To illustrate this we predict a form of recidivism that the models are not trained to predict. That is we let general recidivism be predicted by models that are traind to predict violent recidivism and vice versa.
+
+```{r}
+cross_pred_G_by_V <- map(.x = test_set_predictions[model_names_V],
+                   .f = ~roc(test_set_predictions$reoffenceThisTerm, .x))
+
+
+cross_pred_V_by_G <- map(.x = test_set_predictions[model_names_G],
+                   .f = ~roc(test_set_predictions$newO_violent, .x))
+
+cross_pred_list <- c(cross_pred_G_by_V, cross_pred_V_by_G)
+
+# We use the same seed as in the correct analyses 
+set.seed(2803)
+cross_pred_ci_list   <- map(roc_list_ts, 
+                     .f = ~pROC::ci.auc(.x, 
+                                        method = "bootstrap", 
+                                        progress = "none"))
+
+
+cross_pred_tbl <- map_df(cross_pred_ci_list, get_ci)
+
+cross_pred_tbl <- data.frame(model = names(cross_pred_ci_list),
+                             cross_pred_tbl)
+
+
+```
 
