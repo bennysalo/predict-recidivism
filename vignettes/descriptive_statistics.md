@@ -1,95 +1,27 @@
-<!DOCTYPE html>
+Descriptive statistics
+================
+Benny Salo
+2018-05-02
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+Mean (and standard deviation) or frequency (and percentage) for select predictors by reoffense category.
 
-<head>
+This is an extension of Table 1 in the manuscript displaying descriptive statistics for all variables.
 
-<meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="pandoc" />
+    ## Loading recidivismsl
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<meta name="author" content="Benny Salo" />
-
-<meta name="date" content="2018-05-02" />
-
-<title>Discrimination of trained models</title>
-
-
-
-<style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-</style>
-
-
-
-<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
-
-</head>
-
-<body>
-
-
-
-
-<h1 class="title toc-ignore">Discrimination of trained models</h1>
-<h4 class="author"><em>Benny Salo</em></h4>
-<h4 class="date"><em>2018-05-02</em></h4>
-
-
-
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw">load_all</span>(<span class="st">&quot;.&quot;</span>)
-<span class="co">#&gt; Loading recidivismsl</span>
-knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, <span class="dt">format =</span> <span class="st">&quot;markdown&quot;</span>)</code></pre></div>
-<table>
+<table style="width:100%;">
 <colgroup>
-<col width="48%"></col>
-<col width="13%"></col>
-<col width="20%"></col>
-<col width="17%"></col>
+<col width="46%" />
+<col width="13%" />
+<col width="22%" />
+<col width="18%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th align="left"></th>
-<th align="left">no_reoffence</th>
-<th align="left">reoffence_nonviolent</th>
-<th align="left">reoffence_violent</th>
+<th align="left">Variable</th>
+<th align="left">No reoffence</th>
+<th align="left">Non-violent reoffence</th>
+<th align="left">Violent reoffence</th>
 </tr>
 </thead>
 <tbody>
@@ -100,187 +32,187 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">n = 278</td>
 </tr>
 <tr class="even">
-<td align="left">ageFirstSentence</td>
+<td align="left">Age at first term</td>
 <td align="left">29.5 (11.5)</td>
 <td align="left">22.8 (6.3)</td>
 <td align="left">22.4 (6.4)</td>
 </tr>
 <tr class="odd">
-<td align="left">ageFirst_missing: 1</td>
+<td align="left">Missing info on age at first term</td>
 <td align="left">211 (28.2%)</td>
 <td align="left">177 (37.7%)</td>
 <td align="left">38 (13.7%)</td>
 </tr>
 <tr class="even">
-<td align="left">ageFirstSentence_mr</td>
+<td align="left">Age at first term (missing replaced)</td>
 <td align="left">31.8 (11.7)</td>
 <td align="left">26.5 (9.0)</td>
 <td align="left">23.4 (6.9)</td>
 </tr>
 <tr class="odd">
-<td align="left">followUpYears</td>
+<td align="left">Follow-up in years</td>
 <td align="left">3.7 (1.0)</td>
 <td align="left">3.6 (1.0)</td>
 <td align="left">3.7 (1.1)</td>
 </tr>
 <tr class="even">
-<td align="left">ageAtRelease</td>
+<td align="left">Age at release</td>
 <td align="left">38.3 (11.0)</td>
 <td align="left">33.6 (9.1)</td>
 <td align="left">32.2 (9.4)</td>
 </tr>
 <tr class="odd">
-<td align="left">ps_info_missing: 1</td>
+<td align="left">Missing info on previous sentences</td>
 <td align="left">27 (3.6%)</td>
 <td align="left">12 (2.6%)</td>
 <td align="left">6 (2.2%)</td>
 </tr>
 <tr class="even">
-<td align="left">ps_prisonTerms</td>
+<td align="left">Prison terms</td>
 <td align="left">2.1 (3.3)</td>
 <td align="left">4.0 (4.2)</td>
 <td align="left">3.7 (4.5)</td>
 </tr>
 <tr class="odd">
-<td align="left">ps_prisonTerms_mr</td>
+<td align="left">Prison terms (missing replaced)</td>
 <td align="left">2.0 (3.3)</td>
 <td align="left">3.9 (4.2)</td>
 <td align="left">3.7 (4.5)</td>
 </tr>
 <tr class="even">
-<td align="left">ps_comServiceTerms</td>
+<td align="left">Community service terms</td>
 <td align="left">0.5 (0.9)</td>
 <td align="left">0.8 (1.0)</td>
 <td align="left">0.7 (1.0)</td>
 </tr>
 <tr class="odd">
-<td align="left">ps_comServiceTerms_mr</td>
+<td align="left">Community service terms (missing replaced)</td>
 <td align="left">0.5 (0.9)</td>
 <td align="left">0.7 (1.0)</td>
 <td align="left">0.6 (1.0)</td>
 </tr>
 <tr class="even">
-<td align="left">ps_remandTerms</td>
+<td align="left">Remand terms</td>
 <td align="left">0.4 (0.8)</td>
 <td align="left">1.1 (1.7)</td>
 <td align="left">1.0 (1.5)</td>
 </tr>
 <tr class="odd">
-<td align="left">ps_remandTerms_mr</td>
+<td align="left">Remand terms (missing replaced)</td>
 <td align="left">0.4 (0.8)</td>
 <td align="left">1.1 (1.6)</td>
 <td align="left">1.0 (1.4)</td>
 </tr>
 <tr class="even">
-<td align="left">ps_defaultTerms</td>
+<td align="left">Terms for unpaid fines</td>
 <td align="left">0.3 (1.0)</td>
 <td align="left">0.5 (1.0)</td>
 <td align="left">0.5 (0.8)</td>
 </tr>
 <tr class="odd">
-<td align="left">ps_defaultTerms_mr</td>
+<td align="left">Terms for unpaid fines (missing replaced)</td>
 <td align="left">0.3 (0.9)</td>
 <td align="left">0.5 (1.0)</td>
 <td align="left">0.5 (0.8)</td>
 </tr>
 <tr class="even">
-<td align="left">ps_escapeHistory: Unauthorized absence of any kind</td>
+<td align="left">Unlawful absence or attempt</td>
 <td align="left">62 (8.3%)</td>
 <td align="left">55 (11.7%)</td>
 <td align="left">47 (16.9%)</td>
 </tr>
 <tr class="odd">
-<td align="left">o_homicide: 1</td>
+<td align="left">Current offence: Homicide</td>
 <td align="left">67 (9%)</td>
 <td align="left">10 (2.1%)</td>
 <td align="left">17 (6.1%)</td>
 </tr>
 <tr class="even">
-<td align="left">o_assault: 1</td>
+<td align="left">Current offence: Assault</td>
 <td align="left">413 (55.2%)</td>
 <td align="left">309 (65.7%)</td>
 <td align="left">201 (72.3%)</td>
 </tr>
 <tr class="odd">
-<td align="left">o_sexual: 1</td>
+<td align="left">Current offence: Sexual offence</td>
 <td align="left">91 (12.2%)</td>
 <td align="left">8 (1.7%)</td>
 <td align="left">10 (3.6%)</td>
 </tr>
 <tr class="even">
-<td align="left">o_againstOfficer: 1</td>
+<td align="left">Current offence: Offence against authorities</td>
 <td align="left">44 (5.9%)</td>
 <td align="left">50 (10.6%)</td>
 <td align="left">45 (16.2%)</td>
 </tr>
 <tr class="odd">
-<td align="left">o_otherPerson: 1</td>
+<td align="left">Current offence: Other offence against person</td>
 <td align="left">113 (15.1%)</td>
 <td align="left">61 (13%)</td>
 <td align="left">107 (38.5%)</td>
 </tr>
 <tr class="even">
-<td align="left">o_robbery: 1</td>
+<td align="left">Current offence: Robbery</td>
 <td align="left">67 (9%)</td>
 <td align="left">43 (9.1%)</td>
 <td align="left">75 (27%)</td>
 </tr>
 <tr class="odd">
-<td align="left">o_theft: 1</td>
+<td align="left">Current offence: Theft</td>
 <td align="left">137 (18.3%)</td>
 <td align="left">160 (34%)</td>
 <td align="left">142 (51.1%)</td>
 </tr>
 <tr class="even">
-<td align="left">o_autoTheft: 1</td>
+<td align="left">Current offence: Auto theft</td>
 <td align="left">65 (8.7%)</td>
 <td align="left">100 (21.3%)</td>
 <td align="left">91 (32.7%)</td>
 </tr>
 <tr class="odd">
-<td align="left">o_otherProperty: 1</td>
+<td align="left">Current offence: Other property offence</td>
 <td align="left">110 (14.7%)</td>
 <td align="left">106 (22.6%)</td>
 <td align="left">95 (34.2%)</td>
 </tr>
 <tr class="even">
-<td align="left">o_damage: 1</td>
+<td align="left">Current offence: Criminal damage</td>
 <td align="left">81 (10.8%)</td>
 <td align="left">70 (14.9%)</td>
 <td align="left">89 (32%)</td>
 </tr>
 <tr class="odd">
-<td align="left">o_narcotic: 1</td>
+<td align="left">Current offence: Narcotic offence</td>
 <td align="left">167 (22.3%)</td>
 <td align="left">136 (28.9%)</td>
 <td align="left">89 (32%)</td>
 </tr>
 <tr class="even">
-<td align="left">o_weapon: 1</td>
+<td align="left">Current offence: Unlawful possession of weapon</td>
 <td align="left">105 (14%)</td>
 <td align="left">76 (16.2%)</td>
 <td align="left">58 (20.9%)</td>
 </tr>
 <tr class="odd">
-<td align="left">o_traffic: 1</td>
+<td align="left">Current offence: Traffic offence</td>
 <td align="left">147 (19.7%)</td>
 <td align="left">176 (37.4%)</td>
 <td align="left">158 (56.8%)</td>
 </tr>
 <tr class="even">
-<td align="left">o_whitecollar: 1</td>
+<td align="left">Current offence: White-collar offence</td>
 <td align="left">50 (6.7%)</td>
 <td align="left">4 (0.9%)</td>
 <td align="left">3 (1.1%)</td>
 </tr>
 <tr class="odd">
-<td align="left">o_other: 1</td>
+<td align="left">Current offence: Other offences</td>
 <td align="left">15 (2%)</td>
 <td align="left">8 (1.7%)</td>
 <td align="left">7 (2.5%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_responsibility</td>
+<td align="left">Responsibility for offence</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -304,7 +236,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">62 (22.3%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_housingShortTerm</td>
+<td align="left">Access to accommodation</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -328,7 +260,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">83 (29.9%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_housingAppropriate</td>
+<td align="left">Suitable accommodation</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -352,7 +284,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">76 (27.3%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_dailyLifeManagement</td>
+<td align="left">Management of daily living</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -376,7 +308,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">22 (7.9%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_financialSituation</td>
+<td align="left">Financial situation</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -400,7 +332,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">127 (45.7%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_financialManagement</td>
+<td align="left">Managing finances</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -424,7 +356,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">91 (32.7%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_financialObstacles</td>
+<td align="left">Obstacles to budgeting</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -448,13 +380,13 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">82 (29.5%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_cumpulsorySchool: 2</td>
+<td align="left">Completed compulsory school</td>
 <td align="left">36 (4.8%)</td>
 <td align="left">53 (11.3%)</td>
 <td align="left">13 (4.7%)</td>
 </tr>
 <tr class="odd">
-<td align="left">i_readingProblem</td>
+<td align="left">Learning problems</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -478,13 +410,13 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">11 (4%)</td>
 </tr>
 <tr class="odd">
-<td align="left">i_remedialTeaching: 2</td>
+<td align="left">History of remedial teaching</td>
 <td align="left">200 (26.7%)</td>
 <td align="left">225 (47.9%)</td>
 <td align="left">137 (49.3%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_eduAttitude</td>
+<td align="left">Attitude to education</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -508,7 +440,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">26 (9.4%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_eduNeed</td>
+<td align="left">Work-related qualifications</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -532,7 +464,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">98 (35.3%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_workHistory</td>
+<td align="left">Employment history</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -556,7 +488,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">112 (40.3%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_workAttitude</td>
+<td align="left">Attitude to employment</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -580,7 +512,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">32 (11.5%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_workApplication</td>
+<td align="left">Work application management</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -604,7 +536,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">50 (18%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_familyRelation</td>
+<td align="left">Relationship with family</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -628,7 +560,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">33 (11.9%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_partnerRelation</td>
+<td align="left">Relationship with partner</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -652,7 +584,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">23 (8.3%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_domViolVictim</td>
+<td align="left">Domestic violence, offender</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -676,7 +608,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">52 (18.7%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_domViolPerp</td>
+<td align="left">Domestic violence, victim</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -700,7 +632,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">23 (8.3%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_parenting</td>
+<td align="left">Parenting skills</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -724,7 +656,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">36 (12.9%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_peersCriminal</td>
+<td align="left">Criminal associates</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -748,7 +680,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">82 (29.5%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_manipulative</td>
+<td align="left">Manipulative lifestyle</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -772,7 +704,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">32 (11.5%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_riskSeeking</td>
+<td align="left">Risk-seeking behaviour</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -796,7 +728,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">64 (23%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_submissive</td>
+<td align="left">Easily influenced</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -820,7 +752,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">10 (3.6%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcFrequency</td>
+<td align="left">Alcohol use frequency</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -844,7 +776,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">114 (41%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcWithMeds</td>
+<td align="left">Alcohol with medicine misuse</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -868,7 +800,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">94 (33.8%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcCriminalActs</td>
+<td align="left">Alcohol-related offenses</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -892,7 +824,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">161 (57.9%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcViolence</td>
+<td align="left">Alcohol-induced violence</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -916,7 +848,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">157 (56.5%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcEffectWork</td>
+<td align="left">Effects of alcohol on daily living</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -940,7 +872,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">80 (28.8%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcEffectHealth</td>
+<td align="left">Effects of alcohol on health</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -964,7 +896,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">13 (4.7%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcEffectRelations</td>
+<td align="left">Effects of alcohol on relationships</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -988,7 +920,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">62 (22.3%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcMotivationTreat</td>
+<td align="left">Motivation to tackle alcohol misuse</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1012,7 +944,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">31 (11.2%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugHistory</td>
+<td align="left">History of drug abuse</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1036,7 +968,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">191 (68.7%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugFrequency</td>
+<td align="left">Drug use frequency</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1060,7 +992,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">85 (30.6%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugIntravenous</td>
+<td align="left">Intravenous drug use</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1084,7 +1016,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">121 (43.5%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugCriminalActs</td>
+<td align="left">Drug-related offenses</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1108,7 +1040,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">78 (28.1%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugViolence</td>
+<td align="left">Drug-induced violence</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1132,7 +1064,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">36 (12.9%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugEffectWork</td>
+<td align="left">Effects of drugs on daily living</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1156,7 +1088,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">64 (23%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugEffectHealth</td>
+<td align="left">Effects of drugs on health</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1180,7 +1112,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">45 (16.2%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugEffectRelations</td>
+<td align="left">Effects of drugs on relationship</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1204,7 +1136,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">45 (16.2%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugMotivationTreat</td>
+<td align="left">Motivation to tackle drug misuse</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1228,7 +1160,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">20 (7.2%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_socialSkills</td>
+<td align="left">Interpersonal skills</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1252,7 +1184,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">13 (4.7%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_impulsive</td>
+<td align="left">Impulsivity and impulsive violence</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1276,7 +1208,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">113 (40.6%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_instrumentalAggression</td>
+<td align="left">Instrumental aggression</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1300,7 +1232,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">61 (21.9%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_insight</td>
+<td align="left">Ability to recognise problems</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1324,7 +1256,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">29 (10.4%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_problemSolving</td>
+<td align="left">Problem-solving skills</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1348,7 +1280,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">89 (32%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_othersView</td>
+<td align="left">Understanding of other people</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1372,7 +1304,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">27 (9.7%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_attitudeProcrime</td>
+<td align="left">Pro-criminal attitudes</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1396,7 +1328,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">31 (11.2%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_attitudeHostile</td>
+<td align="left">Interpersonal hostility</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1420,7 +1352,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">16 (5.8%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_attitudeStaff</td>
+<td align="left">Attitude toward staff and authorities</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1444,7 +1376,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">11 (4%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_attitudeSupervision</td>
+<td align="left">Attitude towards parole supervision</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1468,7 +1400,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">15 (5.4%)</td>
 </tr>
 <tr class="even">
-<td align="left">i_motivationChange</td>
+<td align="left">Motivation to avoid reoffending</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1492,13 +1424,13 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">22 (7.9%)</td>
 </tr>
 <tr class="even">
-<td align="left">openPrison: open_prison</td>
+<td align="left">Placement in open prison</td>
 <td align="left">426 (57%)</td>
 <td align="left">169 (36%)</td>
 <td align="left">69 (24.8%)</td>
 </tr>
 <tr class="odd">
-<td align="left">conditionalReleaseOutcome</td>
+<td align="left">Conditional release</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1522,133 +1454,133 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 <td align="left">15 (5.4%)</td>
 </tr>
 <tr class="odd">
-<td align="left">conditionalReleaseGranted: cr_granted</td>
+<td align="left">Conditional release granted</td>
 <td align="left">237 (31.7%)</td>
 <td align="left">63 (13.4%)</td>
 <td align="left">37 (13.3%)</td>
 </tr>
 <tr class="even">
-<td align="left">conditionalReleaseSuccess: successful_cr</td>
+<td align="left">Conditional release successful</td>
 <td align="left">197 (26.3%)</td>
 <td align="left">43 (9.1%)</td>
 <td align="left">22 (7.9%)</td>
 </tr>
 <tr class="odd">
-<td align="left">supervisedParole: supervised parole</td>
+<td align="left">Parole supervised</td>
 <td align="left">525 (70.2%)</td>
 <td align="left">310 (66%)</td>
 <td align="left">175 (62.9%)</td>
 </tr>
 <tr class="even">
-<td align="left">crimeDuringSentence: Record of crime</td>
+<td align="left">Crime during sentence</td>
 <td align="left">1 (0.1%)</td>
 <td align="left">55 (11.7%)</td>
 <td align="left">37 (13.3%)</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_homicide: 1</td>
+<td align="left">New offence: Homicide</td>
 <td align="left">0 (0%)</td>
 <td align="left">0 (0%)</td>
 <td align="left">20 (7.2%)</td>
 </tr>
 <tr class="even">
-<td align="left">newO_assault: 1</td>
+<td align="left">New offence: Assault</td>
 <td align="left">0 (0%)</td>
 <td align="left">0 (0%)</td>
 <td align="left">271 (97.5%)</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_sexual: 1</td>
+<td align="left">New offence: Sexual offence</td>
 <td align="left">0 (0%)</td>
 <td align="left">2 (0.4%)</td>
 <td align="left">10 (3.6%)</td>
 </tr>
 <tr class="even">
-<td align="left">newO_againstOfficer: 1</td>
+<td align="left">New offence: Offence against authorities</td>
 <td align="left">0 (0%)</td>
 <td align="left">21 (4.5%)</td>
 <td align="left">44 (15.8%)</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_otherPerson: 1</td>
+<td align="left">New offence: Other offence against person</td>
 <td align="left">0 (0%)</td>
 <td align="left">31 (6.6%)</td>
 <td align="left">109 (39.2%)</td>
 </tr>
 <tr class="even">
-<td align="left">newO_robbery: 1</td>
+<td align="left">New offence: Robbery</td>
 <td align="left">0 (0%)</td>
 <td align="left">33 (7%)</td>
 <td align="left">49 (17.6%)</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_theft: 1</td>
+<td align="left">New offence: Theft</td>
 <td align="left">0 (0%)</td>
 <td align="left">126 (26.8%)</td>
 <td align="left">120 (43.2%)</td>
 </tr>
 <tr class="even">
-<td align="left">newO_autoTheft: 1</td>
+<td align="left">New offence: Auto theft</td>
 <td align="left">0 (0%)</td>
 <td align="left">60 (12.8%)</td>
 <td align="left">56 (20.1%)</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_otherProperty: 1</td>
+<td align="left">New offence: Other property offence</td>
 <td align="left">0 (0%)</td>
 <td align="left">76 (16.2%)</td>
 <td align="left">73 (26.3%)</td>
 </tr>
 <tr class="even">
-<td align="left">newO_damage: 1</td>
+<td align="left">New offence: Criminal damage</td>
 <td align="left">0 (0%)</td>
 <td align="left">33 (7%)</td>
 <td align="left">63 (22.7%)</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_narcotic: 1</td>
+<td align="left">New offence: Narcotic offence</td>
 <td align="left">0 (0%)</td>
 <td align="left">141 (30%)</td>
 <td align="left">96 (34.5%)</td>
 </tr>
 <tr class="even">
-<td align="left">newO_weapon: 1</td>
+<td align="left">New offence: Unlawful possession of weapon</td>
 <td align="left">0 (0%)</td>
 <td align="left">61 (13%)</td>
 <td align="left">59 (21.2%)</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_traffic: 1</td>
+<td align="left">New offence: Traffic offence</td>
 <td align="left">0 (0%)</td>
 <td align="left">171 (36.4%)</td>
 <td align="left">132 (47.5%)</td>
 </tr>
 <tr class="even">
-<td align="left">newO_whitecollar: 1</td>
+<td align="left">New offence: White-collar offence</td>
 <td align="left">0 (0%)</td>
 <td align="left">0 (0%)</td>
 <td align="left">0 (0%)</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_other: 1</td>
+<td align="left">New offence: Other offences</td>
 <td align="left">0 (0%)</td>
 <td align="left">5 (1.1%)</td>
 <td align="left">3 (1.1%)</td>
 </tr>
 <tr class="even">
-<td align="left">daysToNewO</td>
+<td align="left">Days to new offence</td>
 <td align="left">NaN (NA)</td>
 <td align="left">187.6 (202.5)</td>
 <td align="left">156.2 (204.0)</td>
 </tr>
 <tr class="odd">
-<td align="left">newSentenceMonths</td>
+<td align="left">New sentence in months</td>
 <td align="left">NaN (NA)</td>
 <td align="left">22.1 (24.4)</td>
 <td align="left">38.5 (33.1)</td>
 </tr>
 <tr class="even">
-<td align="left">reoff_category</td>
+<td align="left">Reimprisoned. As one variable.</td>
 <td align="left"></td>
 <td align="left"></td>
 <td align="left"></td>
@@ -1673,18 +1605,3 @@ knitr<span class="op">::</span><span class="kw">kable</span>(descriptive_stats, 
 </tr>
 </tbody>
 </table>
-
-
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
-
-</body>
-</html>
