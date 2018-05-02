@@ -3,7 +3,7 @@ Descriptive statistics
 Benny Salo
 2018-05-02
 
-Mean (and standard deviation) or frequency (and percentage) for select predictors by reoffense category.
+Mean (and standard deviation) or frequency (and percentage) for all predictors by reoffense category.
 
 This is an extension of Table 1 in the manuscript displaying descriptive statistics for all variables.
 
