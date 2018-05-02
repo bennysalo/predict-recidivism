@@ -2,22 +2,16 @@
 title: "Descriptive statistics"
 author: "Benny Salo"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: github_document
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
+Mean (and standard deviation) or frequency (and percentage) for select predictors by reoffense category.
 
-```{r}
+This is an extension of Table 1 in the manuscript displaying descriptive statistics for all variables.
+
+
+```{r echo=FALSE, message=TRUE, warning=FALSE}
 devtools::load_all(".")
-knitr::kable(descriptive_stats)
+knitr::kable(descriptive_stats, format = "markdown")
 ```
 
