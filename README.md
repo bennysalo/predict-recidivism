@@ -6,6 +6,6 @@ First submitted version can be found as a preprint on https://psyarxiv.com/v5uq3
 Files follow a R package structure with the following specification:
 
 * Analyses that require data that we are not able to make public can be found in /data-raw.
-* Analyses that can be run using the results we provide (in /data) can be found in /vignettes. These include analyses of discrimination and calibration.
+* Analyses that can be run using the results we provide (in /data) can be found in /vignettes. These include analyses of discrimination and calibration plus descriptive statistics for all variables. The descriptive statistics as an extention to Table 2 in the revised manuscript can be accessed through [this link](vignettes/descriptive_statistics.md)
 
 
