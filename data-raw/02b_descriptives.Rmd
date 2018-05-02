@@ -38,12 +38,28 @@ descriptive_stats <-
                   splitby = reoff_category, type = c("condenced"))
 ```
 
+Edit
+```{r}
+descriptive_stats$Table1 <-
+  descriptive_stats$Table1 %>% 
+  rename(Variable = " ",
+         "No reoffence" = no_reoffence,
+         "Non-violent reoffence" = reoffence_nonviolent,
+         "Violent reoffence" = reoffence_violent) %>%
+  mutate(Variable = stringr::str_remove(Variable, ":.*$")) %>% 
+  left_join(variable_table[c("Variable", "Label")], by = "Variable") %>% 
+  mutate(Variable = ifelse(is.na(Label), yes = Variable, no = Label)) %>%
+  select(1:4)
+
+```
+
+
 ```{r message=FALSE, warning=FALSE}
 devtools::use_data(descriptive_stats, overwrite = TRUE)
 ```
 
 Save as .csv
-```{r}
+```{r eval=FALSE, include=FALSE}
 devtools::wd()
 write.csv2(data.frame(descriptive_stats), "output/descriptive_stats.csv") 
 ```
