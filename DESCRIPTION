@@ -8,7 +8,8 @@ Imports:
   ggplot2,
   magrittr (>= 1.5),
   pROC,
-  stringr
+  stringr,
+  ggthemes
 Author: person("Benny", "Salo", email = "benny.salo@abo.fi", c("aut", "cre"))
 Description: Analyses for prediction of recidivism in Finnish data using supervised learning
 License: GPL-3
