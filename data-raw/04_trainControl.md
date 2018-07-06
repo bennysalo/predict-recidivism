@@ -27,7 +27,7 @@ ctrl_fun_training <- caret::trainControl(
   repeats = 10,
   summaryFunction = caret::twoClassSummary,
   classProbs = TRUE,
-  verboseIter = TRUE,
+  verboseIter = FALSE,
   savePredictions = "final",
   index = ten_by_ten_folds,
   returnData = FALSE
