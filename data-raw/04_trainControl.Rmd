@@ -45,3 +45,6 @@ ctrl_fun_training <- caret::trainControl(
 devtools::use_data(ctrl_fun_training, overwrite = TRUE)
 ```
 
+```{r}
+sessionInfo()
+```
