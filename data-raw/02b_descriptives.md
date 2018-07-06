@@ -1,28 +1,39 @@
----
-title: "Descriptive statistics"
-author: "Benny Salo"
-date: "`r format(Sys.Date())`"
-output: github_document
----
+Descriptive statistics
+================
+Benny Salo
+2018-07-05
 
-
-```{r message=FALSE, warning=FALSE}
+``` r
 devtools::load_all(".")
 devtools::wd()
 analyzed_data <- readRDS("not_public/analyzed_data.rds")
 ```
 
 Make offence variables factors. Likewise with info missing variables.
-```{r}
+
+``` r
 library(dplyr)
+```
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
 analyzed_data <-
 analyzed_data %>% 
   mutate_at(.vars = vars(starts_with("o_"), ps_info_missing, ageFirst_missing),
             factor)
 ```
 
-
-```{r}
+``` r
 vars_to_desc <- 
   variable_table$Variable[variable_table$Desciptives %in% c("num", "cat")]
 
@@ -39,7 +50,8 @@ descriptive_stats <-
 ```
 
 Edit
-```{r}
+
+``` r
 descriptive_stats$Table1 <-
   descriptive_stats$Table1 %>% 
   rename(Variable = " ",
@@ -50,20 +62,10 @@ descriptive_stats$Table1 <-
   left_join(variable_table[c("Variable", "Label")], by = "Variable") %>% 
   mutate(Variable = ifelse(is.na(Label), yes = Variable, no = Label)) %>%
   select(1:4)
-
 ```
 
 Save in "/data".
 
-```{r message=FALSE, warning=FALSE}
+``` r
 devtools::use_data(descriptive_stats, overwrite = TRUE)
 ```
-
-
-```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
-
-# Save as .csv
-devtools::wd()
-write.csv2(data.frame(descriptive_stats), "output/descriptive_stats.csv") 
-```
-
