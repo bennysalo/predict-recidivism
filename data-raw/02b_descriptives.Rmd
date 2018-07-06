@@ -67,3 +67,6 @@ devtools::wd()
 write.csv2(data.frame(descriptive_stats), "output/descriptive_stats.csv") 
 ```
 
+```{r}
+sessionInfo()
+```
