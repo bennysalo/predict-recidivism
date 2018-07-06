@@ -1,11 +1,19 @@
 ---
 title: "Training logistic regression models"
 author: "Benny Salo"
-date: "2018-04-12"
+date: "`r format(Sys.Date())`"
 output: github_document
 ---
 
+Load `recidivismsl` which contains `model_grid`.
+
+```{r}
+devtools::load_all(".")
+```
+
+
 Training set is defined in 01_analyzed_data.Rmd
+
 ```{r message=FALSE, warning=FALSE}
 devtools::wd()
 training_set <- readRDS("not_public/training_set.rds")
@@ -20,7 +28,7 @@ glm_grid <- model_grid %>% filter(model_type == "Logistic regression")
 Train each model (rows) in the grid according to specifications in the grid. Place results in the train_result columns (previously intitiated).
 
 (Record how long it takes to run.)
-```{r}
+```{r message=FALSE}
 
 start <- Sys.time()
 
@@ -54,3 +62,6 @@ devtools::wd()
 saveRDS(trained_mods_glm, "not_public/trained_mods_glm.rds")
 ```
 
+```{r}
+sessionInfo()
+```
