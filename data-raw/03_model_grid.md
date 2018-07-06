@@ -1,22 +1,22 @@
----
-title: "Create `model_grid`"
-author: Benny Salo
-output: github_document
-date: "`r format(Sys.Date())`"
----
+Create `model_grid`
+================
+Benny Salo
+2018-07-06
 
-## Setup. Load packages.
+Setup. Load packages.
+---------------------
 
-```{r message=FALSE, warning=FALSE}
+``` r
 devtools::load_all(".") # Loading recidivismsl
 library(dplyr)
 ```
 
-## Create `model_grid`
+Create `model_grid`
+-------------------
 
-Define the levels of outcomes, predictors, and model_type. Convert these vectors into factors with levels in the preferred order.
+Define the levels of outcomes, predictors, and model\_type. Convert these vectors into factors with levels in the preferred order.
 
-```{r}
+``` r
 outcomes   <- c("General recidivism", "Violent recidivism")
 outcomes   <- factor(outcomes, levels = outcomes)
 
@@ -32,10 +32,9 @@ model_grid           <- expand.grid(outcomes, predictors, model_type,
 colnames(model_grid) <- c("outcome", "predictors", "model_type")
 ```
 
-
 Write compact model names
 
-```{r}
+``` r
 model_grid$outc_ <- vector("character", length = nrow(model_grid))
 model_grid$pred_ <- vector("character", length = nrow(model_grid))
 model_grid$modty <- vector("character", length = nrow(model_grid))
@@ -56,23 +55,19 @@ model_grid$modty[model_grid$model_type == "Random forest"]       <- "rf"
 model_grid <- model_grid %>% 
   mutate(model_name = paste0(outc_, pred_, modty)) %>% 
   select(-outc_, -pred_, -modty)
-
 ```
-
 
 Add columns of character strings for outcome (lhs)
 
-```{r}
+``` r
 model_grid$lhs <- vector("character", length = nrow(model_grid))
 model_grid$lhs[model_grid$outcome == "General recidivism"] <- "reoffenceThisTerm"
 model_grid$lhs[model_grid$outcome == "Violent recidivism"] <- "newO_violent"
 ```
 
+Add columns of character strings for predictors (rhs). First, extract sets of predictors from the predefined variable table.
 
-Add columns of character strings for predictors (rhs).
-First, extract sets of predictors from the predefined variable table.
-
-```{r}
+``` r
 predset_static <- 
   variable_table$Variable[variable_table$Role ==     "predictor_static"]
 
@@ -87,13 +82,11 @@ predset_all  <-
   variable_table$Variable[variable_table$Role %in% c("predictor_static",
                                                      "predictor_dynamic",
                                                      "predictor_term")]
-
 ```
 
+Then add these sets to the column `rhs` in model\_grid.
 
-Then add these sets to the column `rhs` in model_grid.
-
-```{r}
+``` r
 model_grid$rhs <- vector("list", length = nrow(model_grid))
 model_grid$rhs[model_grid$predictors == "Static"] <- list(predset_static)
 model_grid$rhs[model_grid$predictors == "Rita"]   <- list(predset_RITA)
@@ -103,16 +96,14 @@ model_grid$rhs[model_grid$predictors == "All including term"] <-
                                                      list(predset_all)
 ```
 
-
 Initiate a column of class `list` to store the results in.
 
-```{r}
+``` r
 model_grid$train_result <- vector("list", length = nrow(model_grid))
 ```
 
-
 Save and make available in `/data`
-```{r message=FALSE}
+
+``` r
 devtools::use_data(model_grid, overwrite = TRUE)
 ```
-
