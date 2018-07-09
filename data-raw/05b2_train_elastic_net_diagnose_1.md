@@ -1,7 +1,14 @@
 Checking first round of glmnet models
 ================
 Benny Salo
-2018-07-06
+2018-07-09
+
+Here we diagnose the results from trained elastic net models. The general pattern is that prediction of violent recidivism is benefited by ridge regression type penalties (alpha = 0) while prediction of general recidivism benefits from more lasso type penalties (alpha = 1).
+
+We update our search by including the best value in this run and values not yet tested that are between the best tested value and adjacent values. In all except the first model this is a search in only one direction since the best tested values are most often either 0 or 1.
+
+Setup
+-----
 
 ``` r
 devtools::load_all(".")
@@ -12,6 +19,14 @@ library(dplyr)
 devtools::wd()
 trained_mods_glmnet <- readRDS("not_public/trained_mods_glmnet.rds")
 ```
+
+Initiate a list to store updated alpha values
+
+``` r
+glmnet_grid$alpha2 <- vector("list", length = nrow(glmnet_grid))
+```
+
+### Functions
 
 Function for finding best performance per alpha value
 
@@ -25,7 +40,7 @@ find_best_per_alpha <- function(model_nr) {
 }
 ```
 
-Function for making printing several summaries
+Function for printing several summaries
 
 ``` r
 diagnose_trained_models <- function(model_nr) {
@@ -34,10 +49,18 @@ diagnose_trained_models <- function(model_nr) {
   print("Best tuning values:")
   print(trained_mods_glmnet[[model_nr]]$bestTune)
   print("Per alpha value:")
-  print(find_best_per_alpha(model_nr))
+  per_alpha_table <- find_best_per_alpha(model_nr)
+  print(per_alpha_table)
+  print(paste("Max - min d:", round(max(per_alpha_table$d) - 
+                                      min(per_alpha_table$d), 3)))
   plot(trained_mods_glmnet[[model_nr]])
 }
 ```
+
+Analyses
+--------
+
+### Model 1
 
 ``` r
 diagnose_trained_models(1)
@@ -58,8 +81,15 @@ diagnose_trained_models(1)
     ## 4   0.6   0.04 0.756 0.0464 0.979
     ## 5   0.8   0.04 0.754 0.0457 0.972
     ## 6   1     0.02 0.754 0.0468 0.971
+    ## [1] "Max - min d: 0.013"
 
 ![](05b2_train_elastic_net_diagnose_1_files/figure-markdown_github/unnamed-chunk-6-1.png)
+
+``` r
+glmnet_grid$alpha2[[1]] <- c(seq(from = 0.05, to = 0.35, by = 0.05))
+```
+
+### Model 2
 
 ``` r
 diagnose_trained_models(2)
@@ -80,8 +110,15 @@ diagnose_trained_models(2)
     ## 4   0.6   0.06 0.716 0.0626 0.807
     ## 5   0.8   0.02 0.716 0.0650 0.808
     ## 6   1     0.02 0.714 0.0648 0.799
+    ## [1] "Max - min d: 0.072"
 
 ![](05b2_train_elastic_net_diagnose_1_files/figure-markdown_github/unnamed-chunk-7-1.png)
+
+``` r
+glmnet_grid$alpha2[[2]] <- c(seq(from = 0, to = 0.15, by = 0.05))
+```
+
+### Model 3
 
 ``` r
 diagnose_trained_models(3)
@@ -102,8 +139,15 @@ diagnose_trained_models(3)
     ## 4   0.6   0.02 0.768 0.0455  1.04
     ## 5   0.8   0.02 0.768 0.0453  1.04
     ## 6   1     0.02 0.768 0.0452  1.04
+    ## [1] "Max - min d: 0.012"
 
 ![](05b2_train_elastic_net_diagnose_1_files/figure-markdown_github/unnamed-chunk-8-1.png)
+
+``` r
+glmnet_grid$alpha2[[3]] <- c(seq(from = 0.85, to = 1, by = 0.05))
+```
+
+### Model 4
 
 ``` r
 diagnose_trained_models(4)
@@ -124,8 +168,15 @@ diagnose_trained_models(4)
     ## 4   0.6   0.02 0.769 0.0493  1.04
     ## 5   0.8   0.02 0.768 0.0491  1.03
     ## 6   1     0.02 0.766 0.0490  1.03
+    ## [1] "Max - min d: 0.037"
 
 ![](05b2_train_elastic_net_diagnose_1_files/figure-markdown_github/unnamed-chunk-9-1.png)
+
+``` r
+glmnet_grid$alpha2[[4]] <- c(seq(from = 0, to = 0.15, by = 0.05))
+```
+
+### Model 5
 
 ``` r
 diagnose_trained_models(5)
@@ -146,8 +197,15 @@ diagnose_trained_models(5)
     ## 4   0.6   0.04 0.794 0.0444  1.16
     ## 5   0.8   0.02 0.795 0.0451  1.16
     ## 6   1     0.02 0.796 0.0447  1.17
+    ## [1] "Max - min d: 0.062"
 
 ![](05b2_train_elastic_net_diagnose_1_files/figure-markdown_github/unnamed-chunk-10-1.png)
+
+``` r
+glmnet_grid$alpha2[[5]] <- c(seq(from = 0.85, to = 1, by = 0.05))
+```
+
+### Model 6
 
 ``` r
 diagnose_trained_models(6)
@@ -168,8 +226,15 @@ diagnose_trained_models(6)
     ## 4   0.6   0.06 0.787 0.0500  1.13
     ## 5   0.8   0.04 0.786 0.0497  1.12
     ## 6   1     0.04 0.784 0.0497  1.11
+    ## [1] "Max - min d: 0.037"
 
 ![](05b2_train_elastic_net_diagnose_1_files/figure-markdown_github/unnamed-chunk-11-1.png)
+
+``` r
+glmnet_grid$alpha2[[6]] <- c(seq(from = 0, to = 0.15, by = 0.05))
+```
+
+### Model 7
 
 ``` r
 diagnose_trained_models(7)
@@ -190,8 +255,15 @@ diagnose_trained_models(7)
     ## 4   0.6   0.04 0.824 0.0392  1.32
     ## 5   0.8   0.02 0.825 0.0395  1.32
     ## 6   1     0.02 0.825 0.0389  1.32
+    ## [1] "Max - min d: 0.092"
 
 ![](05b2_train_elastic_net_diagnose_1_files/figure-markdown_github/unnamed-chunk-12-1.png)
+
+``` r
+glmnet_grid$alpha2[[7]] <- c(seq(from = 0.85, to = 1, by = 0.05))
+```
+
+### Model 8
 
 ``` r
 diagnose_trained_models(8)
@@ -212,5 +284,10 @@ diagnose_trained_models(8)
     ## 4   0.6   0.06 0.795 0.0487  1.16
     ## 5   0.8   0.02 0.794 0.0476  1.16
     ## 6   1     0.02 0.792 0.0480  1.15
+    ## [1] "Max - min d: 0.041"
 
 ![](05b2_train_elastic_net_diagnose_1_files/figure-markdown_github/unnamed-chunk-13-1.png)
+
+``` r
+glmnet_grid$alpha2[[8]] <- c(seq(from = 0, to = 0.15, by = 0.05))
+```
