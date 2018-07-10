@@ -1,7 +1,7 @@
 Create `model_grid`
 ================
 Benny Salo
-2018-07-06
+2018-07-10
 
 Setup. Load packages.
 ---------------------
@@ -94,12 +94,6 @@ model_grid$rhs[model_grid$predictors == "All at start of sentence"] <-
                                                      list(predset_begin)
 model_grid$rhs[model_grid$predictors == "All including term"] <- 
                                                      list(predset_all)
-```
-
-Initiate a column of class `list` to store the results in.
-
-``` r
-model_grid$train_result <- vector("list", length = nrow(model_grid))
 ```
 
 Save and make available in `/data`
