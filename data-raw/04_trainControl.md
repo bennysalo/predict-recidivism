@@ -1,7 +1,7 @@
 Setup of `ctrl_fun_training`
 ================
 Benny Salo
-2018-07-06
+2018-07-10
 
 `ctrl_fun_training` is used when training the models. It is passed to `caret::train` and controls, among other things, what the type of cross-validation to use and what discrimination statistics to calculate. Via `index` we also specify what observations will be used in what fold and make training of different models directly comparable.
 

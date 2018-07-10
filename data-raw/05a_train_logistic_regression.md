@@ -1,7 +1,7 @@
 Training logistic regression models
 ================
 Benny Salo
-2018-07-06
+2018-07-10
 
 Load `recidivismsl` which contains `model_grid`.
 
@@ -63,7 +63,7 @@ time_to_run <- Sys.time() - start
 time_to_run
 ```
 
-    ## Time difference of 4.173817 mins
+    ## Time difference of 2.697491 mins
 
 Save the results as a named list.
 
