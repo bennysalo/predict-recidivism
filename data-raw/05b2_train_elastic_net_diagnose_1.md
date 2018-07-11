@@ -1,7 +1,7 @@
 Checking first round of glmnet models
 ================
 Benny Salo
-2018-07-10
+2018-07-11
 
 Here we diagnose the results from trained elastic net models. The general pattern is that prediction of violent recidivism is benefited by ridge regression type penalties (alpha = 0) while prediction of general recidivism benefits from more lasso type penalties (alpha = 1).
 
