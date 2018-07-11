@@ -32,12 +32,41 @@ predict_test_set<- function(model) {
 # Apply this function to all models in the list
 test_set_predictions <- purrr::map_df(.x = trained_mods_all, 
                                       .f = ~ predict_test_set(.x))
+
+# Add the observed outcomes
+test_set_predictions <- 
+  test_set %>% 
+  select(reoffenceThisTerm, newO_violent) %>% 
+  bind_cols(test_set_predictions)
 ```
 
 Save and make available in /data
 
 ``` r
 devtools::use_data(test_set_predictions, overwrite = TRUE)
+```
+
+### Dataset with predictions and RITA sum vairables
+
+For analyses of incremental predictive validity of RITA sum scores in the test set we will need a dataset with the predictions and the sum scores. We create this below and save it (not made public).
+
+``` r
+predictions_and_RITAsums <- test_set %>%
+  select(sum_economy_problems, sum_alcohol_problems, sum_resistance_change, 
+         sum_drug_related_probl, sum_aggressiveness, sum_employment_probl) %>% 
+  bind_cols(test_set_predictions)
+```
+
+Save in `/not_public`
+
+``` r
+devtools::wd()
+```
+
+    ## Changing working directory to C:/Users/benny_000/Dropbox/AAAKTUELLT/Manuskript 2/A- R -project
+
+``` r
+saveRDS(predictions_and_RITAsums, "not_public/predictions_and_RITAsums.rds")
 ```
 
 Print sessionInfo
