@@ -1,7 +1,7 @@
 Create `glmnet_grid`
 ================
 Benny Salo
-2018-07-06
+2018-07-17
 
 Clear environment. Load previous results from the package.
 
@@ -24,10 +24,6 @@ We seem to need to use the formula method of caret::train for glmnet. (Might be 
 We introduce a new column where we write the formula.
 
 ``` r
-write_formula <- function(lhs, rhs) {
-  as.formula(paste(lhs, "~",  paste(rhs, collapse = " + ")))
-}
-
 glmnet_grid$formula <- 
   purrr::map2(.x = glmnet_grid$lhs, 
               .y = glmnet_grid$rhs,
@@ -38,12 +34,8 @@ Checks. (Could be moved to a test file)
 
 ``` r
 # All entries in glmnet_grid$formula should be formulas
-all(purrr::map(glmnet_grid$formula, class) == "formula")
-```
+stopifnot(all(purrr::map(glmnet_grid$formula, class) == "formula"))
 
-    ## [1] TRUE
-
-``` r
 # All formulas should include the corresponding outcome
 outcome_in_formula <-
   purrr::map2_lgl(
@@ -51,12 +43,8 @@ outcome_in_formula <-
     .y = glmnet_grid$lhs,
     .f = ~ stringr::str_detect(string = .x, pattern = .y)
     )
-all(outcome_in_formula)
-```
+stopifnot(all(outcome_in_formula))
 
-    ## [1] TRUE
-
-``` r
 # The number of plusses in the formula should equal 
 # the number of predictors - 1
 
@@ -70,10 +58,8 @@ n_preds <- purrr::map_dbl(.x = glmnet_grid$rhs,
                       .f = ~ length(.x))
                       
 
-all(n_plusses == n_preds - 1)
+stopifnot(all(n_plusses == n_preds - 1))
 ```
-
-    ## [1] TRUE
 
 We are also going to want to adjust the tested values for parameter alpha. We create a new column for this. The tested values in the first run will be 0, .2, .4, .6, .8, and 1.
 
