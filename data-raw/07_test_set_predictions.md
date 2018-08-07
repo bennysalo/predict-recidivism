@@ -1,7 +1,11 @@
 Predicting recidivism in test set based on models trained on training set
 ================
 Benny Salo
-2018-07-11
+2018-08-07
+
+Here we create /data/test\_set\_predictions.rda. It will contain predictions for the individuals in the test set produced by the trained models. In addition we include the true observed outcomes.
+
+### Setup
 
 ``` r
 rm(list = ls())
@@ -36,7 +40,7 @@ test_set_predictions <- purrr::map_df(.x = trained_mods_all,
 # Add the observed outcomes
 test_set_predictions <- 
   test_set %>% 
-  select(reoffenceThisTerm, newO_violent) %>% 
+  select(reoffenceThisTerm, newO_violent, reoff_category) %>% 
   bind_cols(test_set_predictions)
 ```
 
@@ -61,15 +65,10 @@ Save in `/not_public`
 
 ``` r
 devtools::wd()
-```
-
-    ## Changing working directory to C:/Users/benny_000/Dropbox/AAAKTUELLT/Manuskript 2/A- R -project
-
-``` r
 saveRDS(predictions_and_RITAsums, "not_public/predictions_and_RITAsums.rds")
 ```
 
-Print sessionInfo
+### Print sessionInfo
 
 ``` r
 sessionInfo()
