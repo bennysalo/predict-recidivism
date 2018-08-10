@@ -1,7 +1,7 @@
 Data used for this project
 ================
 Benny Salo
-2018-08-09
+2018-08-10
 
 ``` r
 devtools::load_all(".")
