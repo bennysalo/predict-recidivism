@@ -8,3 +8,5 @@ inst/doc
 not_public
 scraps
 output
+packrat/lib*/
+packrat/src/

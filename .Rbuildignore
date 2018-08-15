@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^data-raw$
 ^not_public$
+^packrat/
+^\.Rprofile$
