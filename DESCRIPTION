@@ -11,10 +11,14 @@ RoxygenNote: 6.1.0
 VignetteBuilder: knitr
 Imports: caret,
     dplyr,
+    furniture,
     ggplot2,
     ggthemes,
     pROC,
     stringr
-Suggests: testthat,
-    knitr,
-    markdown
+Suggests: knitr,
+    markdown,
+    readr, 
+    testthat
+    
+    
