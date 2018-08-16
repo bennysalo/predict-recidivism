@@ -260,6 +260,7 @@ model_names_main <-
   select(model_name) %>% 
   purrr::as_vector(.type = "character") 
 
+# This should not be a named vector
 names(model_names_main) <- NULL
 
 devtools::use_data(model_names_main, overwrite = TRUE)
