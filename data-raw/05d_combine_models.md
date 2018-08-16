@@ -1,15 +1,15 @@
 Combine the best models of each type
 ================
 Benny Salo
-2018-07-10
+2018-08-16
 
-Load the best models. That is the last updated models.
+Load the best models for each algorithm type. That is, the last updated models.
 
 ``` r
 devtools::wd()
 trained_mods_glm    <- readRDS("not_public/trained_mods_glm.rds")
-trained_mods_glmnet <- readRDS("not_public/trained_mods_glmnet3.rds")
-trained_mods_rf     <- readRDS("not_public/trained_mods_rf2.rds")
+trained_mods_glmnet <- readRDS("not_public/trained_mods_glmnet.rds")
+trained_mods_rf     <- readRDS("not_public/trained_mods_rf_1.rds")
 ```
 
 Combine all models.
