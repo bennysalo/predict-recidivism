@@ -1,22 +1,12 @@
 ---
 title: "Discrimination of trained models"
-author: "Benny Salo"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: github_document
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
+## Setup
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 devtools::load_all(".")
 library(tidyverse)
 ```
@@ -226,7 +216,7 @@ write.csv2(best_models_tbl, "output/best_models_tbl.csv")
 
 # The value of customization
 
-We believe that the good performance of the models is partly due to the customization of weights in the models. To illustrate this we predict a form of recidivism that the models are not trained to predict. That is we let general recidivism be predicted by models that are traind to predict violent recidivism and vice versa.
+We believe that the good performance of the models is partly due to the customization of weights in the models. To illustrate this we predict a form of recidivism that the models are not trained to predict. That is we let general recidivism be predicted by models that are trained to predict violent recidivism and vice versa.
 
 ```{r}
 cross_pred_G_by_V <- map(.x = test_set_predictions[model_names_V],
@@ -252,5 +242,9 @@ cross_pred_tbl <- data.frame(model = names(cross_pred_ci_list),
                              cross_pred_tbl)
 
 
+```
+### Print sessionInfo
+```{r}
+sessionInfo()
 ```
 
