@@ -1,7 +1,7 @@
 Create `model_grid`
 ================
 Benny Salo
-2018-08-15
+2018-08-16
 
 Here we create the data frame `model_grid`. It describes all the models we want to run. We will select subsets of this models grid when when training using different algorithms.
 
@@ -250,3 +250,19 @@ Save and make available in `/data`
 ``` r
 devtools::use_data(model_grid, overwrite = TRUE)
 ```
+
+Extract model names of main analyses. Used to filter out results for main analyses in /analyses\_of\_results
+
+``` r
+model_names_main <-
+  model_grid %>%
+  filter(analysis == "Main analyses") %>%
+  select(model_name) %>% 
+  purrr::as_vector(.type = "character") 
+
+names(model_names_main) <- NULL
+
+devtools::use_data(model_names_main, overwrite = TRUE)
+```
+
+    ## Saving model_names_main as model_names_main.rda to C:/Users/benny_000/Dropbox/AAAKTUELLT/Manuskript 2/A- R -project/data
