@@ -8,13 +8,14 @@ output: github_document
 
 ```{r message=FALSE, warning=FALSE}
 devtools::load_all(".")
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 ```
 
 
 # Training set
 
-The package comes with the data frame `model_AUCs_training_set`. This is created by the function caret::resamples and can be used with caret functions to display the discrimination numbers in the 10 repeated 10-fold cross-validations. For example, we can make a box plot of all 100 AUV values for the 24 models.
+Available in the /data folder of the package is the data frame `model_AUCs_training_set`. This is created by the function caret::resamples and can be used with caret functions to display the discrimination numbers in the 10 repeated 10-fold cross-validations. For example, we can make a box plot of all 100 AUV values for the 24 models.
 
 ```{r message=FALSE}
 library(caret)
@@ -25,8 +26,10 @@ Model names can be looked up in the model_grid
 ```{r}
 model_desc <- model_grid[c("model_name", "outcome", 
                            "predictors", "model_type")]
-model_desc
+knitr::kable(model_desc)
 ```
+
+## Discrimination in cross validated training set: `auc_tbl_cv`
 
 The discrimination varies widely over the 100 cross-validation sets for all models. We are interested in the mean and standard errors of these.
 
@@ -35,10 +38,11 @@ We create a table of confidence intervals for the cross-validation results. The 
 Confidence interval is calculated by first transforming AUC-values to logits of the AUC-values. After calculation of mean, and confidence intervals for the logit they are transformed back to AUC-values.
 
 ```{r}
+# Functions from dplyr used (select, mutate, group_by, summarise)
 auc_tbl_cv <-
 model_AUCs_training_set$values %>% 
   select(Resample, ends_with(match = "ROC")) %>% 
-  gather(-Resample, key = model, value = ROC) %>%
+  tidyr::gather(-Resample, key = model, value = ROC) %>%
   mutate(logit_ROC = log(ROC / (1-ROC))) %>% 
   group_by(model) %>% 
   summarise(n = n(),
@@ -50,40 +54,45 @@ model_AUCs_training_set$values %>%
             ci_lo_cv   = exp(ci_lo_logit) / (1 + exp(ci_lo_logit)),
             ci_hi_cv   = exp(ci_hi_logit) / (1 + exp(ci_hi_logit))) %>% 
   select(model, mean_auc_cv, ci_lo_cv, ci_hi_cv) %>% 
-  mutate(model = as.factor(str_replace(model, pattern = "~ROC", "")))
+  mutate(model = stringr::str_replace(model, pattern = "~ROC", ""))
 
 ```
-The data frame `auc_tbl_cv` contains the mean AUC with 95% confidence intervals for all 24 models.
+The data frame `auc_tbl_cv` contains the mean AUC with 95% confidence intervals for all models in the model grid. 
 
-# Test set
+## Discrimination in test set: `auc_tbl_ts`
 
-Using the package `pROC` we can calculate the AUC with confidence intervals. For this we need the observed outcomes and the predicted probabilities. The predicted probabilities are included in the package in the data frame `test_set_predictions`.
+Using the package `pROC` we can calculate the AUC with confidence intervals. For this we need the observed outcomes and the predicted probabilities. The predicted probabilities are included in the package in the data frame `test_set_predictions` (in the /data folder).
 
 We use bootstrap to calculate the confidence intervals which means this chunk takes a few minutes to run.
 ```{r}
-library(pROC)
 # Get the names of predictions of violent and generalised recidivism seperately.
-model_names_G <- str_subset(names(test_set_predictions), pattern = "gen_") 
-model_names_V <- str_subset(names(test_set_predictions), pattern = "vio_") 
+model_names_G <- stringr::str_subset(names(test_set_predictions), 
+                                     pattern = "gen_") 
+model_names_V <- stringr::str_subset(names(test_set_predictions), 
+                                     pattern = "vio_") 
 
 # Do ROC analysis using predictions with the relevant outcome
 # First all predictions of general recidivism
 # (ts stands for 'test set')
-roc_list_ts_G <- map(.x = test_set_predictions[model_names_G],
-                   .f = ~roc(test_set_predictions$reoffenceThisTerm, .x))
+roc_list_ts_G <- 
+  purrr::map(.x = test_set_predictions[model_names_G],
+             .f = ~ pROC::roc(test_set_predictions$reoffenceThisTerm, .x))
 
 # Then all predictions of violent recidivism
-roc_list_ts_V <- map(.x = test_set_predictions[model_names_V],
-                   .f = ~roc(test_set_predictions$newO_violent, .x))
+roc_list_ts_V <- 
+  purrr::map(.x = test_set_predictions[model_names_V],
+             .f = ~ pROC::roc(test_set_predictions$newO_violent, .x))
+
 # Combine the two lists
 roc_list_ts   <- c(roc_list_ts_G, roc_list_ts_V)
 
 # Bootstrap confidence intervals for all AUC-values
 set.seed(2803)
-auc_ci_list   <- map(roc_list_ts, 
-                     .f = ~pROC::ci.auc(.x, 
-                                        method = "bootstrap", 
-                                        progress = "none"))
+auc_ci_list   <- 
+  purrr::map(roc_list_ts,
+             .f = ~ pROC::ci.auc(.x,
+             method = "bootstrap",
+             progress = "none"))
 
 
 ```
@@ -99,17 +108,18 @@ get_ci <- function(ci.auc_result) {
 }
 
 # Apply this function to all results in 'the 'auc_tbl_ts'
-auc_tbl_ts <- map_df(auc_ci_list, get_ci)
+auc_tbl_ts <- purrr::map_df(auc_ci_list, get_ci)
 
 # Amend the data frame with the names of the models
-auc_tbl_ts <- data.frame(model = names(auc_ci_list), auc_tbl_ts)
+auc_tbl_ts <- data.frame(model = names(auc_ci_list), auc_tbl_ts,
+                         stringsAsFactors = FALSE)
 ```
 
-# Join tables
-We join the tables with AUC-values in training and test set and then join these to the descriptive columns i model_grid.
+## Join tables `auc_tbl_cv` and `auc_tbl_ts`
+We join the tables with AUC-values in *training set* and *test set* and then join these to the descriptive columns i model_grid.
 
 ```{r}
-auc_tbl <- full_join(auc_tbl_cv, auc_tbl_ts, by = "model") %>% 
+auc_tbl <- dplyr::full_join(auc_tbl_cv, auc_tbl_ts, by = "model") %>% 
   full_join(model_desc, auc_tbl, by = c("model" = "model_name"))
 ```
 
@@ -135,10 +145,27 @@ auc_tbl <- auc_tbl %>%
          d_ts = calc_d_from_AUC(auc_ts))
 ```
 
+The `auc_tbl`now contains discimination values for all 36 models. Many of the following analyses focus on the main analyses excluding models with a single RITA-factor as predictor. We therfore create a seperate tables with just main analyses (`auc_tbl_mains`) and a table with just the analyses of RITA-dimensions (`auc_tbl_dims`).
+
+```{r}
+# Extract model names of main analyses
+model_names_main <-
+  model_grid %>%
+  filter(analysis == "Main analyses") %>%
+  select(model_name) %>% 
+  purrr::as_vector(.type = "character")
+
+# Filter auc_tbl
+auc_tbl_mains <- filter(auc_tbl, model %in% model_names_main)
+auc_tbl_dims  <- filter(auc_tbl, !(model %in% model_names_main))
+```
+
+## Discrimination in main analyses
+
 We can compare the average Cohen's d between different model types
 ```{r}
 mean_perf_by_type <-
-auc_tbl %>% 
+auc_tbl_mains %>% 
   group_by(model_type) %>% 
   summarise(mean(d_cv), mean(d_ts))
 
@@ -154,10 +181,10 @@ mean_perf_by_type %>% filter(model_type == "Elastic net") %>%
 ```
 
 
-# Figure 1
+### Figure 1
 
 ```{r}
-auc_plot <- auc_tbl %>% 
+auc_plot <- auc_tbl_mains %>% 
   ggplot(aes(x = auc_ts, y = mean_auc_cv)) + 
   geom_point(aes(shape = predictors), size = 3) +
   geom_errorbar(aes(ymin = ci_lo_cv, ymax = ci_hi_cv)) +
@@ -179,39 +206,38 @@ auc_plot
 ```
 
 
-
-
-
-
-
-# Table 2
+## Table 2
 
 Below we filter out the model with the best discrimination in the training set for each outcome - predictor set pair. We select the columns we report in Table 2 of the manuscript.
 
 ```{r}
-best_models_tbl <-
-  auc_tbl %>% 
+aus_tbl_best_mains <-
+  auc_tbl_mains %>% 
   group_by (outcome, predictors) %>% 
   filter(mean_auc_cv == max(mean_auc_cv)) %>% 
-  arrange(outcome, mean_auc_cv) %>% 
-  select(outcome, predictors, 
-         mean_auc_cv, ci_lo_cv, ci_hi_cv, d_cv,
-         auc_ts, ci_lower_ts, ci_upper_ts, d_ts, 
-         model_type) %>% 
-  mutate_at(.vars = c(1:8), .funs = round, digits = 3) %>% 
-  mutate_at(.vars = vars(d_cv, d_ts), .funs = round, digits = 2)
+  arrange(outcome, mean_auc_cv) 
+
+table2 <- 
+  bind_rows(aus_tbl_best_mains, auc_tbl_dims) %>% 
+    arrange(outcome) %>% 
+    select(outcome, predictors, 
+           mean_auc_cv, ci_lo_cv, ci_hi_cv, d_cv,
+           auc_ts, ci_lower_ts, ci_upper_ts, d_ts, 
+           model_type) %>% 
+    mutate_at(.vars = c(3:10), .funs = round, digits = 3) %>% 
+    mutate_at(.vars = vars(d_cv, d_ts), .funs = round, digits = 2)
 
 
 ```
 
 Print
 ```{r}
-knitr::kable(best_models_tbl)
+knitr::kable(table2)
 ```
 
 ```{r eval=FALSE, include=FALSE}
 devtools::wd()
-write.csv2(best_models_tbl, "output/best_models_tbl.csv")
+write.csv2(table2, "output/table2.csv")
 ```
 
 # The value of customization
@@ -219,27 +245,31 @@ write.csv2(best_models_tbl, "output/best_models_tbl.csv")
 We believe that the good performance of the models is partly due to the customization of weights in the models. To illustrate this we predict a form of recidivism that the models are not trained to predict. That is we let general recidivism be predicted by models that are trained to predict violent recidivism and vice versa.
 
 ```{r}
-cross_pred_G_by_V <- map(.x = test_set_predictions[model_names_V],
-                   .f = ~roc(test_set_predictions$reoffenceThisTerm, .x))
+cross_pred_G_by_V <- 
+  purrr::map(.x = test_set_predictions[model_names_V],
+             .f = ~ pROC::roc(test_set_predictions$reoffenceThisTerm, .x))
 
 
-cross_pred_V_by_G <- map(.x = test_set_predictions[model_names_G],
-                   .f = ~roc(test_set_predictions$newO_violent, .x))
+cross_pred_V_by_G <- 
+  purrr::map(.x = test_set_predictions[model_names_G],
+             .f = ~ pROC::roc(test_set_predictions$newO_violent, .x))
 
 cross_pred_list <- c(cross_pred_G_by_V, cross_pred_V_by_G)
 
 # We use the same seed as in the correct analyses 
 set.seed(2803)
-cross_pred_ci_list   <- map(cross_pred_list, 
-                     .f = ~pROC::ci.auc(.x, 
-                                        method = "bootstrap", 
-                                        progress = "none"))
+cross_pred_ci_list <- 
+  purrr::map(cross_pred_list,
+             .f = ~ pROC::ci.auc(.x,
+             method = "bootstrap",
+             progress = "none"))
 
 
-cross_pred_tbl <- map_df(cross_pred_ci_list, get_ci)
+cross_pred_tbl <- 
+  purrr::map_df(cross_pred_ci_list, get_ci)
 
-cross_pred_tbl <- data.frame(model = names(cross_pred_ci_list),
-                             cross_pred_tbl)
+cross_pred_tbl <- 
+  data.frame(model = names(cross_pred_ci_list), cross_pred_tbl)
 
 
 ```
