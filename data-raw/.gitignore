@@ -2,3 +2,4 @@ writing_csv_file_with_predictors.R
 variable_table.csv
 variables.csv
 *.Rmd
+*.html
