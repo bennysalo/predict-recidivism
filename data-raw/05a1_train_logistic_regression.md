@@ -1,7 +1,7 @@
 Training logistic regression models
 ================
 Benny Salo
-2018-08-15
+2018-08-16
 
 Load `recidivismsl` which contains `model_grid`.
 
@@ -99,10 +99,12 @@ time_to_run <- Sys.time() - start
 time_to_run
 ```
 
-    ## Time difference of 9.525014 mins
+    ## Time difference of 3.184334 mins
+
+Name the trained models accoring to the names in the grid used to specify models.
 
 ``` r
-names(trained_mods_glm) <- glm_grid$model_names
+names(trained_mods_glm) <- glm_grid$model_name
 ```
 
 ``` r
