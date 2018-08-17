@@ -148,13 +148,6 @@ auc_tbl <- auc_tbl %>%
 The `auc_tbl`now contains discimination values for all 36 models. Many of the following analyses focus on the main analyses excluding models with a single RITA-factor as predictor. We therfore create a seperate tables with just main analyses (`auc_tbl_mains`) and a table with just the analyses of RITA-dimensions (`auc_tbl_dims`).
 
 ```{r}
-# Extract model names of main analyses
-model_names_main <-
-  model_grid %>%
-  filter(analysis == "Main analyses") %>%
-  select(model_name) %>% 
-  purrr::as_vector(.type = "character")
-
 # Filter auc_tbl
 auc_tbl_mains <- filter(auc_tbl, model %in% model_names_main)
 auc_tbl_dims  <- filter(auc_tbl, !(model %in% model_names_main))
