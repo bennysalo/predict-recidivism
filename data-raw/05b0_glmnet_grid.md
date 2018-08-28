@@ -1,7 +1,7 @@
 Create `glmnet_grid`
 ================
 Benny Salo
-2018-08-15
+2018-08-28
 
 Clear environment. Load previous results from the package.
 
@@ -61,19 +61,19 @@ n_preds <- purrr::map_dbl(.x = glmnet_grid$rhs,
 stopifnot(all(n_plusses == n_preds - 1))
 ```
 
-We are also going to want to adjust the tested values for parameter alpha. We create a new column for this. The tested values in the first run will be 0, .2, .4, .6, .8, and 1.
+We are also going to want to adjust the tested values for parameter alpha. We create a new column for this. The tested values in the first run will be values between 0 and 1 with an interval of 0.1.
 
 ``` r
 glmnet_grid$alpha <- vector("list", nrow(glmnet_grid))
 glmnet_grid$alpha <- purrr::map(.x = glmnet_grid$alpha, 
-                                .f = ~c(0, 0.2, 0.4, 0.6, 0.8, 1))
+                                .f = ~seq(0, 1, by = 0.1))
 ```
 
 Checks
 
 ``` r
 stopifnot(length(glmnet_grid$alpha) == 8,
-          all(purrr::map(glmnet_grid$alpha, length) == 6),
+          all(purrr::map(glmnet_grid$alpha, length) == 11),
           all(purrr::map(glmnet_grid$alpha, class) == "numeric"))
 ```
 
