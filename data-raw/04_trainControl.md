@@ -99,7 +99,7 @@ ctrl_fun_training_1 <- caret::trainControl(
   repeats = 1,
   summaryFunction = my_twoClassSummary_1,
   classProbs = TRUE,
-  verboseIter = TRUE,
+  verboseIter = FALSE,
   savePredictions = "final",
   index = one_by_ten_folds,
   returnData = FALSE
@@ -113,7 +113,7 @@ ctrl_fun_training_2 <- caret::trainControl(
   repeats = 10,
   summaryFunction = my_twoClassSummary_2,
   classProbs = TRUE,
-  verboseIter = TRUE,
+  verboseIter = FALSE,
   savePredictions = "final",
   index = ten_by_ten_folds,
   returnData = FALSE
