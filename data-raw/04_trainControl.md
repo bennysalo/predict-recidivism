@@ -1,9 +1,15 @@
 Setup of `ctrl_fun_training`
 ================
 Benny Salo
-2018-08-15
+2018-08-28
 
-`ctrl_fun_training` is used when training the models. It is passed to `caret::train` and controls, among other things, what the type of cross-validation to use and what discrimination statistics to calculate. Via `index` we also specify what observations will be used in what fold and make training of different models directly comparable.
+Control functions `ctrl_fun_training_1` and `ctrl_fun_training_2` are used when training the models. It is passed to `caret::train` and controls, among other things, what the type of cross-validation to use and what discrimination statistics to calculate. Via `index` we also specify what observations will be used in what fold and make training of different models directly comparable.
+
+We create two different control functions:
+
+`ctrl_fun_training_1` - is used for the first search for the best tuning parameters - uses only one repeat of a ten-fold cross-validation - collects ROC and logLoss through the summary function but no calibration figures
+
+`ctrl_fun_training_2` - is used for further narrowing in on the best tuning parameters - uses ten repeats of a ten-fold cross-validation - collects ROC and logLoss and calibration figures through the summary function - is considerably slower (more than ten times)
 
 ``` r
 devtools::wd()
@@ -16,26 +22,109 @@ Create ten repeats of ten folds for cross-validation.
 set.seed(120418)
 ten_by_ten_folds <- 
   caret::createMultiFolds(y = training_set$reoffenceThisTerm, k = 10, times = 10)
+
+one_by_ten_folds <- 
+  caret::createMultiFolds(y = training_set$reoffenceThisTerm, k = 10, times = 1)
 ```
 
-Now set up the cross validation schemes using these folds.
+We write custom made summary functions. We select ROC from caret::twoClassSummary (and disregard sensitivity and specificity, at cutoff 0.5, also provided by that function) and the logLoss from caret::mnLogLoss. This will be used in the first control function.
 
 ``` r
-ctrl_fun_training <- caret::trainControl(
+my_twoClassSummary_1 <- function(data, lev = NULL, model = NULL) {
+  c(
+    caret::twoClassSummary(data = data, lev = lev, model = model)["ROC"],
+    caret::mnLogLoss(data = data, lev = lev, model = model)
+    )
+}
+```
+
+The folowing summary function used code used in the caret functions and adds code to calculate Hosmer-Lemeshow chis-squared using three groups and E/O-values for those groups. This will be used in the second control function.
+=================================================================================================================================================================================================================================
+
+``` r
+my_twoClassSummary_2 <- function (data, lev = NULL, model = NULL)
+{
+  lvls <- levels(data$obs)
+  if(length(lvls) > 2)
+    stop(paste("Your outcome has", length(lvls),
+               "levels. The twoClassSummary() function isn't appropriate."))
+  # requireNamespaceQuietStop('ModelMetrics')
+  if (!all(levels(data[, "pred"]) == lvls))
+    stop("levels of observed and predicted data do not match")
+  
+  # Customized code
+  observations_binary <- ifelse(data$obs == lev[2], 1, 0)
+  predicted_values    <- data[, lvls[2]]
+  
+  rocAUC  <- ModelMetrics::auc(actual    = observations_binary,
+                               predicted = predicted_values)
+                               
+  logLoss <- ModelMetrics::logLoss(actual    = observations_binary,
+                                   predicted = predicted_values)
+  HL_test <- ResourceSelection::hoslem.test(x = observations_binary,
+                                            y = predicted_values,
+                                            g = 3)
+
+  make_table_tbl <- function(my_table) {
+    my_tbl <- as.data.frame(my_table)
+    my_tbl <- tidyr::spread(my_tbl, key = Var2, value = Freq)
+    return(my_tbl)
+  }
+
+  expected <- make_table_tbl(HL_test$expected)
+  observed <- make_table_tbl(HL_test$observed)
+
+  e_o_ratios <- expected$yhat1 / observed$y1
+
+  expect_ps <- expected$yhat1 / (expected$yhat0 + expected$yhat1)
+
+  out <- c(ROC = rocAUC,
+           logLoss = logLoss,
+           HL_chisq = HL_test$statistic,
+           EO_1 = e_o_ratios[1], EO_2 = e_o_ratios[2], EO_3 = e_o_ratios[3],
+           e_p_1 = expect_ps[1], e_p_2 = expect_ps[2], e_p_3 = expect_ps[3],
+           abs_log_eo = exp(sum(abs(log(e_o_ratios)))/3))
+  
+  names(out)[3] <- "HL_chisq"
+  return(out)
+}
+```
+
+Now set up the cross validation schemes using these folds and the summary function
+
+``` r
+ctrl_fun_training_1 <- caret::trainControl(
+  method = "repeatedcv",
+  number = 10,
+  repeats = 1,
+  summaryFunction = my_twoClassSummary_1,
+  classProbs = TRUE,
+  verboseIter = TRUE,
+  savePredictions = "final",
+  index = one_by_ten_folds,
+  returnData = FALSE
+  )
+```
+
+``` r
+ctrl_fun_training_2 <- caret::trainControl(
   method = "repeatedcv",
   number = 10,
   repeats = 10,
-  summaryFunction = caret::twoClassSummary,
+  summaryFunction = my_twoClassSummary_2,
   classProbs = TRUE,
-  verboseIter = FALSE,
+  verboseIter = TRUE,
   savePredictions = "final",
   index = ten_by_ten_folds,
   returnData = FALSE
   )
 ```
 
+Save control functions
+
 ``` r
-devtools::use_data(ctrl_fun_training, overwrite = TRUE)
+devtools::use_data(ctrl_fun_training_1, overwrite = TRUE)
+devtools::use_data(ctrl_fun_training_2, overwrite = TRUE)
 ```
 
 ``` r
