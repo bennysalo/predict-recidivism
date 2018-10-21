@@ -1,7 +1,7 @@
 ---
 title: "Table 1"
 date: "`r Sys.Date()`"
-output: html_document
+output: github_document
 ---
 
 Mean (and standard deviation) or frequency (and percentage) for all predictors by reoffense category.

@@ -1,6 +1,6 @@
 Table 1
 ================
-2018-10-11
+2018-10-21
 
 Mean (and standard deviation) or frequency (and percentage) for all predictors by reoffense category.
 
