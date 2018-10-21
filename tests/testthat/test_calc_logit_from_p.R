@@ -31,5 +31,11 @@ test_that("logit of 0 and 1 fails when there is no offset", {
                "Probability is 0 or 1, for which logit cannot be calculated")
 })
 
+test_that("calc_p_form_logit and calc_logit_from_p are inverse functions", {
+  expect_equal(c(0.1, 0.5, 0.7),
+               calc_p_from_logit(calc_logit_from_p(c(0.1, 0.5, 0.7))))
+  expect_equal(c(-2, 0, 1),
+               calc_logit_from_p(calc_p_from_logit(c(-2, 0, 1))))
 
+})
 
