@@ -1,0 +1,79 @@
+---
+title: "Incremental validity in d"
+output: html_notebook
+---
+
+## Function
+
+```{r}
+R2_difference_in_d <- function(better_mod, worse_mod, 
+                               resamples = model_perfs_training_set1000) {
+  
+  data_frame(
+      R2_b = resamples$values[[better_mod]],
+      R2_w = resamples$values[[worse_mod]]
+  ) %>% 
+  mutate(better_d = calc_d_from_R2(R2_b),
+         worse_d  = calc_d_from_R2(R2_w),
+         diff_d   = better_d - worse_d) %>% 
+  summarise(median_diff_d = median(diff_d),
+            LL            = quantile(diff_d, 0.025),
+            UL            = quantile(diff_d, 0.975),
+            p             = mean(diff_d < 0))
+}
+```
+
+## Comparing algorithm types
+
+```{r}
+compared_models <- model_grid %>% 
+  filter(analysis == "Main analyses" & model_type != "Logistic regression") %>% 
+  select(model_name) %>% 
+  purrr::as_vector()
+
+
+a <- data_frame(glmnet_mod = stringr::str_subset(compared_models, "glmnet"),
+           rf_mod     = stringr::str_subset(compared_models, "rf")) %>% 
+  mutate(glmnet_mod = paste0(glmnet_mod, "~McF_R2"),
+         rf_mod     = paste0(rf_mod, "~McF_R2")) 
+
+cbind(a, 
+      purrr::map2_df(.x = a$glmnet_mod, 
+                     .y = a$rf_mod, 
+                     .f = ~R2_difference_in_d(.x, .y)))
+```
+
+## Comparing predictor sets
+
+
+```{r}
+incremental_mod <- c("gen_stat_glmnet",
+                     "gen_bgnn_glmnet",
+                     "gen_allp_glmnet",
+                     
+                     "vio_stat_glmnet",
+                     "vio_bgnn_glmnet",
+                     "vio_allp_glmnet")
+
+baseline_mod    <- c("gen_rita_glmnet",
+                     "gen_stat_glmnet",
+                     "gen_bgnn_glmnet",
+                     
+                     "vio_rita_glmnet",
+                     "vio_stat_glmnet",
+                     "vio_bgnn_glmnet")
+
+b <- data_frame(incr = incremental_mod,
+                base = baseline_mod) %>% 
+      mutate(incr = paste0(incr, "~McF_R2"),
+             base = paste0(base, "~McF_R2")) 
+
+cbind(b, 
+      purrr::map2_df(.x = b$incr, 
+                     .y = b$base, 
+                     .f = ~R2_difference_in_d(.x, .y))) %>% 
+  mutate_at(3:6, round, 3)
+
+
+```
+

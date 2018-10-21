@@ -1,0 +1,199 @@
+---
+title: "Table 2"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+Table 2 displays the Estimated test discimination and Conditional test discimination of the Elastic net models for all predictor sets. For single dimensions the model is ordinary univariate logistic regression.
+
+
+
+## Setup
+
+```{r message=FALSE, warning=FALSE}
+devtools::load_all(".")
+library(dplyr)
+library(ggplot2)
+```
+
+
+
+## Discrimination in cross validated training set: `auc_tbl_cv`
+
+The discrimination varies widely over the 1000 cross-validation sets for all models. We are interested in the means and percentile confidence interval.
+
+(This is similar to a bootstrap except that we explicitely specify the number of observations, and base rate for the outcome in each validation set. All observations are also used as part of a validation set the same number of times.)
+
+The mean is calculated by first transforming AUC-values to logits of the AUC-values, then taking the mean and tranforiming it back to a AUC-value. Confidence intervals are simply the percentiles 2.5 and 97.5 of the 1000 AUC-values.
+
+```{r}
+# Functions from dplyr used (select, mutate, group_by, summarise)
+auc_tbl_cv <-
+model_perfs_training_set1000$values %>% 
+  select(Resample, ends_with(match = "ROC")) %>% 
+  tidyr::gather(-Resample, key = model, value = ROC) %>%
+  mutate(logit_ROC = log(ROC / (1-ROC))) %>% 
+  group_by(model) %>% 
+  summarise(mean_logit  = mean(logit_ROC),
+            mean_auc_cv = exp(mean_logit)  / (1 + exp(mean_logit)),
+            ci95_LL_cv    = quantile(ROC, probs = 0.025),
+            ci95_UL_cv   = quantile(ROC, probs = 0.975)) %>% 
+  # Remove the column `mean_logit` 
+  select(-mean_logit) %>% 
+  # Remove ~ROC from the end of the model name
+  mutate(model = stringr::str_replace(model, pattern = "~ROC", ""))
+
+```
+The data frame `auc_tbl_cv` contains the mean AUC with 95% confidence intervals for all models in the model grid. 
+
+## Discrimination in test set: `auc_tbl_ts`
+
+Using the package `pROC` we can calculate the AUC with confidence intervals. For this we need the observed outcomes and the predicted probabilities. The predicted probabilities are included in the package in the data frame `test_set_predictions` (in the /data folder).
+
+We use bootstrap to calculate the confidence intervals which means this chunk takes a few minutes to run.
+```{r}
+# Get the names of predictions of violent and generalised recidivism seperately.
+model_names_G <- stringr::str_subset(names(test_set_predictions), 
+                                     pattern = "gen_") 
+model_names_V <- stringr::str_subset(names(test_set_predictions), 
+                                     pattern = "vio_") 
+
+# Do ROC analysis using predictions with the relevant outcome
+# First all predictions of general recidivism
+# (ts stands for 'test set')
+roc_list_ts_G <- 
+  purrr::map(.x = test_set_predictions[model_names_G],
+             .f = ~ pROC::roc(test_set_predictions$reoffenceThisTerm, .x))
+
+# Then all predictions of violent recidivism
+roc_list_ts_V <- 
+  purrr::map(.x = test_set_predictions[model_names_V],
+             .f = ~ pROC::roc(test_set_predictions$newO_violent, .x))
+
+# Combine the two lists
+roc_list_ts   <- c(roc_list_ts_G, roc_list_ts_V)
+
+# Bootstrap confidence intervals for all AUC-values
+set.seed(2803)
+auc_ci_list   <- 
+  purrr::map(roc_list_ts,
+             .f = ~ pROC::ci.auc(.x,
+             method = "bootstrap",
+             progress = "none"))
+
+
+```
+The results are at this point stored in a list (`auc_ci_list`). The following chunk places them in data_frame that we call `auc_tbl_ts`
+
+```{r}
+#(_ts stands for "test set")
+# Create a function to extract auc and its confidence interval
+get_ci <- function(ci.auc_result) {
+  data_frame(auc_ts      = ci.auc_result[2], 
+             ci95_LL_ts = ci.auc_result[1], 
+             ci95_UL_ts = ci.auc_result[3])
+}
+
+# Apply this function to all results in 'the 'auc_tbl_ts'
+auc_tbl_ts <- purrr::map_df(auc_ci_list, get_ci)
+
+# Amend the data frame with the names of the models
+auc_tbl_ts <- data.frame(model = names(auc_ci_list), auc_tbl_ts,
+                         stringsAsFactors = FALSE)
+```
+
+## Join tables `auc_tbl_cv` and `auc_tbl_ts`
+We join the tables with AUC-values in *training set* and *test set* and then join these to the descriptive columns i model_grid.
+
+```{r}
+model_desc <- model_grid[c("model_name", "outcome", 
+                           "predictors", "model_type")]
+
+auc_tbl <- dplyr::full_join(auc_tbl_cv, auc_tbl_ts, by = "model") %>% 
+  full_join(model_desc, auc_tbl, by = c("model" = "model_name"))
+```
+
+We add to this table figures for Cohen's d calculated from AUC using a formula in Table 1 in Ruscio (2008): $d = \sqrt2 \phi^{-1}CL$ where CL refers to "Common Language Effect Size" which in this case is the same as AUC and $\phi^{-1}$ is the inverse of the normal cumulative distribution function (i.e. the z-score that correspond to a cumulative percentage in a normal distribution). 
+
+This is the formula assuming equal group sizes. This assumption does not hold for violent recidivism but retains the property of AUC of not being affected by base rates and thus makes comparison between violent and general recidivism more straight forward. 
+
+Cohen's d has the advantage over AUC in that it is an effect size that is linear. With that I mean that the difference between d = 0.1 and d = 0.2 is the same as the difference between d = 1.1 and d = 1.2. On the contrary, the difference between AUC = 0.60 and AUC = 0.65 is smaller than the difference between AUC = 0.90 and AUC = 0.95. This makes d more convinient for comparisons between pairs of models.
+
+The function below can be used to transform any AUC value to Cohen's d.
+
+```{r}
+calc_d_from_AUC <- function(AUC) {
+  sqrt(2) * qnorm(AUC) 
+}
+```
+
+We add Cohen's d calculated from the mean AUC in the training set and the estimated AUC in the test set.
+
+```{r}
+auc_tbl <- auc_tbl %>% 
+  mutate(d_cv = calc_d_from_AUC(mean_auc_cv),
+         d_ts = calc_d_from_AUC(auc_ts))
+```
+Sort the columns and then the rows according to outcome, predictors, model_type
+
+```{r}
+auc_tbl <- auc_tbl %>% 
+  select(outcome, predictors, model_type, 
+         mean_auc_cv, ci95_LL_cv, ci95_UL_cv, d_cv,
+         auc_ts, ci95_LL_ts, ci95_UL_ts, d_ts, 
+         model) %>% 
+  arrange(outcome, predictors, model_type)
+```
+
+
+
+The `auc_tbl`now contains discimination values for all 36 models. In Table 2 we display the ealstic net models and the logistic regression models with simgle RITA-dimensions. We filter `auc_tbl` accordingly.
+
+```{r}
+
+table2_models <- model_grid %>% 
+  filter(model_type == "Elastic net" | analysis == "Dimension analyses") %>% 
+  select(model_name) %>% 
+  purrr::as_vector()
+
+
+# Filter auc_tbl
+table_2 <- filter(auc_tbl, model %in% table2_models)
+```
+
+We edit Table 2 below. Remove the model_nbame column and round AUC values to 3 decimal places and d-values to two decimal places. 
+
+
+```{r}
+
+table_2 <- table_2 %>% 
+  mutate_at(.vars = vars(mean_auc_cv, ci95_LL_cv, ci95_UL_cv, 
+                         auc_ts, ci95_LL_ts, ci95_UL_ts), 
+            .funs = round, digits = 3) %>% 
+  mutate_at(.vars = vars(d_cv, d_ts), .funs = round, digits = 2) %>% 
+  select(-model_type, -model) %>% 
+  arrange(outcome)
+  
+
+table_2
+
+
+```
+
+Print
+```{r}
+knitr::kable(table_2)
+```
+
+```{r eval=FALSE, include=FALSE}
+devtools::wd()
+write.csv2(table_2, "output/table2.csv")
+```
+
+
+### Print sessionInfo
+```{r}
+sessionInfo()
+```
+
+
