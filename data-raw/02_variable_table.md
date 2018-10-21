@@ -1,7 +1,7 @@
 Creating data/variable\_table.rda
 ================
 Benny Salo
-2018-08-15
+2018-10-04
 
 ``` r
 devtools::wd()

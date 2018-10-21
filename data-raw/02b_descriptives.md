@@ -1,7 +1,7 @@
 Descriptive statistics
 ================
 Benny Salo
-2018-08-15
+2018-10-04
 
 ``` r
 devtools::load_all(".")
@@ -53,6 +53,13 @@ descriptive_stats_preds <-
     ## incorrect
 
 ``` r
+descriptive_stats_csv <- 
+  furniture::table1(analyzed_data[predictors_to_desc],
+                  splitby = spl_by, type = "condense", 
+                  test = FALSE)
+```
+
+``` r
 descriptive_stats_newO <- 
   furniture::table1(analyzed_data[newO_to_desc], splitby = spl_by)
 ```
@@ -81,6 +88,17 @@ descriptive_stats_newO$Table1 <-
   left_join(variable_table[c("Variable", "Label")], by = "Variable") %>% 
   mutate(Variable = ifelse(is.na(Label), yes = Variable, no = Label)) %>%
   select(-Label)
+
+descriptive_stats_csv$Table1 <-
+  descriptive_stats_csv$Table1 %>% 
+  rename(Variable = " ",
+         "No reoffence" = no_reoffence,
+         "Non-violent reoffence" = reoffence_nonviolent,
+         "Violent reoffence" = reoffence_violent) %>%
+  mutate(Variable = stringr::str_remove(Variable, ":.*$")) %>% 
+  left_join(variable_table[c("Variable", "Label")], by = "Variable") %>% 
+  mutate(Variable = ifelse(is.na(Label), yes = Variable, no = Label)) %>%
+  select(-Label)
 ```
 
 Save in "/data".
@@ -88,6 +106,13 @@ Save in "/data".
 ``` r
 devtools::use_data(descriptive_stats_preds, overwrite = TRUE)
 devtools::use_data(descriptive_stats_newO, overwrite = TRUE)
+```
+
+``` r
+# Save as .csv
+devtools::wd()
+write.csv2(data.frame(descriptive_stats_csv), 
+           "output/descriptive_stats_csv.csv") 
 ```
 
 ``` r
@@ -118,9 +143,9 @@ sessionInfo()
     ## [10] DRR_0.0.3          yaml_2.2.0         robustbase_0.93-2 
     ## [13] ipred_0.9-7        pillar_1.3.0       backports_1.1.2   
     ## [16] lattice_0.20-35    glue_1.3.0         pROC_1.12.1       
-    ## [19] digest_0.6.15      colorspace_1.3-2   recipes_0.1.3     
+    ## [19] digest_0.6.16      colorspace_1.3-2   recipes_0.1.3     
     ## [22] htmltools_0.3.6    Matrix_1.2-14      plyr_1.8.4        
-    ## [25] timeDate_3043.102  pkgconfig_2.0.1    devtools_1.13.6   
+    ## [25] timeDate_3043.102  pkgconfig_2.0.2    devtools_1.13.6   
     ## [28] CVST_0.2-2         broom_0.5.0        caret_6.0-80      
     ## [31] purrr_0.2.5        scales_1.0.0       gower_0.1.2       
     ## [34] lava_1.6.3         furniture_1.7.9    tibble_1.4.2      
@@ -128,10 +153,10 @@ sessionInfo()
     ## [40] lazyeval_0.2.1     survival_2.42-3    magrittr_1.5      
     ## [43] crayon_1.3.4       memoise_1.1.0      evaluate_0.11     
     ## [46] nlme_3.1-137       MASS_7.3-50        xml2_1.2.0        
-    ## [49] dimRed_0.1.0       class_7.3-14       ggthemes_4.0.0    
+    ## [49] dimRed_0.1.0       class_7.3-14       ggthemes_4.0.1    
     ## [52] tools_3.5.1        data.table_1.11.4  stringr_1.3.1     
-    ## [55] kernlab_0.9-27     munsell_0.5.0      pls_2.6-0         
-    ## [58] compiler_3.5.1     RcppRoll_0.3.0     rlang_0.2.1       
+    ## [55] kernlab_0.9-27     munsell_0.5.0      pls_2.7-0         
+    ## [58] compiler_3.5.1     RcppRoll_0.3.0     rlang_0.2.2       
     ## [61] grid_3.5.1         iterators_1.0.10   rmarkdown_1.10    
     ## [64] testthat_2.0.0     geometry_0.3-6     gtable_0.2.0      
     ## [67] ModelMetrics_1.2.0 codetools_0.2-15   abind_1.4-5       

@@ -1,7 +1,7 @@
 Create `model_grid`
 ================
 Benny Salo
-2018-08-16
+2018-10-03
 
 Here we create the data frame `model_grid`. It describes all the models we want to run. We will select subsets of this models grid when when training using different algorithms.
 
@@ -194,7 +194,7 @@ model_grid$rhs[model_grid$predictors == "All including term"] <-
 model_grid$rhs[model_grid$predictors == "Alcohol problem"] <-
   "sum_alcohol_problems"                  
 model_grid$rhs[model_grid$predictors == "Resistance to change"] <-
-  "sum_alcohol_problems"
+  "sum_resistance_change"
 model_grid$rhs[model_grid$predictors == "Employment problems"] <-
   "sum_employment_probl"
 model_grid$rhs[model_grid$predictors == "Problems managing economy"] <-
@@ -243,6 +243,25 @@ stopifnot(all(
 
 # No missing values in any column
 stopifnot(!all(purrr::map_lgl(model_grid, anyNA))) 
+```
+
+``` r
+model_grid <- model_grid %>% 
+  mutate(outcome = factor(outcome, levels = c("General recidivism",
+                                               "Violent recidivism")),
+         predictors = factor(predictors, levels = c("All including term",
+                                                     "All at start of sentence",
+                                                     "Static",
+                                                     "Rita-items",
+                                                     "Aggressiveness",
+                                                     "Alcohol problem",
+                                                     "Current drug use and its effects",
+                                                     "Employment problems",
+                                                     "Problems managing economy",
+                                                     "Resistance to change")),
+         model_type = factor(model_type, levels = c("Logistic regression",
+                                                    "Elastic net",
+                                                    "Random forest")))
 ```
 
 Save and make available in `/data`
