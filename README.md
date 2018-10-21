@@ -10,7 +10,7 @@ Files follow a R package structure with the following specification:
 
 The manuscript specifically mentions the following to be found on these pages
 
-* Descriptive statistics as an extention to Table 1 in the revised manuscript can be accessed through [this link](analyses_of_results/table_1_descriptive_statistics.md).
+* Descriptive statistics as an extention to Table 1 in the revised manuscript can be accessed through [this link](analyses_of_results/table_1_desciptive_statistics.md).
 * The process for chosing tuning parameters and R packages used are documented [here](computational_details.pdf) 
 
 
