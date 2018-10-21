@@ -1,5 +1,5 @@
 
-#' Caclulate logit (log odds) from probability
+#' Calculate logit (log odds) from probability
 #'
 #' @param probability A numerical vector (or single number) with probabilities
 #'   between 0 and 1.
