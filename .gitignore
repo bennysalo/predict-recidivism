@@ -10,3 +10,4 @@ scraps
 output
 packrat/lib*/
 packrat/src/
+setup_packages.R
