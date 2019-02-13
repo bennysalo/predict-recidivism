@@ -1,13 +1,22 @@
-Creating data/variable\_table.rda
-================
-Benny Salo
-2018-10-04
+---
+title: "Creating data/variable_table.rda"
+author: "Benny Salo"
+date: "2019-02-11"
+output: github_document
+---
 
-``` r
-devtools::wd()
+
+```r
 variable_table <- 
-  readr::read_delim("data-raw/variable_table.csv", 
-    ";", escape_double = FALSE, trim_ws = TRUE)
+  readr::read_delim("variable_table.csv",
+                    ";",
+                    escape_double = FALSE,
+                    trim_ws = TRUE)
 
-devtools::use_data(variable_table, overwrite = TRUE)
+usethis::use_data(variable_table, overwrite = TRUE)
 ```
+
+```
+## <U+2714> Saving 'variable_table' to 'data/variable_table.rda'
+```
+

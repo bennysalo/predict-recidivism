@@ -1,24 +1,25 @@
-Data used for this project
-================
-Benny Salo
-2018-09-18
+---
+title: "Data used for this project"
+author: "Benny Salo"
+date: "2019-02-11"
+output: github_document
+---
 
-``` r
-library(devtools)
+
+
+```r
 devtools::load_all(".")
 library(dplyr)
 ```
 
 Load raw data. At this point we are not authorized to make raw data publicly available. `FinPrisonMales.rds` includes only males.
 
-Update data file in "/not\_public"
+Update data file in "/not_public"
 
-``` r
-devtools::wd()
-source("not_public/get_copy_of_FinPrisonData.R")
-```
 
-``` r
+
+
+```r
 rm(list = ls())
 devtools::wd()
 FinPrisonMales <- 
@@ -28,73 +29,93 @@ FinPrisonMales <-
 stopifnot(sum(FinPrisonMales$gender == "male") == nrow(FinPrisonMales))
 ```
 
-We define a violent crime as crimes that belong to the homicide or assault categories. Other offence categories include offences that are violent and offences that are not violent. In many cases the violent forms are also coded as assault.
+We define a violent crime as crimes that belong to the homicide or assault categories. Other offence categories include offences that are violent and offences that are not violent. In many cases the violent forms are also coded as assault. 
 
-We create variables for new violent crime
+We create variables for new violent crime 
 
-``` r
+
+```r
 analyzed_data <- 
   FinPrisonMales %>% 
-  mutate(newO_violent = as.factor(ifelse(newO_homicide == 1 | newO_assault == 1, 
-                                         "new_violent_crime", 
-                                         "no_crime_or_not_violent")),
-         newO_violent = relevel(newO_violent, ref ="no_crime_or_not_violent"))
+  mutate(
+    newO_violent = as.factor(
+      ifelse(newO_homicide == 1 | newO_assault == 1,
+             "new_violent_crime",
+             "no_crime_or_not_violent")
+      ),
+    newO_violent = relevel(newO_violent, ref = "no_crime_or_not_violent")
+    )
 
 
 table(analyzed_data$newO_violent)
 ```
 
-    ## 
-    ## no_crime_or_not_violent       new_violent_crime 
-    ##                    1218                     278
+```
+## 
+## no_crime_or_not_violent       new_violent_crime 
+##                    1218                     278
+```
 
-``` r
+```r
 table(analyzed_data$newO_violent)/nrow(analyzed_data)
 ```
 
-    ## 
-    ## no_crime_or_not_violent       new_violent_crime 
-    ##               0.8141711               0.1858289
+```
+## 
+## no_crime_or_not_violent       new_violent_crime 
+##               0.8141711               0.1858289
+```
 
 Of the 748 new convictions 278 are categorized as prison terms for violent crimes.
 
 For descriptive statistics we also want a variable that represents category of reoffending as a single variable with levels "no reoffence", "non-violent reoffence", and "violent reoffence".
 
-``` r
+
+```r
 # Get indices
 no_reoff_i      <- 
   which(analyzed_data$reoffenceThisTerm == "not_in_prison")
 
 non_vio_reoff_i <- 
   which(analyzed_data$reoffenceThisTerm == "new_prison_sentence" &
-          analyzed_data$newO_violent == "no_crime_or_not_violent")
+          analyzed_data$newO_violent    == "no_crime_or_not_violent")
 
 vio_reoff_i     <-
-  which(analyzed_data$newO_violent == "new_violent_crime")
+  which(analyzed_data$newO_violent      == "new_violent_crime")
 
 # Assert that all rows are accounted for
 assertthat::assert_that(
-  identical(sort(c(no_reoff_i, non_vio_reoff_i, vio_reoff_i)),
-            1:nrow(analyzed_data))
-)
+  identical(
+    sort(c(no_reoff_i, non_vio_reoff_i, vio_reoff_i)),
+    1:nrow(analyzed_data)))
 ```
 
-    ## [1] TRUE
+```
+## [1] TRUE
+```
 
-``` r
+```r
 analyzed_data$reoff_category[no_reoff_i]      <- "no_reoffence"
 analyzed_data$reoff_category[non_vio_reoff_i] <- "reoffence_nonviolent"
 analyzed_data$reoff_category[vio_reoff_i]     <- "reoffence_violent"
 
 analyzed_data$reoff_category <- factor(analyzed_data$reoff_category)
+
+summary(analyzed_data$reoff_category)
 ```
 
-Check follow-up time
-====================
+```
+##         no_reoffence reoffence_nonviolent    reoffence_violent 
+##                  748                  470                  278
+```
+
+
+# Check follow-up time
 
 Compare distributions in follow-up time between those who committed a new crime and those who did not.
 
-``` r
+
+```r
 followUp_G_yes <- analyzed_data[
   analyzed_data$reoffenceThisTerm == "new_prison_sentence",
   "followUpYears"]
@@ -115,88 +136,106 @@ followUp_V_no <- analyzed_data[
 qqplot(followUp_G_yes, followUp_G_no)
 ```
 
-![](01_analyzed_data_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
 
-``` r
+```r
 qqplot(followUp_V_yes, followUp_V_no)
 ```
 
-![](01_analyzed_data_files/figure-markdown_github/unnamed-chunk-6-2.png)
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-2.png)
 
 The similarity of distributions is close to perfect for general recidivism and very good for violent recidivism.
 
 Check means and standard deviations
 
-``` r
+
+```r
 analyzed_data %>% 
   group_by(reoffenceThisTerm) %>% 
   summarise(M = mean(followUpYears),
             SD = sd(followUpYears))
 ```
 
-    ## # A tibble: 2 x 3
-    ##   reoffenceThisTerm       M    SD
-    ##   <fct>               <dbl> <dbl>
-    ## 1 not_in_prison        3.66  1.04
-    ## 2 new_prison_sentence  3.65  1.05
+```
+## # A tibble: 2 x 3
+##   reoffenceThisTerm       M    SD
+##   <fct>               <dbl> <dbl>
+## 1 not_in_prison        3.66  1.04
+## 2 new_prison_sentence  3.65  1.05
+```
 
-``` r
+```r
 analyzed_data %>% 
   group_by(newO_violent) %>% 
   summarise(M = mean(followUpYears),
             SD = sd(followUpYears))
 ```
 
-    ## # A tibble: 2 x 3
-    ##   newO_violent                M    SD
-    ##   <fct>                   <dbl> <dbl>
-    ## 1 no_crime_or_not_violent  3.65  1.04
-    ## 2 new_violent_crime        3.70  1.05
+```
+## # A tibble: 2 x 3
+##   newO_violent                M    SD
+##   <fct>                   <dbl> <dbl>
+## 1 no_crime_or_not_violent  3.65  1.04
+## 2 new_violent_crime        3.70  1.05
+```
 
-Time to offence
-===============
+# Time to offence
 
-``` r
+
+```r
 median(analyzed_data$daysToNewO, na.rm = TRUE) 
 ```
 
-    ## [1] 101.8333
+```
+## [1] 101.8333
+```
 
-``` r
+```r
 max(analyzed_data$daysToNewO, na.rm = TRUE) 
 ```
 
-    ## [1] 1321
+```
+## [1] 1321
+```
 
-``` r
+```r
 sum(analyzed_data$daysToNewO <= 365, na.rm = TRUE) /748
 ```
 
-    ## [1] 0.8395722
+```
+## [1] 0.8395722
+```
 
-``` r
+```r
 # Proportion under 1 year
 median(analyzed_data$followUpYears)
 ```
 
-    ## [1] 3.687886
+```
+## [1] 3.687886
+```
 
-``` r
+```r
 min(analyzed_data$followUpYears)
 ```
 
-    ## [1] 0.4928142
+```
+## [1] 0.4928142
+```
 
-``` r
+```r
 max(analyzed_data$followUpYears)
 ```
 
-    ## [1] 5.828885
+```
+## [1] 5.828885
+```
 
-Split data into a training set and a test set
-=============================================
 
-``` r
+# Split data into a training set and a test set
+
+
+```r
 # set.seed(3010)
 # four_folds   <- caret::createFolds(y = analyzed_data$reoffenceThisTerm, k = 4)
 # 
@@ -216,76 +255,101 @@ test_set     <- analyzed_data[ (1:nrow(analyzed_data) %in% test_set_index), ]
 nrow(training_set)
 ```
 
-    ## [1] 1196
+```
+## [1] 1196
+```
 
-``` r
+```r
 nrow(test_set)
 ```
 
-    ## [1] 300
+```
+## [1] 300
+```
 
-Save data for later use.
-========================
 
+# Save data for later use. 
 Will not be made public.
 
-``` r
+```r
 devtools::wd()
 saveRDS(analyzed_data, "not_public/analyzed_data.rds")
-saveRDS(training_set, "not_public/training_set.rds")
-saveRDS(test_set,     "not_public/test_set.rds")
+saveRDS(training_set,  "not_public/training_set.rds")
+saveRDS(test_set,      "not_public/test_set.rds")
 ```
 
 Display session info.
 
-``` r
+```r
 sessionInfo()
 ```
 
-    ## R version 3.5.1 (2018-07-02)
-    ## Platform: x86_64-w64-mingw32/x64 (64-bit)
-    ## Running under: Windows 10 x64 (build 17134)
-    ## 
-    ## Matrix products: default
-    ## 
-    ## locale:
-    ## [1] LC_COLLATE=Swedish_Finland.1252  LC_CTYPE=Swedish_Finland.1252   
-    ## [3] LC_MONETARY=Swedish_Finland.1252 LC_NUMERIC=C                    
-    ## [5] LC_TIME=Swedish_Finland.1252    
-    ## 
-    ## attached base packages:
-    ## [1] stats     graphics  grDevices utils     datasets  methods   base     
-    ## 
-    ## other attached packages:
-    ## [1] bindrcpp_0.2.2          dplyr_0.7.6             recidivismsl_0.0.0.9000
-    ## [4] devtools_1.13.6        
-    ## 
-    ## loaded via a namespace (and not attached):
-    ##  [1] magic_1.5-8        ddalpha_1.3.4      tidyr_0.8.1       
-    ##  [4] sfsmisc_1.1-2      splines_3.5.1      foreach_1.4.4     
-    ##  [7] prodlim_2018.04.18 assertthat_0.2.0   stats4_3.5.1      
-    ## [10] DRR_0.0.3          yaml_2.2.0         robustbase_0.93-2 
-    ## [13] ipred_0.9-7        pillar_1.3.0       backports_1.1.2   
-    ## [16] lattice_0.20-35    glue_1.3.0         pROC_1.12.1       
-    ## [19] digest_0.6.16      colorspace_1.3-2   recipes_0.1.3     
-    ## [22] htmltools_0.3.6    Matrix_1.2-14      plyr_1.8.4        
-    ## [25] timeDate_3043.102  pkgconfig_2.0.2    CVST_0.2-2        
-    ## [28] broom_0.5.0        caret_6.0-80       purrr_0.2.5       
-    ## [31] scales_1.0.0       gower_0.1.2        lava_1.6.3        
-    ## [34] furniture_1.7.9    tibble_1.4.2       ggplot2_3.0.0     
-    ## [37] withr_2.1.2        nnet_7.3-12        lazyeval_0.2.1    
-    ## [40] cli_1.0.0          survival_2.42-3    magrittr_1.5      
-    ## [43] crayon_1.3.4       memoise_1.1.0      evaluate_0.11     
-    ## [46] fansi_0.3.0        nlme_3.1-137       MASS_7.3-50       
-    ## [49] xml2_1.2.0         dimRed_0.1.0       class_7.3-14      
-    ## [52] ggthemes_4.0.1     tools_3.5.1        data.table_1.11.4 
-    ## [55] stringr_1.3.1      kernlab_0.9-27     munsell_0.5.0     
-    ## [58] pls_2.7-0          compiler_3.5.1     RcppRoll_0.3.0    
-    ## [61] rlang_0.2.2        grid_3.5.1         iterators_1.0.10  
-    ## [64] rmarkdown_1.10     testthat_2.0.0     geometry_0.3-6    
-    ## [67] gtable_0.2.0       ModelMetrics_1.2.0 codetools_0.2-15  
-    ## [70] abind_1.4-5        roxygen2_6.1.0     reshape2_1.4.3    
-    ## [73] R6_2.2.2           lubridate_1.7.4    knitr_1.20        
-    ## [76] utf8_1.1.4         bindr_0.1.1        commonmark_1.5    
-    ## [79] rprojroot_1.3-2    stringi_1.2.4      Rcpp_0.12.18      
-    ## [82] rpart_4.1-13       DEoptimR_1.0-8     tidyselect_0.2.4
+```
+## R version 3.5.2 (2018-12-20)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows >= 8 x64 (build 9200)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=Swedish_Finland.1252  LC_CTYPE=Swedish_Finland.1252   
+## [3] LC_MONETARY=Swedish_Finland.1252 LC_NUMERIC=C                    
+## [5] LC_TIME=Swedish_Finland.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] recidivismsl_0.0.0.9000 caret_6.0-81            ggplot2_3.1.0          
+## [4] lattice_0.20-38         bindrcpp_0.2.2          dplyr_0.7.8            
+## [7] magrittr_1.5            testthat_2.0.1         
+## 
+## loaded via a namespace (and not attached):
+##  [1] nlme_3.1-137            fs_1.2.6               
+##  [3] usethis_1.4.0           lubridate_1.7.4        
+##  [5] devtools_2.0.1          rprojroot_1.3-2        
+##  [7] tools_3.5.2             backports_1.1.3        
+##  [9] utf8_1.1.4              R6_2.3.0               
+## [11] rpart_4.1-13            lazyeval_0.2.1         
+## [13] colorspace_1.4-0        nnet_7.3-12            
+## [15] withr_2.1.2             tidyselect_0.2.5       
+## [17] prettyunits_1.0.2       processx_3.2.1         
+## [19] ResourceSelection_0.3-4 compiler_3.5.2         
+## [21] cli_1.0.1               desc_1.2.0             
+## [23] scales_1.0.0            readr_1.3.1            
+## [25] callr_3.1.1             stringr_1.3.1          
+## [27] digest_0.6.18           rmarkdown_1.11         
+## [29] base64enc_0.1-3         pkgconfig_2.0.2        
+## [31] htmltools_0.3.6         sessioninfo_1.1.1      
+## [33] highr_0.7               rlang_0.3.1            
+## [35] ggthemes_4.0.1          rstudioapi_0.9.0       
+## [37] bindr_0.1.1             generics_0.0.2         
+## [39] jsonlite_1.6            ModelMetrics_1.2.2     
+## [41] Matrix_1.2-15           Rcpp_1.0.0             
+## [43] munsell_0.5.0           fansi_0.4.0            
+## [45] furniture_1.8.7         stringi_1.2.4          
+## [47] pROC_1.13.0             yaml_2.2.0             
+## [49] MASS_7.3-51.1           pkgbuild_1.0.2         
+## [51] plyr_1.8.4              recipes_0.1.4          
+## [53] grid_3.5.2              forcats_0.3.0          
+## [55] crayon_1.3.4            splines_3.5.2          
+## [57] hms_0.4.2               knitr_1.21             
+## [59] ps_1.3.0                pillar_1.3.1           
+## [61] reshape2_1.4.3          codetools_0.2-15       
+## [63] clisymbols_1.2.0        stats4_3.5.2           
+## [65] pkgload_1.0.2           glue_1.3.0             
+## [67] evaluate_0.12           data.table_1.12.0      
+## [69] remotes_2.0.2           foreach_1.4.4          
+## [71] gtable_0.2.0            purrr_0.2.5            
+## [73] tidyr_0.8.2             assertthat_0.2.0       
+## [75] xfun_0.4                gower_0.1.2            
+## [77] prodlim_2018.04.18      class_7.3-14           
+## [79] survival_2.43-3         timeDate_3043.102      
+## [81] tibble_2.0.1            iterators_1.0.10       
+## [83] memoise_1.1.0           lava_1.6.4             
+## [85] ipred_0.9-8
+```
+
+
+
+

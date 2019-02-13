@@ -1,9 +1,9 @@
 Create `model_grid`
 ================
 Benny Salo
-2018-10-03
+2019-02-13
 
-Here we create the data frame `model_grid`. It describes all the models we want to run. We will select subsets of this models grid when when training using different algorithms.
+Here we create the data frame `model_grid`. It describes, and helps keep track of, all the models we want to run. We will select subsets of this models grid when training using different algorithms.
 
 We first create a model grid for the main analyses and then a model grid for the analyses with single RITA-factors as predictors. We then combine these two to a single grid.
 
@@ -43,26 +43,17 @@ analysis   <- c("Main analyses", "Dimension analyses")
 Create `model_grid_mains`
 -------------------------
 
-Define the levels of outcomes, predictors, and model\_type. Convert these vectors into factors with levels in the preferred order.
-
 ``` r
-outcomes_m   <- c("General recidivism", "Violent recidivism")
-
-predictors_m <- c("Rita-items", 
-                  "Static",
-                  "All at start of sentence",
-                  "All including term")
-
-model_type_m <- c("Logistic regression", 
-                  "Elastic net",
-                  "Random forest")
-                  
 analysis_m   <- c("Main analyses")
 
+predictors_m <- c("Rita-items", 
+                  "Static", 
+                  "All at start of sentence", 
+                  "All including term")
 
-model_grid_mains  <- expand.grid(outcomes_m,
+model_grid_mains  <- expand.grid(outcomes,
                                  predictors_m,
-                                 model_type_m,
+                                 model_type,
                                  analysis_m,
                                  stringsAsFactors = FALSE)
 ```
@@ -71,8 +62,6 @@ Create `model_grid_dims`
 ------------------------
 
 ``` r
-outcomes_d   <- c("General recidivism", "Violent recidivism")
-
 predictors_d <- c("Alcohol problem",
                 "Resistance to change",
                 "Employment problems",
@@ -85,7 +74,7 @@ model_type_d  <-  "Logistic regression"
 analysis_d    <-  "Dimension analyses"
 
 
-model_grid_dims <- expand.grid(outcomes_d,
+model_grid_dims <- expand.grid(outcomes,
                                predictors_d,
                                model_type_d,
                                analysis_d,
@@ -98,10 +87,10 @@ Combine and name columns
 model_grid <- dplyr::bind_rows(model_grid_mains, model_grid_dims)
 
 colnames(model_grid) <- c("outcome", "predictors",
-                                "model_type", "analysis")
+                          "model_type", "analysis")
 ```
 
-Write compact model names
+Write a columns with compact model names of the style "outc\_pred\_modty". Start with writing three columns (outc\_, pred\_, and modty) that are later pasted to one.
 
 ``` r
 #Intitate new columns
@@ -110,37 +99,41 @@ model_grid$pred_ <- vector("character", length = nrow(model_grid))
 model_grid$modty <- vector("character", length = nrow(model_grid))
 
 # Model name begins with abbreviation of outcome (gen_ or vio_)
-model_grid$outc_[model_grid$outcome == "General recidivism"]     <- "gen_"
-model_grid$outc_[model_grid$outcome == "Violent recidivism"]     <- "vio_"
+outc_ <- c("General recidivism" = "gen_", 
+           "Violent recidivism" = "vio_")
 
-# Continue with abbreviation of predictors
-model_grid$pred_[model_grid$predictors == 
-                  "Alcohol problem"]                   <- "alcohol_"
-model_grid$pred_[model_grid$predictors == 
-                  "Resistance to change"]              <-"change_"
-model_grid$pred_[model_grid$predictors == 
-                  "Employment problems"]               <- "employment_"
-model_grid$pred_[model_grid$predictors == 
-                  "Problems managing economy"]         <- "economy_"
-model_grid$pred_[model_grid$predictors ==
-                  "Aggressiveness"]                    <- "aggression_"
-model_grid$pred_[model_grid$predictors == 
-                  "Current drug use and its effects"]  <- "drugs_"
+model_grid$outc_ <- outc_[model_grid$outcome]
 
-model_grid$pred_[model_grid$predictors == "Rita-items"]<- "rita_"
-model_grid$pred_[model_grid$predictors == "Static"]    <- "stat_"
-model_grid$pred_[model_grid$predictors == 
-                   "All at start of sentence"]         <- "bgnn_"
-model_grid$pred_[model_grid$predictors == 
-                   "All including term"]               <- "allp_"
 
-# End with model type
-model_grid$modty[model_grid$model_type == "Logistic regression"] <- "glm"
-model_grid$modty[model_grid$model_type == "Elastic net"]         <- "glmnet"
-model_grid$modty[model_grid$model_type == "Random forest"]       <- "rf"
+# continues with a abbreviation for predictor set
+pred_ <- c(
+  "Alcohol problem" = "alcohol_",
+  "Resistance to change" = "change_",
+  "Employment problems" = "employment_",
+  "Problems managing economy" = "economy_",
+  "Aggressiveness" = "aggression_",
+  "Current drug use and its effects" = "drugs_",
+  "Rita-items" = "rita_",
+  "Static" = "stat_",
+  "All at start of sentence" = "bgnn_",
+  "All including term" = "allp_"
+  )
+
+model_grid$pred_ <- pred_[model_grid$predictors]
+
+# And ends with the model type / algorithm
+modty <- c(
+  "Logistic regression" = "glm",
+  "Elastic net" = "glmnet",
+  "Random forest" = "rf"
+  )
+
+model_grid$modty <- modty[model_grid$model_type]
+
 
 # Paste them together to a model name
-model_grid <- model_grid %>% 
+model_grid <- 
+  model_grid %>% 
   mutate(model_name = paste0(outc_, pred_, modty)) %>% 
   # Delete auxilliary columns created above
   select(-outc_, -pred_, -modty)
@@ -152,11 +145,10 @@ Add columns of character strings for outcome (lhs)
 # Intiate columns
 model_grid$lhs <- vector("character", length = nrow(model_grid))
 
-# Write lhs based on outcome
-model_grid$lhs[model_grid$outcome == "General recidivism"] <- 
-  "reoffenceThisTerm"
-model_grid$lhs[model_grid$outcome == "Violent recidivism"] <- 
-  "newO_violent"
+lhs <- c("General recidivism" = "reoffenceThisTerm",
+         "Violent recidivism" = "newO_violent")
+
+model_grid$lhs <- lhs[model_grid$outcome]
 ```
 
 Add columns of character strings for predictors (rhs). First, extract sets of predictors from the predefined variable table.
@@ -182,27 +174,21 @@ Then add these sets to the column `rhs` in model\_grid.
 
 ``` r
 model_grid$rhs <- vector("list", length = nrow(model_grid))
-model_grid$rhs[model_grid$predictors == "Rita-items"] <- 
-  list(predset_RITA)
-model_grid$rhs[model_grid$predictors == "Static"] <- 
-  list(predset_static)
-model_grid$rhs[model_grid$predictors == "All at start of sentence"] <-        
-  list(predset_begin)
-model_grid$rhs[model_grid$predictors == "All including term"] <- 
-  list(predset_all)
 
-model_grid$rhs[model_grid$predictors == "Alcohol problem"] <-
-  "sum_alcohol_problems"                  
-model_grid$rhs[model_grid$predictors == "Resistance to change"] <-
-  "sum_resistance_change"
-model_grid$rhs[model_grid$predictors == "Employment problems"] <-
-  "sum_employment_probl"
-model_grid$rhs[model_grid$predictors == "Problems managing economy"] <-
-  "sum_economy_problems" 
-model_grid$rhs[model_grid$predictors == "Aggressiveness"] <-
-  "sum_aggressiveness"
-model_grid$rhs[model_grid$predictors == "Current drug use and its effects"] <-
-  "sum_current_drug_probl"
+rhs <- list(
+  "Rita-items" = predset_RITA,
+  "Static" = predset_static,
+  "All at start of sentence" = predset_begin,
+  "All including term" = predset_all,
+  "Alcohol problem" = "sum_alcohol_problems",
+  "Resistance to change" = "sum_resistance_change",
+  "Employment problems" = "sum_employment_probl",
+  "Problems managing economy" = "sum_economy_problems",
+  "Aggressiveness" = "sum_aggressiveness",
+  "Current drug use and its effects" = "sum_current_drug_probl"
+)
+
+model_grid$rhs <- rhs[model_grid$predictors]
 ```
 
 Assertions
@@ -245,30 +231,44 @@ stopifnot(all(
 stopifnot(!all(purrr::map_lgl(model_grid, anyNA))) 
 ```
 
+Explicitly set order of levels in factors.
+
 ``` r
-model_grid <- model_grid %>% 
-  mutate(outcome = factor(outcome, levels = c("General recidivism",
-                                               "Violent recidivism")),
-         predictors = factor(predictors, levels = c("All including term",
-                                                     "All at start of sentence",
-                                                     "Static",
-                                                     "Rita-items",
-                                                     "Aggressiveness",
-                                                     "Alcohol problem",
-                                                     "Current drug use and its effects",
-                                                     "Employment problems",
-                                                     "Problems managing economy",
-                                                     "Resistance to change")),
-         model_type = factor(model_type, levels = c("Logistic regression",
-                                                    "Elastic net",
-                                                    "Random forest")))
+model_grid <- 
+  model_grid %>%
+  mutate(
+    outcome = 
+      factor(outcome, 
+             levels = c("General recidivism",
+                        "Violent recidivism")), 
+    predictors = 
+      factor(
+        predictors,
+        levels = c("All including term",
+                   "All at start of sentence",
+                   "Static",
+                   "Rita-items",
+                   "Aggressiveness",
+                   "Alcohol problem",
+                   "Employment problems",
+                   "Problems managing economy",
+                   "Resistance to change")), 
+    model_type = 
+      factor(model_type,
+             levels = c("Logistic regression",
+                        "Elastic net",
+                        "Random forest"))
+    )
 ```
 
 Save and make available in `/data`
 
 ``` r
-devtools::use_data(model_grid, overwrite = TRUE)
+usethis::use_data(model_grid, overwrite = TRUE)
 ```
+
+    ## <U+2714> Setting active project to 'C:/Users/benny_000/OneDrive - United Nations/z-PhD/Manuskript 2/A- R -project'
+    ## <U+2714> Saving 'model_grid' to 'data/model_grid.rda'
 
 Extract model names of main analyses. Used to filter out results for main analyses in /analyses\_of\_results
 
@@ -282,7 +282,7 @@ model_names_main <-
 # This should not be a named vector
 names(model_names_main) <- NULL
 
-devtools::use_data(model_names_main, overwrite = TRUE)
+usethis::use_data(model_names_main, overwrite = TRUE)
 ```
 
-    ## Saving model_names_main as model_names_main.rda to C:/Users/benny_000/Dropbox/AAAKTUELLT/Manuskript 2/A- R -project/data
+    ## <U+2714> Saving 'model_names_main' to 'data/model_names_main.rda'

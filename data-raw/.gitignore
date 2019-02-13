@@ -3,3 +3,5 @@ variable_table.csv
 variables.csv
 *.Rmd
 *.html
+02_variable_table.md
+knit all rmds.R

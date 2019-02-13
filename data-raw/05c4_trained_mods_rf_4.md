@@ -1,90 +1,70 @@
 ---
-title: "Create `rf_grid`"
+title: "`trained_mods_rf_4`"
 author: "Benny Salo"
 date: "2019-02-12"
 output: github_document
 ---
 
-
+Training set is defined in 01_analyzed_data.Rmd
 
 ```r
-library(dplyr)
+rm(list = ls())
+devtools::wd()
 devtools::load_all(".")
+training_set <- readRDS("not_public/training_set.rds")
 ```
 
-Get the part of model_grid that are random forest models.
 
 
 ```r
-rf_grid <- model_grid %>% filter(model_type == "Random forest")
+rf_grid <- dplyr::full_join(rf_grid, best_tunes_rf, by = "model_name")
 ```
 
-In the first run we test eleven possible values for the tuning parameter `mtry`, including the often recommended square root of the number of predictors. We test five smaller and five bigger values in relation to this. The sequence of tested values are the number of predictors raised to the power of 1/12, 1/6, 1/4, 1/3, 5/12, 1/2,  (i.e. the square root), 7/12, 2/3, 3/4, 5/6, and 11/12.
 
-We create a new column for this argument
+Train each model (rows) in the grid according to specifications in the grid. 
+
+(Record how long it takes to run.)
+
+```r
+start <- Sys.time()
+
+trained_mods_rf_4 <-                    # new list of results
+  purrr::pmap(
+    .l = list(..1 = rf_grid$rhs,
+              ..2 = rf_grid$lhs,
+              ..3 = rf_grid$best_for_LL), # updated with new the best mtry value
+    .f = ~ caret::train(
+      x         = training_set[..1],
+      y         = training_set[[..2]],
+      method    = "rf",
+      metric    = "logLoss",
+      trControl = ctrl_fun_training_4,  # 1000 resamples
+      tuneGrid  = as.data.frame(..3)    # Single mtry value in data.frame
+      )
+    )
+
+time_to_run <- Sys.time() - start
+time_to_run
+```
+
+```
+## Time difference of 3.775356 hours
+```
+Save the results as a named list.
 
 
 ```r
-write_mtry_seq <- function(predictor_vector) {
-  n_preds  <- length(predictor_vector)
-  powers   <- (1:11)/12
-  mtry_seq <- as.integer(round(n_preds^powers))
-  # We could remvove possible dupicate mtrys
-  # mtry_seq <- unique(mtry_seq)
-}
-
-rf_grid$mtry_seq <- 
-  purrr::map(
-    .x = rf_grid$rhs,
-    .f = ~ write_mtry_seq(.x)
-  )
+names(trained_mods_rf_4) <- rf_grid$model_name
 ```
 
-Assertions
+
 
 ```r
-library(assertthat)
-# All entries in rf_grid$mtry_seq should be of class integer
-assert_that(all(purrr::map_chr(rf_grid$mtry_seq, class) == "integer"))
+devtools::wd()
+saveRDS(trained_mods_rf_4, "not_public/trained_mods_rf_4.rds")
 ```
 
-```
-## [1] TRUE
-```
-
-```r
-# All entries in rf_grid$mtry_seq should have length 7.
-# assert_that(all(purrr::map_chr(rf_grid$mtry_seq, length) == 11))
-
-# The sixth element should be the sqrt of the number of predictors
-sixth  <- purrr::map_int(rf_grid$mtry_seq, 6)
-n_preds <- purrr::map_int(rf_grid$rhs, length)
-
-assert_that(all(sixth == round(sqrt(n_preds))))
-```
-
-```
-## [1] TRUE
-```
-
-
-Save and make available in `/data`
-
-```r
-devtools::use_data(rf_grid, overwrite = TRUE)
-```
-
-```
-## Warning: 'devtools::use_data' is deprecated.
-## Use 'usethis::use_data()' instead.
-## See help("Deprecated") and help("devtools-deprecated").
-```
-
-```
-## <U+2714> Saving 'rf_grid' to 'data/rf_grid.rda'
-```
-
-Print sessionInfo
+### Print sessionInfo
 
 ```r
 sessionInfo()
@@ -157,6 +137,3 @@ sessionInfo()
 ## [83] memoise_1.1.0           lava_1.6.4             
 ## [85] ipred_0.9-8
 ```
-
-
-
