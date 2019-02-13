@@ -80,14 +80,10 @@ stopifnot(length(glmnet_grid$alpha) == 8,
 Save and make available in `/data`
 
 ``` r
-devtools::use_data(glmnet_grid, overwrite = TRUE)
+usethis::use_data(glmnet_grid, overwrite = TRUE)
 ```
 
-    ## Warning: 'devtools::use_data' is deprecated.
-    ## Use 'usethis::use_data()' instead.
-    ## See help("Deprecated") and help("devtools-deprecated").
 
-    ## <U+2714> Setting active project to 'C:/Users/benny_000/OneDrive - United Nations/z-PhD/Manuskript 2/A- R -project'
     ## <U+2714> Saving 'glmnet_grid' to 'data/glmnet_grid.rda'
 
 Print sessionInfo

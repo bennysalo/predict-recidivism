@@ -267,7 +267,7 @@ Save and make available in `/data`
 usethis::use_data(model_grid, overwrite = TRUE)
 ```
 
-    ## <U+2714> Setting active project to 'C:/Users/benny_000/OneDrive - United Nations/z-PhD/Manuskript 2/A- R -project'
+
     ## <U+2714> Saving 'model_grid' to 'data/model_grid.rda'
 
 Extract model names of main analyses. Used to filter out results for main analyses in /analyses\_of\_results
