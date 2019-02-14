@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_logit_from_p.R
 \name{calc_logit_from_p}
 \alias{calc_logit_from_p}
-\title{Caclulate logit (log odds) from probability}
+\title{Calculate logit (log odds) from probability}
 \usage{
 calc_logit_from_p(probability, offset_for_01 = NULL)
 }
@@ -18,7 +18,7 @@ A numerical vector (or single number) representing the logit (log
   odds).
 }
 \description{
-Caclulate logit (log odds) from probability
+Calculate logit (log odds) from probability
 }
 \examples{
 calc_logit_from_p(0.2)
