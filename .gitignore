@@ -11,3 +11,4 @@ output
 packrat/lib*/
 packrat/src/
 setup_packages.R
+vign_runlog.rds
