@@ -75,28 +75,28 @@ knitr::kable(table_2)
 
 
 
-|outcome            |predictors                | median_McF_R2| ci95_LL_R2| ci95_UL_R2| p_one_side|
-|:------------------|:-------------------------|-------------:|----------:|----------:|----------:|
-|General recidivism |All including term        |         0.270|      0.207|      0.322|      0.000|
-|General recidivism |All at start of sentence  |         0.203|      0.137|      0.259|      0.000|
-|General recidivism |Static                    |         0.187|      0.115|      0.240|      0.000|
-|General recidivism |Rita-items                |         0.133|      0.070|      0.184|      0.000|
-|General recidivism |Aggressiveness            |         0.022|     -0.006|      0.042|      0.052|
-|General recidivism |Alcohol problem           |         0.027|     -0.003|      0.049|      0.040|
-|General recidivism |Employment problems       |         0.065|      0.014|      0.102|      0.009|
-|General recidivism |Problems managing economy |         0.106|      0.051|      0.155|      0.003|
-|General recidivism |Resistance to change      |         0.029|     -0.006|      0.051|      0.054|
-|General recidivism |NA                        |         0.050|      0.003|      0.079|      0.019|
-|Violent recidivism |All including term        |         0.198|      0.127|      0.263|      0.000|
-|Violent recidivism |All at start of sentence  |         0.181|      0.109|      0.245|      0.000|
-|Violent recidivism |Static                    |         0.139|      0.077|      0.187|      0.000|
-|Violent recidivism |Rita-items                |         0.120|      0.057|      0.175|      0.000|
-|Violent recidivism |Aggressiveness            |         0.078|      0.016|      0.128|      0.008|
-|Violent recidivism |Alcohol problem           |         0.047|     -0.005|      0.082|      0.037|
-|Violent recidivism |Employment problems       |         0.031|     -0.013|      0.060|      0.092|
-|Violent recidivism |Problems managing economy |         0.038|     -0.007|      0.070|      0.056|
-|Violent recidivism |Resistance to change      |         0.025|     -0.019|      0.053|      0.116|
-|Violent recidivism |NA                        |         0.041|     -0.012|      0.080|      0.051|
+|outcome            |predictors                       | median_McF_R2| ci95_LL_R2| ci95_UL_R2| p_one_side|
+|:------------------|:--------------------------------|-------------:|----------:|----------:|----------:|
+|General recidivism |All including term               |         0.270|      0.207|      0.322|      0.000|
+|General recidivism |All at start of sentence         |         0.203|      0.137|      0.259|      0.000|
+|General recidivism |Static                           |         0.187|      0.115|      0.240|      0.000|
+|General recidivism |Rita-items                       |         0.133|      0.070|      0.184|      0.000|
+|General recidivism |Aggressiveness                   |         0.022|     -0.006|      0.042|      0.052|
+|General recidivism |Alcohol problem                  |         0.027|     -0.003|      0.049|      0.040|
+|General recidivism |Employment problems              |         0.065|      0.014|      0.102|      0.009|
+|General recidivism |Current drug use and its effects |         0.050|      0.003|      0.079|      0.019|
+|General recidivism |Problems managing economy        |         0.106|      0.051|      0.155|      0.003|
+|General recidivism |Resistance to change             |         0.029|     -0.006|      0.051|      0.054|
+|Violent recidivism |All including term               |         0.198|      0.127|      0.263|      0.000|
+|Violent recidivism |All at start of sentence         |         0.181|      0.109|      0.245|      0.000|
+|Violent recidivism |Static                           |         0.139|      0.077|      0.187|      0.000|
+|Violent recidivism |Rita-items                       |         0.120|      0.057|      0.175|      0.000|
+|Violent recidivism |Aggressiveness                   |         0.078|      0.016|      0.128|      0.008|
+|Violent recidivism |Alcohol problem                  |         0.047|     -0.005|      0.082|      0.037|
+|Violent recidivism |Employment problems              |         0.031|     -0.013|      0.060|      0.092|
+|Violent recidivism |Current drug use and its effects |         0.041|     -0.012|      0.080|      0.051|
+|Violent recidivism |Problems managing economy        |         0.038|     -0.007|      0.070|      0.056|
+|Violent recidivism |Resistance to change             |         0.025|     -0.019|      0.053|      0.116|
 
 
 

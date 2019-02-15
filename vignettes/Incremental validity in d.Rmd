@@ -1,6 +1,7 @@
 ---
 title: "Incremental validity in d"
 output: html_notebook
+date: "`r Sys.Date()`"
 ---
 
 ## Function

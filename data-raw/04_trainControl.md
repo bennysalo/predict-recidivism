@@ -1,7 +1,7 @@
 ---
 title: "Setup of `ctrl_fun_training`"
 author: "Benny Salo"
-date: "2019-02-11"
+date: "2019-02-14"
 output: github_document
 ---
 
@@ -330,52 +330,54 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] recidivismsl_0.0.0.9000 caret_6.0-81            ggplot2_3.1.0          
-## [4] lattice_0.20-38         bindrcpp_0.2.2          dplyr_0.7.8            
-## [7] magrittr_1.5            testthat_2.0.1         
+##  [1] recidivismsl_0.0.0.9000 assertthat_0.2.0       
+##  [3] caret_6.0-81            lattice_0.20-38        
+##  [5] bindrcpp_0.2.2          ggplot2_3.1.0          
+##  [7] dplyr_0.7.8             testthat_2.0.1         
+##  [9] purrr_0.2.5             magrittr_1.5           
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] nlme_3.1-137            fs_1.2.6               
-##  [3] usethis_1.4.0           lubridate_1.7.4        
-##  [5] devtools_2.0.1          rprojroot_1.3-2        
-##  [7] tools_3.5.2             backports_1.1.3        
-##  [9] utf8_1.1.4              R6_2.3.0               
-## [11] rpart_4.1-13            lazyeval_0.2.1         
-## [13] colorspace_1.4-0        nnet_7.3-12            
-## [15] withr_2.1.2             tidyselect_0.2.5       
-## [17] prettyunits_1.0.2       processx_3.2.1         
-## [19] ResourceSelection_0.3-4 compiler_3.5.2         
-## [21] cli_1.0.1               desc_1.2.0             
-## [23] scales_1.0.0            readr_1.3.1            
-## [25] callr_3.1.1             stringr_1.3.1          
-## [27] digest_0.6.18           rmarkdown_1.11         
-## [29] base64enc_0.1-3         pkgconfig_2.0.2        
-## [31] htmltools_0.3.6         sessioninfo_1.1.1      
-## [33] highr_0.7               rlang_0.3.1            
-## [35] ggthemes_4.0.1          rstudioapi_0.9.0       
-## [37] bindr_0.1.1             generics_0.0.2         
-## [39] jsonlite_1.6            ModelMetrics_1.2.2     
-## [41] Matrix_1.2-15           Rcpp_1.0.0             
-## [43] munsell_0.5.0           fansi_0.4.0            
-## [45] furniture_1.8.7         stringi_1.2.4          
-## [47] pROC_1.13.0             yaml_2.2.0             
-## [49] MASS_7.3-51.1           pkgbuild_1.0.2         
-## [51] plyr_1.8.4              recipes_0.1.4          
-## [53] grid_3.5.2              forcats_0.3.0          
-## [55] crayon_1.3.4            splines_3.5.2          
-## [57] hms_0.4.2               knitr_1.21             
-## [59] ps_1.3.0                pillar_1.3.1           
-## [61] reshape2_1.4.3          codetools_0.2-15       
-## [63] clisymbols_1.2.0        stats4_3.5.2           
-## [65] pkgload_1.0.2           glue_1.3.0             
-## [67] evaluate_0.12           data.table_1.12.0      
-## [69] remotes_2.0.2           foreach_1.4.4          
-## [71] gtable_0.2.0            purrr_0.2.5            
-## [73] tidyr_0.8.2             assertthat_0.2.0       
+##  [3] xopen_1.0.0             usethis_1.4.0          
+##  [5] lubridate_1.7.4         devtools_2.0.1         
+##  [7] rprojroot_1.3-2         tools_3.5.2            
+##  [9] backports_1.1.3         utf8_1.1.4             
+## [11] R6_2.3.0                rpart_4.1-13           
+## [13] lazyeval_0.2.1          colorspace_1.4-0       
+## [15] nnet_7.3-12             withr_2.1.2            
+## [17] ResourceSelection_0.3-4 tidyselect_0.2.5       
+## [19] prettyunits_1.0.2       processx_3.2.1         
+## [21] compiler_3.5.2          glmnet_2.0-16          
+## [23] cli_1.0.1               xml2_1.2.0             
+## [25] desc_1.2.0              scales_1.0.0           
+## [27] randomForest_4.6-14     readr_1.3.1            
+## [29] callr_3.1.1             commonmark_1.7         
+## [31] stringr_1.3.1           digest_0.6.18          
+## [33] pkgconfig_2.0.2         sessioninfo_1.1.1      
+## [35] highr_0.7               rlang_0.3.1            
+## [37] ggthemes_4.0.1          rstudioapi_0.9.0       
+## [39] bindr_0.1.1             generics_0.0.2         
+## [41] ModelMetrics_1.2.2      Matrix_1.2-15          
+## [43] Rcpp_1.0.0              munsell_0.5.0          
+## [45] fansi_0.4.0             furniture_1.8.7        
+## [47] stringi_1.2.4           pROC_1.13.0            
+## [49] yaml_2.2.0              MASS_7.3-51.1          
+## [51] pkgbuild_1.0.2          plyr_1.8.4             
+## [53] recipes_0.1.4           grid_3.5.2             
+## [55] forcats_0.3.0           crayon_1.3.4           
+## [57] splines_3.5.2           hms_0.4.2              
+## [59] knitr_1.21              ps_1.3.0               
+## [61] pillar_1.3.1            reshape2_1.4.3         
+## [63] codetools_0.2-15        clisymbols_1.2.0       
+## [65] stats4_3.5.2            pkgload_1.0.2          
+## [67] glue_1.3.0              evaluate_0.12          
+## [69] data.table_1.12.0       remotes_2.0.2          
+## [71] foreach_1.4.4           gtable_0.2.0           
+## [73] rcmdcheck_1.3.2         tidyr_0.8.2            
 ## [75] xfun_0.4                gower_0.1.2            
-## [77] prodlim_2018.04.18      class_7.3-14           
-## [79] survival_2.43-3         timeDate_3043.102      
-## [81] tibble_2.0.1            iterators_1.0.10       
-## [83] memoise_1.1.0           lava_1.6.4             
-## [85] ipred_0.9-8
+## [77] prodlim_2018.04.18      roxygen2_6.1.1         
+## [79] class_7.3-14            survival_2.43-3        
+## [81] timeDate_3043.102       tibble_2.0.1           
+## [83] iterators_1.0.10        memoise_1.1.0          
+## [85] lava_1.6.4              ipred_0.9-8
 ```

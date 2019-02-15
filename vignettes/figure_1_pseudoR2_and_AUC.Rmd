@@ -1,6 +1,7 @@
 ---
-title: "R Notebook"
+title: "Figure 1. Discrimination"
 output: html_notebook
+date: "`r Sys.Date()`"
 ---
 
 

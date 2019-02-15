@@ -1,6 +1,6 @@
 ---
 title: "Table 1"
-date: "2019-02-14"
+date: "2019-02-15"
 output: github_document
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Combine the best models of each type"
 author: "Benny Salo"
-date: "2019-02-12"
+date: "2019-02-14"
 output: github_document
 ---
 

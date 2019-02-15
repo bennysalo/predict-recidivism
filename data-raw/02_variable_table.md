@@ -1,7 +1,7 @@
 ---
 title: "Creating data/variable_table.rda"
 author: "Benny Salo"
-date: "2019-02-11"
+date: "2019-02-14"
 output: github_document
 ---
 

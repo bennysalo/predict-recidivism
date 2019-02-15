@@ -1,6 +1,6 @@
 ---
 title: "Table 2"
-date: "2019-02-14"
+date: "2019-02-15"
 output: github_document
 ---
 
@@ -194,9 +194,9 @@ table_2
 ##  5 Genera~ Aggressiv~       0.602      0.546      0.656  0.36  0.632
 ##  6 Genera~ Alcohol p~       0.613      0.56       0.667  0.41  0.647
 ##  7 Genera~ Employmen~       0.682      0.628      0.734  0.67  0.709
-##  8 Genera~ Problems ~       0.721      0.669      0.769  0.83  0.737
-##  9 Genera~ Resistanc~       0.622      0.568      0.675  0.44  0.647
-## 10 Genera~ <NA>             0.631      0.581      0.679  0.47  0.655
+##  8 Genera~ Current d~       0.631      0.581      0.679  0.47  0.655
+##  9 Genera~ Problems ~       0.721      0.669      0.769  0.83  0.737
+## 10 Genera~ Resistanc~       0.622      0.568      0.675  0.44  0.647
 ## 11 Violen~ All inclu~       0.815      0.767      0.862  1.27  0.771
 ## 12 Violen~ All at st~       0.802      0.751      0.852  1.2   0.761
 ## 13 Violen~ Static           0.775      0.717      0.826  1.07  0.788
@@ -204,9 +204,9 @@ table_2
 ## 15 Violen~ Aggressiv~       0.705      0.643      0.766  0.76  0.668
 ## 16 Violen~ Alcohol p~       0.666      0.598      0.728  0.6   0.621
 ## 17 Violen~ Employmen~       0.647      0.578      0.709  0.54  0.596
-## 18 Violen~ Problems ~       0.647      0.583      0.707  0.53  0.63 
-## 19 Violen~ Resistanc~       0.622      0.551      0.689  0.44  0.623
-## 20 Violen~ <NA>             0.646      0.578      0.714  0.53  0.629
+## 18 Violen~ Current d~       0.646      0.578      0.714  0.53  0.629
+## 19 Violen~ Problems ~       0.647      0.583      0.707  0.53  0.63 
+## 20 Violen~ Resistanc~       0.622      0.551      0.689  0.44  0.623
 ## # ... with 3 more variables: ci95_LL_ts <dbl>, ci95_UL_ts <dbl>,
 ## #   d_ts <dbl>
 ```
@@ -219,28 +219,28 @@ knitr::kable(table_2)
 
 
 
-|outcome            |predictors                | mean_auc_cv| ci95_LL_cv| ci95_UL_cv| d_cv| auc_ts| ci95_LL_ts| ci95_UL_ts| d_ts|
-|:------------------|:-------------------------|-----------:|----------:|----------:|----:|------:|----------:|----------:|----:|
-|General recidivism |All including term        |       0.829|      0.787|      0.866| 1.34|  0.823|      0.771|      0.865| 1.31|
-|General recidivism |All at start of sentence  |       0.795|      0.746|      0.839| 1.16|  0.775|      0.723|      0.825| 1.07|
-|General recidivism |Static                    |       0.782|      0.733|      0.824| 1.10|  0.738|      0.677|      0.789| 0.90|
-|General recidivism |Rita-items                |       0.744|      0.691|      0.793| 0.93|  0.755|      0.697|      0.807| 0.98|
-|General recidivism |Aggressiveness            |       0.602|      0.546|      0.656| 0.36|  0.632|      0.569|      0.694| 0.48|
-|General recidivism |Alcohol problem           |       0.613|      0.560|      0.667| 0.41|  0.647|      0.586|      0.707| 0.53|
-|General recidivism |Employment problems       |       0.682|      0.628|      0.734| 0.67|  0.709|      0.651|      0.765| 0.78|
-|General recidivism |Problems managing economy |       0.721|      0.669|      0.769| 0.83|  0.737|      0.678|      0.790| 0.90|
-|General recidivism |Resistance to change      |       0.622|      0.568|      0.675| 0.44|  0.647|      0.583|      0.707| 0.53|
-|General recidivism |NA                        |       0.631|      0.581|      0.679| 0.47|  0.655|      0.599|      0.707| 0.56|
-|Violent recidivism |All including term        |       0.815|      0.767|      0.862| 1.27|  0.771|      0.703|      0.835| 1.05|
-|Violent recidivism |All at start of sentence  |       0.802|      0.751|      0.852| 1.20|  0.761|      0.691|      0.826| 1.01|
-|Violent recidivism |Static                    |       0.775|      0.717|      0.826| 1.07|  0.788|      0.726|      0.844| 1.13|
-|Violent recidivism |Rita-items                |       0.750|      0.689|      0.805| 0.95|  0.697|      0.624|      0.769| 0.73|
-|Violent recidivism |Aggressiveness            |       0.705|      0.643|      0.766| 0.76|  0.668|      0.590|      0.743| 0.61|
-|Violent recidivism |Alcohol problem           |       0.666|      0.598|      0.728| 0.60|  0.621|      0.544|      0.701| 0.44|
-|Violent recidivism |Employment problems       |       0.647|      0.578|      0.709| 0.54|  0.596|      0.512|      0.679| 0.34|
-|Violent recidivism |Problems managing economy |       0.647|      0.583|      0.707| 0.53|  0.630|      0.546|      0.708| 0.47|
-|Violent recidivism |Resistance to change      |       0.622|      0.551|      0.689| 0.44|  0.623|      0.542|      0.705| 0.44|
-|Violent recidivism |NA                        |       0.646|      0.578|      0.714| 0.53|  0.629|      0.555|      0.712| 0.47|
+|outcome            |predictors                       | mean_auc_cv| ci95_LL_cv| ci95_UL_cv| d_cv| auc_ts| ci95_LL_ts| ci95_UL_ts| d_ts|
+|:------------------|:--------------------------------|-----------:|----------:|----------:|----:|------:|----------:|----------:|----:|
+|General recidivism |All including term               |       0.829|      0.787|      0.866| 1.34|  0.823|      0.771|      0.865| 1.31|
+|General recidivism |All at start of sentence         |       0.795|      0.746|      0.839| 1.16|  0.775|      0.723|      0.825| 1.07|
+|General recidivism |Static                           |       0.782|      0.733|      0.824| 1.10|  0.738|      0.677|      0.789| 0.90|
+|General recidivism |Rita-items                       |       0.744|      0.691|      0.793| 0.93|  0.755|      0.697|      0.807| 0.98|
+|General recidivism |Aggressiveness                   |       0.602|      0.546|      0.656| 0.36|  0.632|      0.569|      0.694| 0.48|
+|General recidivism |Alcohol problem                  |       0.613|      0.560|      0.667| 0.41|  0.647|      0.586|      0.707| 0.53|
+|General recidivism |Employment problems              |       0.682|      0.628|      0.734| 0.67|  0.709|      0.651|      0.765| 0.78|
+|General recidivism |Current drug use and its effects |       0.631|      0.581|      0.679| 0.47|  0.655|      0.599|      0.707| 0.56|
+|General recidivism |Problems managing economy        |       0.721|      0.669|      0.769| 0.83|  0.737|      0.678|      0.790| 0.90|
+|General recidivism |Resistance to change             |       0.622|      0.568|      0.675| 0.44|  0.647|      0.583|      0.707| 0.53|
+|Violent recidivism |All including term               |       0.815|      0.767|      0.862| 1.27|  0.771|      0.703|      0.835| 1.05|
+|Violent recidivism |All at start of sentence         |       0.802|      0.751|      0.852| 1.20|  0.761|      0.691|      0.826| 1.01|
+|Violent recidivism |Static                           |       0.775|      0.717|      0.826| 1.07|  0.788|      0.726|      0.844| 1.13|
+|Violent recidivism |Rita-items                       |       0.750|      0.689|      0.805| 0.95|  0.697|      0.624|      0.769| 0.73|
+|Violent recidivism |Aggressiveness                   |       0.705|      0.643|      0.766| 0.76|  0.668|      0.590|      0.743| 0.61|
+|Violent recidivism |Alcohol problem                  |       0.666|      0.598|      0.728| 0.60|  0.621|      0.544|      0.701| 0.44|
+|Violent recidivism |Employment problems              |       0.647|      0.578|      0.709| 0.54|  0.596|      0.512|      0.679| 0.34|
+|Violent recidivism |Current drug use and its effects |       0.646|      0.578|      0.714| 0.53|  0.629|      0.555|      0.712| 0.47|
+|Violent recidivism |Problems managing economy        |       0.647|      0.583|      0.707| 0.53|  0.630|      0.546|      0.708| 0.47|
+|Violent recidivism |Resistance to change             |       0.622|      0.551|      0.689| 0.44|  0.623|      0.542|      0.705| 0.44|
 
 
 
@@ -272,33 +272,32 @@ sessionInfo()
 ## [7] testthat_2.0.1          purrr_0.2.5             magrittr_1.5           
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] tidyr_0.8.2        pkgload_1.0.2      splines_3.5.2     
+##  [1] pkgload_1.0.2      tidyr_0.8.2        splines_3.5.2     
 ##  [4] foreach_1.4.4      prodlim_2018.04.18 assertthat_0.2.0  
 ##  [7] highr_0.7          stats4_3.5.2       yaml_2.2.0        
 ## [10] remotes_2.0.2      sessioninfo_1.1.1  ipred_0.9-8       
 ## [13] pillar_1.3.1       backports_1.1.3    glue_1.3.0        
 ## [16] pROC_1.13.0        digest_0.6.18      colorspace_1.4-0  
-## [19] recipes_0.1.4      Matrix_1.2-15      plyr_1.8.4        
-## [22] timeDate_3043.102  pkgconfig_2.0.2    devtools_2.0.1    
-## [25] rcmdcheck_1.3.2    scales_1.0.0       processx_3.2.1    
+## [19] recipes_0.1.4      htmltools_0.3.6    Matrix_1.2-15     
+## [22] plyr_1.8.4         timeDate_3043.102  pkgconfig_2.0.2   
+## [25] devtools_2.0.1     scales_1.0.0       processx_3.2.1    
 ## [28] gower_0.1.2        lava_1.6.4         furniture_1.8.7   
 ## [31] tibble_2.0.1       generics_0.0.2     usethis_1.4.0     
 ## [34] withr_2.1.2        nnet_7.3-12        lazyeval_0.2.1    
 ## [37] cli_1.0.1          survival_2.43-3    crayon_1.3.4      
 ## [40] memoise_1.1.0      evaluate_0.12      ps_1.3.0          
 ## [43] fansi_0.4.0        fs_1.2.6           nlme_3.1-137      
-## [46] MASS_7.3-51.1      forcats_0.3.0      xml2_1.2.0        
-## [49] class_7.3-14       pkgbuild_1.0.2     ggthemes_4.0.1    
-## [52] tools_3.5.2        data.table_1.12.0  prettyunits_1.0.2 
-## [55] stringr_1.3.1      xopen_1.0.0        munsell_0.5.0     
-## [58] callr_3.1.1        compiler_3.5.2     rlang_0.3.1       
-## [61] grid_3.5.2         iterators_1.0.10   rstudioapi_0.9.0  
-## [64] gtable_0.2.0       ModelMetrics_1.2.2 codetools_0.2-15  
-## [67] roxygen2_6.1.1     reshape2_1.4.3     R6_2.3.0          
-## [70] lubridate_1.7.4    knitr_1.21         utf8_1.1.4        
-## [73] bindr_0.1.1        commonmark_1.7     rprojroot_1.3-2   
-## [76] desc_1.2.0         stringi_1.2.4      Rcpp_1.0.0        
-## [79] rpart_4.1-13       tidyselect_0.2.5   xfun_0.4
+## [46] MASS_7.3-51.1      forcats_0.3.0      class_7.3-14      
+## [49] pkgbuild_1.0.2     ggthemes_4.0.1     tools_3.5.2       
+## [52] data.table_1.12.0  prettyunits_1.0.2  stringr_1.3.1     
+## [55] munsell_0.5.0      callr_3.1.1        compiler_3.5.2    
+## [58] rlang_0.3.1        grid_3.5.2         iterators_1.0.10  
+## [61] rstudioapi_0.9.0   rmarkdown_1.11     gtable_0.2.0      
+## [64] ModelMetrics_1.2.2 codetools_0.2-15   reshape2_1.4.3    
+## [67] R6_2.3.0           lubridate_1.7.4    knitr_1.21        
+## [70] utf8_1.1.4         bindr_0.1.1        rprojroot_1.3-2   
+## [73] desc_1.2.0         stringi_1.2.4      Rcpp_1.0.0        
+## [76] rpart_4.1-13       tidyselect_0.2.5   xfun_0.4
 ```
 
 

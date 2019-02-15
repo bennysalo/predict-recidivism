@@ -5,3 +5,4 @@ variables.csv
 *.html
 02_variable_table.md
 knit all rmds.R
+my_runlog.rds
