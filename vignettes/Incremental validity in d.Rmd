@@ -10,10 +10,8 @@ date: "`r Sys.Date()`"
 R2_difference_in_d <- function(better_mod, worse_mod, 
                                resamples = model_perfs_training_set1000) {
   
-  data_frame(
-      R2_b = resamples$values[[better_mod]],
-      R2_w = resamples$values[[worse_mod]]
-  ) %>% 
+  data_frame(R2_b = resamples$values[[better_mod]],
+             R2_w = resamples$values[[worse_mod]]) %>% 
   mutate(better_d = calc_d_from_R2(R2_b),
          worse_d  = calc_d_from_R2(R2_w),
          diff_d   = better_d - worse_d) %>% 
@@ -69,10 +67,9 @@ b <- data_frame(incr = incremental_mod,
       mutate(incr = paste0(incr, "~McF_R2"),
              base = paste0(base, "~McF_R2")) 
 
-cbind(b, 
-      purrr::map2_df(.x = b$incr, 
-                     .y = b$base, 
-                     .f = ~R2_difference_in_d(.x, .y))) %>% 
+cbind(b, purrr::map2_df(.x = b$incr, 
+                        .y = b$base, 
+                        .f = ~R2_difference_in_d(.x, .y))) %>% 
   mutate_at(3:6, round, 3)
 
 
