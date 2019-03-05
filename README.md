@@ -10,8 +10,8 @@ Files are organised in an R package structure (even though currently it is not d
 
 The manuscript specifically mentions the following to be found on these pages
 
-* Descriptive statistics as an extension to Table 1 in the revised manuscript can be accessed through [this link](
-(/table_1_desciptive_statistics.md).
+* Descriptive statistics as an extension to Table 1 in the revised manuscript can be founf in
+table_1_desciptive_statistics.md.
 * The process for choosing tuning parameters and R packages used are documented [here](computational_details.pdf) 
 
 (Updated 2019-03-05)
