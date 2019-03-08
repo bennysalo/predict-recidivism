@@ -1,9 +1,9 @@
 ---
 title: "Descriptive statistics"
-date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+          keep_md: yes
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Descriptive statistics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
