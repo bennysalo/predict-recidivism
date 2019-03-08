@@ -1,8 +1,14 @@
 ---
 title: "Incremental validity in d"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 date: "`r Sys.Date()`"
 ---
+```{r}
+library(dplyr)
+devtools::load_all(".")
+```
 
 ## Function
 

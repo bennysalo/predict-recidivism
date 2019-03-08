@@ -1,1 +1,3 @@
+*.html
+*.R
 knit_all_analyses.R

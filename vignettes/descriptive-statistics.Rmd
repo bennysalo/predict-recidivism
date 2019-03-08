@@ -1,0 +1,71 @@
+---
+title: "Descriptive statistics"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This package includes the data objects with descriptive statistics: `descriptive_stats_cat` (for categorical variables) and `descriptive_stats_num` (for numerical variables. These objects are data frames that can be used for further analyzes such as mean differences and chi-square tables.
+
+For readers that only want to see the descriptive statistics we print out the tables below.
+
+
+We can use the information in `variable_table` to replace the variable names with longer variable labels
+
+```{r}
+library(recidivismsl)
+
+# Create a replacement vector
+variable_labels <- variable_table$Label
+names(variable_labels) <- variable_table$Variable
+```
+
+
+## Categorical variables
+*Frequencies and percentages by reoffence group.Key: NoRe = No reoffence, NViolRe = Non-violent reoffence, VioRe = Violent Reoffence, n = frequencies, % = percentages.*
+
+```{r}
+printed_cat  <- descriptive_stats_cat
+names(printed_cat) <- c("Variable", "Level", 
+                         "NoRe n", "NViolRe n", "VioRe n",
+                         "NoRe %", "NViolRe %", "VioRe %")
+
+
+
+printed_cat$Variable <- variable_labels[printed_cat$Variable]
+
+
+knitr::kable(printed_cat, digits = 1)
+
+```
+
+## Numerical variables
+*Means and standard deviations per reoffence group. Key: NoRe = No reoffence, NViolRe = Non-violent reoffence, VioRe = Violent Reoffence, M = Means, SD = Standard Deviations.*
+
+```{r}
+printed_num  <- descriptive_stats_num
+names(printed_num) <- c("Variable",
+                         "NoRe M", "NViolRe M", "VioRe M",
+                         "NoRr SD", "NViolRe SD", "VioRe SD")
+
+
+
+printed_num$Variable <- variable_labels[printed_num$Variable]
+
+
+knitr::kable(printed_num, digits = 1)
+
+```
+
+
+

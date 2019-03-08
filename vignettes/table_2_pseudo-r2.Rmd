@@ -1,6 +1,6 @@
 ---
 title: "Table 2 - Pseudo R2"
-date: "2018-09-24"
+date: "`r Sys.Date()`"
 output: github_document
 ---
 
@@ -65,7 +65,7 @@ my_diff <- function(model_vector) {
 qet_quantiles_test <- 
   function(model_vector, metric = "logLoss", 
            sided = "two", Bonf_cor_n = 1, alpha = 0.05) {
-    
+
   lim <- alpha / Bonf_cor_n
   if(sided == "two") {
     prob_lims <- c(lim/2, 1 - lim/2)
@@ -99,15 +99,6 @@ qet_quantiles_test <-
 }
 ```
 
-```{r}
-qet_quantiles_test(c("gen_allp_glmnet", "gen_bgnn_glmnet"), metric = "McF_R2")
-qet_quantiles_test(c("gen_bgnn_glmnet", "gen_stat_glmnet"), metric = "McF_R2")          
-qet_quantiles_test(c("gen_stat_glmnet", "gen_rita_glmnet"), metric = "McF_R2")
-```
 
-```{r}
-qet_quantiles_test(c("vio_allp_glmnet", "vio_bgnn_glmnet"), metric = "McF_R2")
-qet_quantiles_test(c("vio_bgnn_glmnet", "vio_stat_glmnet"), metric = "McF_R2")          
-qet_quantiles_test(c("vio_stat_glmnet", "vio_rita_glmnet"), metric = "McF_R2")
-```
+
 

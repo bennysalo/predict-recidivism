@@ -16,7 +16,9 @@ Imports: caret,
     ggthemes,
     pROC,
     stringr
-Suggests: knitr,
+Suggests: 
+    knitr,
     markdown,
-    readr, 
-    testthat
+    readr,
+    testthat,
+    rmarkdown
