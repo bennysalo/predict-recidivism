@@ -1,7 +1,6 @@
 ---
 title: "Descriptive statistics"
 output: rmarkdown::html_vignette
-          keep_md: yes
 vignette: >
   %\VignetteIndexEntry{Descriptive statistics}
   %\VignetteEngine{knitr::rmarkdown}
