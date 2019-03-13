@@ -25,27 +25,49 @@ body {
 
 <body>
 
-<h1 id="descriptive-statistics.r">descriptive-statistics.R</h1>
-<p>benny_000<br />
-Tue Mar 12 06:19:26 2019</p>
+<h1 id="descriptive-statistics">Descriptive statistics</h1>
+<p>This package includes the data objects with descriptive statistics: <code>descriptive_stats_cat</code> (for categorical variables) and <code>descriptive_stats_num</code> (for numerical variables. These objects are data frames that can be used for further analyzes such as mean differences and chi-square tables.</p>
+<p>For readers that only want to see the descriptive statistics we print out the tables below.</p>
+<p>We can use the information in <code>variable_table</code> to replace the variable names with longer variable labels</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(recidivismsl)
 
-output_table  &lt;-<span class="st"> </span>descriptive_stats_cat
-<span class="kw">names</span>(output_table) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Variable&quot;</span>, <span class="st">&quot;Level&quot;</span>, 
-                         <span class="st">&quot;NoRe&quot;</span>, <span class="st">&quot;NVioVRe&quot;</span>, <span class="st">&quot;VioRe&quot;</span>,
-                         <span class="st">&quot;NoRe%&quot;</span>, <span class="st">&quot;NVioVRe%&quot;</span>, <span class="st">&quot;VioRe%&quot;</span>)
-knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span class="dt">digits =</span> <span class="dv">1</span>)</code></pre></div>
-<table>
+<span class="co"># Create a replacement vector</span>
+variable_labels &lt;-<span class="st"> </span>variable_table<span class="op">$</span>Label
+<span class="kw">names</span>(variable_labels) &lt;-<span class="st"> </span>variable_table<span class="op">$</span>Variable</code></pre></div>
+<h2 id="categorical-variables">Categorical variables</h2>
+<p><em>Frequencies and percentages by reoffence group.Key: NoRe = No reoffence, NViolRe = Non-violent reoffence, VioRe = Violent Reoffence, n = frequencies, % = percentages.</em></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">printed_cat  &lt;-<span class="st"> </span>descriptive_stats_cat
+<span class="kw">names</span>(printed_cat) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Variable&quot;</span>, <span class="st">&quot;Level&quot;</span>, 
+                         <span class="st">&quot;NoRe n&quot;</span>, <span class="st">&quot;NViolRe n&quot;</span>, <span class="st">&quot;VioRe n&quot;</span>,
+                         <span class="st">&quot;NoRe %&quot;</span>, <span class="st">&quot;NViolRe %&quot;</span>, <span class="st">&quot;VioRe %&quot;</span>)
+
+
+
+printed_cat<span class="op">$</span>Variable &lt;-<span class="st"> </span>variable_labels[printed_cat<span class="op">$</span>Variable]
+
+
+knitr<span class="op">::</span><span class="kw">kable</span>(printed_cat, <span class="dt">digits =</span> <span class="dv">1</span>)</code></pre></div>
+<table style="width:100%;">
+<colgroup>
+<col width="33%"></col>
+<col width="23%"></col>
+<col width="6%"></col>
+<col width="8%"></col>
+<col width="6%"></col>
+<col width="6%"></col>
+<col width="8%"></col>
+<col width="6%"></col>
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">Variable</th>
 <th align="left">Level</th>
-<th align="right">NoRe</th>
-<th align="right">NVioVRe</th>
-<th align="right">VioRe</th>
-<th align="right">NoRe%</th>
-<th align="right">NVioVRe%</th>
-<th align="right">VioRe%</th>
+<th align="right">NoRe n</th>
+<th align="right">NViolRe n</th>
+<th align="right">VioRe n</th>
+<th align="right">NoRe %</th>
+<th align="right">NViolRe %</th>
+<th align="right">VioRe %</th>
 </tr>
 </thead>
 <tbody>
@@ -60,7 +82,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">18.6</td>
 </tr>
 <tr class="even">
-<td align="left">ageFirst_missing</td>
+<td align="left">Missing info on age at first term</td>
 <td align="left">0</td>
 <td align="right">537</td>
 <td align="right">293</td>
@@ -70,7 +92,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">16.0</td>
 </tr>
 <tr class="odd">
-<td align="left">ageFirst_missing</td>
+<td align="left">Missing info on age at first term</td>
 <td align="left">1</td>
 <td align="right">211</td>
 <td align="right">177</td>
@@ -80,7 +102,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.5</td>
 </tr>
 <tr class="even">
-<td align="left">conditionalReleaseGranted</td>
+<td align="left">Conditional release granted</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">410</td>
@@ -90,7 +112,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.8</td>
 </tr>
 <tr class="odd">
-<td align="left">conditionalReleaseGranted</td>
+<td align="left">Conditional release granted</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">60</td>
@@ -100,7 +122,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.7</td>
 </tr>
 <tr class="even">
-<td align="left">conditionalReleaseOutcome</td>
+<td align="left">Conditional release</td>
 <td align="left">Cancelled conditional release</td>
 <td align="right">40</td>
 <td align="right">20</td>
@@ -110,7 +132,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.0</td>
 </tr>
 <tr class="odd">
-<td align="left">conditionalReleaseOutcome</td>
+<td align="left">Conditional release</td>
 <td align="left">No conditional release</td>
 <td align="right">511</td>
 <td align="right">407</td>
@@ -120,7 +142,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">16.1</td>
 </tr>
 <tr class="even">
-<td align="left">conditionalReleaseOutcome</td>
+<td align="left">Conditional release</td>
 <td align="left">Successful conditional relase</td>
 <td align="right">197</td>
 <td align="right">43</td>
@@ -130,7 +152,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.5</td>
 </tr>
 <tr class="odd">
-<td align="left">conditionalReleaseSuccess</td>
+<td align="left">Conditional release successful</td>
 <td align="left">no_cr_or_revoked</td>
 <td align="right">551</td>
 <td align="right">427</td>
@@ -140,7 +162,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">17.1</td>
 </tr>
 <tr class="even">
-<td align="left">conditionalReleaseSuccess</td>
+<td align="left">Conditional release successful</td>
 <td align="left">successful_cr</td>
 <td align="right">197</td>
 <td align="right">43</td>
@@ -150,7 +172,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.5</td>
 </tr>
 <tr class="odd">
-<td align="left">crimeDuringSentence</td>
+<td align="left">Crime during sentence</td>
 <td align="left">No records of crime</td>
 <td align="right">747</td>
 <td align="right">415</td>
@@ -160,7 +182,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">16.1</td>
 </tr>
 <tr class="even">
-<td align="left">crimeDuringSentence</td>
+<td align="left">Crime during sentence</td>
 <td align="left">Record of crime</td>
 <td align="right">1</td>
 <td align="right">55</td>
@@ -170,7 +192,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.5</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcCriminalActs</td>
+<td align="left">Alcohol-related offenses</td>
 <td align="left">0</td>
 <td align="right">274</td>
 <td align="right">148</td>
@@ -180,7 +202,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcCriminalActs</td>
+<td align="left">Alcohol-related offenses</td>
 <td align="left">1</td>
 <td align="right">189</td>
 <td align="right">122</td>
@@ -190,7 +212,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.0</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcCriminalActs</td>
+<td align="left">Alcohol-related offenses</td>
 <td align="left">2</td>
 <td align="right">285</td>
 <td align="right">200</td>
@@ -200,7 +222,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">10.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcEffectHealth</td>
+<td align="left">Effects of alcohol on health</td>
 <td align="left">0</td>
 <td align="right">639</td>
 <td align="right">381</td>
@@ -210,7 +232,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">15.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcEffectHealth</td>
+<td align="left">Effects of alcohol on health</td>
 <td align="left">1</td>
 <td align="right">83</td>
 <td align="right">66</td>
@@ -220,7 +242,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.0</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcEffectHealth</td>
+<td align="left">Effects of alcohol on health</td>
 <td align="left">2</td>
 <td align="right">26</td>
 <td align="right">23</td>
@@ -230,7 +252,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcEffectRelations</td>
+<td align="left">Effects of alcohol on relationships</td>
 <td align="left">0</td>
 <td align="right">407</td>
 <td align="right">217</td>
@@ -240,7 +262,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.5</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcEffectRelations</td>
+<td align="left">Effects of alcohol on relationships</td>
 <td align="left">1</td>
 <td align="right">248</td>
 <td align="right">180</td>
@@ -250,7 +272,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">8.0</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcEffectRelations</td>
+<td align="left">Effects of alcohol on relationships</td>
 <td align="left">2</td>
 <td align="right">93</td>
 <td align="right">73</td>
@@ -260,7 +282,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.1</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcEffectWork</td>
+<td align="left">Effects of alcohol on daily living</td>
 <td align="left">0</td>
 <td align="right">423</td>
 <td align="right">208</td>
@@ -270,7 +292,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.8</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcEffectWork</td>
+<td align="left">Effects of alcohol on daily living</td>
 <td align="left">1</td>
 <td align="right">224</td>
 <td align="right">148</td>
@@ -280,7 +302,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.4</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcEffectWork</td>
+<td align="left">Effects of alcohol on daily living</td>
 <td align="left">2</td>
 <td align="right">101</td>
 <td align="right">114</td>
@@ -290,7 +312,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.3</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcFrequency</td>
+<td align="left">Alcohol use frequency</td>
 <td align="left">0</td>
 <td align="right">336</td>
 <td align="right">170</td>
@@ -300,7 +322,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.1</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcFrequency</td>
+<td align="left">Alcohol use frequency</td>
 <td align="left">1</td>
 <td align="right">241</td>
 <td align="right">152</td>
@@ -310,7 +332,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.8</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcFrequency</td>
+<td align="left">Alcohol use frequency</td>
 <td align="left">2</td>
 <td align="right">171</td>
 <td align="right">148</td>
@@ -320,7 +342,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.6</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcMotivationTreat</td>
+<td align="left">Motivation to tackle alcohol misuse</td>
 <td align="left">0</td>
 <td align="right">600</td>
 <td align="right">343</td>
@@ -330,7 +352,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">11.8</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcMotivationTreat</td>
+<td align="left">Motivation to tackle alcohol misuse</td>
 <td align="left">1</td>
 <td align="right">110</td>
 <td align="right">91</td>
@@ -340,7 +362,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.7</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcMotivationTreat</td>
+<td align="left">Motivation to tackle alcohol misuse</td>
 <td align="left">2</td>
 <td align="right">38</td>
 <td align="right">36</td>
@@ -350,7 +372,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.1</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcViolence</td>
+<td align="left">Alcohol-induced violence</td>
 <td align="left">0</td>
 <td align="right">302</td>
 <td align="right">174</td>
@@ -360,7 +382,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.2</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcViolence</td>
+<td align="left">Alcohol-induced violence</td>
 <td align="left">1</td>
 <td align="right">218</td>
 <td align="right">142</td>
@@ -370,7 +392,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcViolence</td>
+<td align="left">Alcohol-induced violence</td>
 <td align="left">2</td>
 <td align="right">228</td>
 <td align="right">154</td>
@@ -380,7 +402,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">10.5</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcWithMeds</td>
+<td align="left">Alcohol with medicine misuse</td>
 <td align="left">0</td>
 <td align="right">584</td>
 <td align="right">303</td>
@@ -390,7 +412,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.4</td>
 </tr>
 <tr class="odd">
-<td align="left">i_alcWithMeds</td>
+<td align="left">Alcohol with medicine misuse</td>
 <td align="left">1</td>
 <td align="right">48</td>
 <td align="right">49</td>
@@ -400,7 +422,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.9</td>
 </tr>
 <tr class="even">
-<td align="left">i_alcWithMeds</td>
+<td align="left">Alcohol with medicine misuse</td>
 <td align="left">2</td>
 <td align="right">116</td>
 <td align="right">118</td>
@@ -410,7 +432,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.3</td>
 </tr>
 <tr class="odd">
-<td align="left">i_attitudeHostile</td>
+<td align="left">Interpersonal hostility</td>
 <td align="left">0</td>
 <td align="right">631</td>
 <td align="right">385</td>
@@ -420,7 +442,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">13.2</td>
 </tr>
 <tr class="even">
-<td align="left">i_attitudeHostile</td>
+<td align="left">Interpersonal hostility</td>
 <td align="left">1</td>
 <td align="right">91</td>
 <td align="right">70</td>
@@ -430,7 +452,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.3</td>
 </tr>
 <tr class="odd">
-<td align="left">i_attitudeHostile</td>
+<td align="left">Interpersonal hostility</td>
 <td align="left">2</td>
 <td align="right">26</td>
 <td align="right">15</td>
@@ -440,7 +462,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.1</td>
 </tr>
 <tr class="even">
-<td align="left">i_attitudeProcrime</td>
+<td align="left">Pro-criminal attitudes</td>
 <td align="left">0</td>
 <td align="right">414</td>
 <td align="right">184</td>
@@ -450,7 +472,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_attitudeProcrime</td>
+<td align="left">Pro-criminal attitudes</td>
 <td align="left">1</td>
 <td align="right">273</td>
 <td align="right">215</td>
@@ -460,7 +482,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">8.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_attitudeProcrime</td>
+<td align="left">Pro-criminal attitudes</td>
 <td align="left">2</td>
 <td align="right">61</td>
 <td align="right">71</td>
@@ -470,7 +492,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.1</td>
 </tr>
 <tr class="odd">
-<td align="left">i_attitudeStaff</td>
+<td align="left">Attitude toward staff and authorities</td>
 <td align="left">0</td>
 <td align="right">658</td>
 <td align="right">383</td>
@@ -480,7 +502,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">13.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_attitudeStaff</td>
+<td align="left">Attitude toward staff and authorities</td>
 <td align="left">1</td>
 <td align="right">81</td>
 <td align="right">77</td>
@@ -490,7 +512,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.0</td>
 </tr>
 <tr class="odd">
-<td align="left">i_attitudeStaff</td>
+<td align="left">Attitude toward staff and authorities</td>
 <td align="left">2</td>
 <td align="right">9</td>
 <td align="right">10</td>
@@ -500,7 +522,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.7</td>
 </tr>
 <tr class="even">
-<td align="left">i_attitudeSupervision</td>
+<td align="left">Attitude towards parole supervision</td>
 <td align="left">0</td>
 <td align="right">654</td>
 <td align="right">368</td>
@@ -510,7 +532,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.6</td>
 </tr>
 <tr class="odd">
-<td align="left">i_attitudeSupervision</td>
+<td align="left">Attitude towards parole supervision</td>
 <td align="left">1</td>
 <td align="right">77</td>
 <td align="right">79</td>
@@ -520,7 +542,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.0</td>
 </tr>
 <tr class="even">
-<td align="left">i_attitudeSupervision</td>
+<td align="left">Attitude towards parole supervision</td>
 <td align="left">2</td>
 <td align="right">17</td>
 <td align="right">23</td>
@@ -530,7 +552,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.0</td>
 </tr>
 <tr class="odd">
-<td align="left">i_cumpulsorySchool</td>
+<td align="left">Completed compulsory school</td>
 <td align="left">0</td>
 <td align="right">712</td>
 <td align="right">417</td>
@@ -540,7 +562,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">17.7</td>
 </tr>
 <tr class="even">
-<td align="left">i_cumpulsorySchool</td>
+<td align="left">Completed compulsory school</td>
 <td align="left">2</td>
 <td align="right">36</td>
 <td align="right">53</td>
@@ -550,7 +572,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_dailyLifeManagement</td>
+<td align="left">Management of daily living</td>
 <td align="left">0</td>
 <td align="right">645</td>
 <td align="right">348</td>
@@ -560,7 +582,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">13.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_dailyLifeManagement</td>
+<td align="left">Management of daily living</td>
 <td align="left">1</td>
 <td align="right">83</td>
 <td align="right">98</td>
@@ -570,7 +592,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.3</td>
 </tr>
 <tr class="odd">
-<td align="left">i_dailyLifeManagement</td>
+<td align="left">Management of daily living</td>
 <td align="left">2</td>
 <td align="right">20</td>
 <td align="right">24</td>
@@ -580,7 +602,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.5</td>
 </tr>
 <tr class="even">
-<td align="left">i_domViolPerp</td>
+<td align="left">Domestic violence, victim</td>
 <td align="left">0</td>
 <td align="right">622</td>
 <td align="right">381</td>
@@ -590,7 +612,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.2</td>
 </tr>
 <tr class="odd">
-<td align="left">i_domViolPerp</td>
+<td align="left">Domestic violence, victim</td>
 <td align="left">1</td>
 <td align="right">88</td>
 <td align="right">66</td>
@@ -600,7 +622,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_domViolPerp</td>
+<td align="left">Domestic violence, victim</td>
 <td align="left">2</td>
 <td align="right">38</td>
 <td align="right">23</td>
@@ -610,7 +632,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.5</td>
 </tr>
 <tr class="odd">
-<td align="left">i_domViolVictim</td>
+<td align="left">Domestic violence, offender</td>
 <td align="left">0</td>
 <td align="right">565</td>
 <td align="right">367</td>
@@ -620,7 +642,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">12.6</td>
 </tr>
 <tr class="even">
-<td align="left">i_domViolVictim</td>
+<td align="left">Domestic violence, offender</td>
 <td align="left">1</td>
 <td align="right">85</td>
 <td align="right">72</td>
@@ -630,7 +652,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.5</td>
 </tr>
 <tr class="odd">
-<td align="left">i_domViolVictim</td>
+<td align="left">Domestic violence, offender</td>
 <td align="left">2</td>
 <td align="right">98</td>
 <td align="right">31</td>
@@ -640,7 +662,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.5</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugCriminalActs</td>
+<td align="left">Drug-related offenses</td>
 <td align="left">0</td>
 <td align="right">625</td>
 <td align="right">307</td>
@@ -650,7 +672,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">10.3</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugCriminalActs</td>
+<td align="left">Drug-related offenses</td>
 <td align="left">1</td>
 <td align="right">41</td>
 <td align="right">37</td>
@@ -660,7 +682,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.1</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugCriminalActs</td>
+<td align="left">Drug-related offenses</td>
 <td align="left">2</td>
 <td align="right">82</td>
 <td align="right">126</td>
@@ -670,7 +692,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.2</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugEffectHealth</td>
+<td align="left">Effects of drugs on health</td>
 <td align="left">0</td>
 <td align="right">671</td>
 <td align="right">344</td>
@@ -680,7 +702,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">12.0</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugEffectHealth</td>
+<td align="left">Effects of drugs on health</td>
 <td align="left">1</td>
 <td align="right">47</td>
 <td align="right">83</td>
@@ -690,7 +712,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.6</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugEffectHealth</td>
+<td align="left">Effects of drugs on health</td>
 <td align="left">2</td>
 <td align="right">30</td>
 <td align="right">43</td>
@@ -700,7 +722,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.0</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugEffectRelations</td>
+<td align="left">Effects of drugs on relationship</td>
 <td align="left">0</td>
 <td align="right">640</td>
 <td align="right">329</td>
@@ -710,7 +732,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">11.5</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugEffectRelations</td>
+<td align="left">Effects of drugs on relationship</td>
 <td align="left">1</td>
 <td align="right">75</td>
 <td align="right">83</td>
@@ -720,7 +742,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.1</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugEffectRelations</td>
+<td align="left">Effects of drugs on relationship</td>
 <td align="left">2</td>
 <td align="right">33</td>
 <td align="right">58</td>
@@ -730,7 +752,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.0</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugEffectWork</td>
+<td align="left">Effects of drugs on daily living</td>
 <td align="left">0</td>
 <td align="right">637</td>
 <td align="right">322</td>
@@ -740,7 +762,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">11.6</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugEffectWork</td>
+<td align="left">Effects of drugs on daily living</td>
 <td align="left">1</td>
 <td align="right">50</td>
 <td align="right">56</td>
@@ -750,7 +772,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugEffectWork</td>
+<td align="left">Effects of drugs on daily living</td>
 <td align="left">2</td>
 <td align="right">61</td>
 <td align="right">92</td>
@@ -760,7 +782,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.3</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugFrequency</td>
+<td align="left">Drug use frequency</td>
 <td align="left">0</td>
 <td align="right">602</td>
 <td align="right">297</td>
@@ -770,7 +792,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugFrequency</td>
+<td align="left">Drug use frequency</td>
 <td align="left">1</td>
 <td align="right">66</td>
 <td align="right">63</td>
@@ -780,7 +802,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.2</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugFrequency</td>
+<td align="left">Drug use frequency</td>
 <td align="left">2</td>
 <td align="right">80</td>
 <td align="right">110</td>
@@ -790,7 +812,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugHistory</td>
+<td align="left">History of drug abuse</td>
 <td align="left">0</td>
 <td align="right">263</td>
 <td align="right">65</td>
@@ -800,7 +822,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.4</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugHistory</td>
+<td align="left">History of drug abuse</td>
 <td align="left">1</td>
 <td align="right">60</td>
 <td align="right">38</td>
@@ -810,7 +832,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.4</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugHistory</td>
+<td align="left">History of drug abuse</td>
 <td align="left">2</td>
 <td align="right">425</td>
 <td align="right">367</td>
@@ -820,7 +842,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">12.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugIntravenous</td>
+<td align="left">Intravenous drug use</td>
 <td align="left">0</td>
 <td align="right">629</td>
 <td align="right">307</td>
@@ -830,7 +852,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">10.0</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugIntravenous</td>
+<td align="left">Intravenous drug use</td>
 <td align="left">1</td>
 <td align="right">7</td>
 <td align="right">11</td>
@@ -840,7 +862,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.5</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugIntravenous</td>
+<td align="left">Intravenous drug use</td>
 <td align="left">2</td>
 <td align="right">112</td>
 <td align="right">152</td>
@@ -850,7 +872,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">8.1</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugMotivationTreat</td>
+<td align="left">Motivation to tackle drug misuse</td>
 <td align="left">0</td>
 <td align="right">694</td>
 <td align="right">391</td>
@@ -860,7 +882,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.5</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugMotivationTreat</td>
+<td align="left">Motivation to tackle drug misuse</td>
 <td align="left">1</td>
 <td align="right">38</td>
 <td align="right">54</td>
@@ -870,7 +892,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugMotivationTreat</td>
+<td align="left">Motivation to tackle drug misuse</td>
 <td align="left">2</td>
 <td align="right">16</td>
 <td align="right">25</td>
@@ -880,7 +902,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.3</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugViolence</td>
+<td align="left">Drug-induced violence</td>
 <td align="left">0</td>
 <td align="right">700</td>
 <td align="right">414</td>
@@ -890,7 +912,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">13.2</td>
 </tr>
 <tr class="odd">
-<td align="left">i_drugViolence</td>
+<td align="left">Drug-induced violence</td>
 <td align="left">1</td>
 <td align="right">28</td>
 <td align="right">35</td>
@@ -900,7 +922,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.9</td>
 </tr>
 <tr class="even">
-<td align="left">i_drugViolence</td>
+<td align="left">Drug-induced violence</td>
 <td align="left">2</td>
 <td align="right">20</td>
 <td align="right">21</td>
@@ -910,7 +932,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.4</td>
 </tr>
 <tr class="odd">
-<td align="left">i_eduAttitude</td>
+<td align="left">Attitude to education</td>
 <td align="left">0</td>
 <td align="right">580</td>
 <td align="right">299</td>
@@ -920,7 +942,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">12.4</td>
 </tr>
 <tr class="even">
-<td align="left">i_eduAttitude</td>
+<td align="left">Attitude to education</td>
 <td align="left">1</td>
 <td align="right">124</td>
 <td align="right">125</td>
@@ -930,7 +952,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.5</td>
 </tr>
 <tr class="odd">
-<td align="left">i_eduAttitude</td>
+<td align="left">Attitude to education</td>
 <td align="left">2</td>
 <td align="right">44</td>
 <td align="right">46</td>
@@ -940,7 +962,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.7</td>
 </tr>
 <tr class="even">
-<td align="left">i_eduNeed</td>
+<td align="left">Work-related qualifications</td>
 <td align="left">0</td>
 <td align="right">378</td>
 <td align="right">154</td>
@@ -950,7 +972,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.3</td>
 </tr>
 <tr class="odd">
-<td align="left">i_eduNeed</td>
+<td align="left">Work-related qualifications</td>
 <td align="left">1</td>
 <td align="right">245</td>
 <td align="right">169</td>
@@ -960,7 +982,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_eduNeed</td>
+<td align="left">Work-related qualifications</td>
 <td align="left">2</td>
 <td align="right">125</td>
 <td align="right">147</td>
@@ -970,7 +992,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.6</td>
 </tr>
 <tr class="odd">
-<td align="left">i_familyRelation</td>
+<td align="left">Relationship with family</td>
 <td align="left">0</td>
 <td align="right">563</td>
 <td align="right">281</td>
@@ -980,7 +1002,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">11.6</td>
 </tr>
 <tr class="even">
-<td align="left">i_familyRelation</td>
+<td align="left">Relationship with family</td>
 <td align="left">1</td>
 <td align="right">146</td>
 <td align="right">140</td>
@@ -990,7 +1012,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_familyRelation</td>
+<td align="left">Relationship with family</td>
 <td align="left">2</td>
 <td align="right">39</td>
 <td align="right">49</td>
@@ -1000,7 +1022,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.2</td>
 </tr>
 <tr class="even">
-<td align="left">i_financialManagement</td>
+<td align="left">Managing finances</td>
 <td align="left">0</td>
 <td align="right">335</td>
 <td align="right">106</td>
@@ -1010,7 +1032,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_financialManagement</td>
+<td align="left">Managing finances</td>
 <td align="left">1</td>
 <td align="right">300</td>
 <td align="right">207</td>
@@ -1020,7 +1042,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_financialManagement</td>
+<td align="left">Managing finances</td>
 <td align="left">2</td>
 <td align="right">113</td>
 <td align="right">157</td>
@@ -1030,7 +1052,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.1</td>
 </tr>
 <tr class="odd">
-<td align="left">i_financialObstacles</td>
+<td align="left">Obstacles to budgeting</td>
 <td align="left">0</td>
 <td align="right">347</td>
 <td align="right">115</td>
@@ -1040,7 +1062,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.4</td>
 </tr>
 <tr class="even">
-<td align="left">i_financialObstacles</td>
+<td align="left">Obstacles to budgeting</td>
 <td align="left">1</td>
 <td align="right">292</td>
 <td align="right">205</td>
@@ -1050,7 +1072,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">8.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_financialObstacles</td>
+<td align="left">Obstacles to budgeting</td>
 <td align="left">2</td>
 <td align="right">109</td>
 <td align="right">150</td>
@@ -1060,7 +1082,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.5</td>
 </tr>
 <tr class="even">
-<td align="left">i_financialSituation</td>
+<td align="left">Financial situation</td>
 <td align="left">0</td>
 <td align="right">281</td>
 <td align="right">75</td>
@@ -1070,7 +1092,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_financialSituation</td>
+<td align="left">Financial situation</td>
 <td align="left">1</td>
 <td align="right">290</td>
 <td align="right">155</td>
@@ -1080,7 +1102,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.2</td>
 </tr>
 <tr class="even">
-<td align="left">i_financialSituation</td>
+<td align="left">Financial situation</td>
 <td align="left">2</td>
 <td align="right">177</td>
 <td align="right">240</td>
@@ -1090,7 +1112,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">8.5</td>
 </tr>
 <tr class="odd">
-<td align="left">i_housingAppropriate</td>
+<td align="left">Suitable accommodation</td>
 <td align="left">0</td>
 <td align="right">570</td>
 <td align="right">291</td>
@@ -1100,7 +1122,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">10.0</td>
 </tr>
 <tr class="even">
-<td align="left">i_housingAppropriate</td>
+<td align="left">Suitable accommodation</td>
 <td align="left">1</td>
 <td align="right">81</td>
 <td align="right">67</td>
@@ -1110,7 +1132,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.5</td>
 </tr>
 <tr class="odd">
-<td align="left">i_housingAppropriate</td>
+<td align="left">Suitable accommodation</td>
 <td align="left">2</td>
 <td align="right">97</td>
 <td align="right">112</td>
@@ -1120,7 +1142,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.1</td>
 </tr>
 <tr class="even">
-<td align="left">i_housingShortTerm</td>
+<td align="left">Access to accommodation</td>
 <td align="left">0</td>
 <td align="right">558</td>
 <td align="right">230</td>
@@ -1130,7 +1152,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">8.4</td>
 </tr>
 <tr class="odd">
-<td align="left">i_housingShortTerm</td>
+<td align="left">Access to accommodation</td>
 <td align="left">1</td>
 <td align="right">102</td>
 <td align="right">119</td>
@@ -1140,7 +1162,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.6</td>
 </tr>
 <tr class="even">
-<td align="left">i_housingShortTerm</td>
+<td align="left">Access to accommodation</td>
 <td align="left">2</td>
 <td align="right">88</td>
 <td align="right">121</td>
@@ -1150,7 +1172,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.5</td>
 </tr>
 <tr class="odd">
-<td align="left">i_impulsive</td>
+<td align="left">Impulsivity and impulsive violence</td>
 <td align="left">0</td>
 <td align="right">296</td>
 <td align="right">161</td>
@@ -1160,7 +1182,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.1</td>
 </tr>
 <tr class="even">
-<td align="left">i_impulsive</td>
+<td align="left">Impulsivity and impulsive violence</td>
 <td align="left">1</td>
 <td align="right">324</td>
 <td align="right">214</td>
@@ -1170,7 +1192,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_impulsive</td>
+<td align="left">Impulsivity and impulsive violence</td>
 <td align="left">2</td>
 <td align="right">128</td>
 <td align="right">95</td>
@@ -1180,7 +1202,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.6</td>
 </tr>
 <tr class="even">
-<td align="left">i_insight</td>
+<td align="left">Ability to recognise problems</td>
 <td align="left">0</td>
 <td align="right">323</td>
 <td align="right">170</td>
@@ -1190,7 +1212,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.8</td>
 </tr>
 <tr class="odd">
-<td align="left">i_insight</td>
+<td align="left">Ability to recognise problems</td>
 <td align="left">1</td>
 <td align="right">344</td>
 <td align="right">247</td>
@@ -1200,7 +1222,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_insight</td>
+<td align="left">Ability to recognise problems</td>
 <td align="left">2</td>
 <td align="right">81</td>
 <td align="right">53</td>
@@ -1210,7 +1232,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_instrumentalAggression</td>
+<td align="left">Instrumental aggression</td>
 <td align="left">0</td>
 <td align="right">532</td>
 <td align="right">305</td>
@@ -1220,7 +1242,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.8</td>
 </tr>
 <tr class="even">
-<td align="left">i_instrumentalAggression</td>
+<td align="left">Instrumental aggression</td>
 <td align="left">1</td>
 <td align="right">150</td>
 <td align="right">116</td>
@@ -1230,7 +1252,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_instrumentalAggression</td>
+<td align="left">Instrumental aggression</td>
 <td align="left">2</td>
 <td align="right">66</td>
 <td align="right">49</td>
@@ -1240,7 +1262,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.1</td>
 </tr>
 <tr class="even">
-<td align="left">i_manipulative</td>
+<td align="left">Manipulative lifestyle</td>
 <td align="left">0</td>
 <td align="right">517</td>
 <td align="right">308</td>
@@ -1250,7 +1272,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">11.7</td>
 </tr>
 <tr class="odd">
-<td align="left">i_manipulative</td>
+<td align="left">Manipulative lifestyle</td>
 <td align="left">1</td>
 <td align="right">169</td>
 <td align="right">118</td>
@@ -1260,7 +1282,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.7</td>
 </tr>
 <tr class="even">
-<td align="left">i_manipulative</td>
+<td align="left">Manipulative lifestyle</td>
 <td align="left">2</td>
 <td align="right">62</td>
 <td align="right">44</td>
@@ -1270,7 +1292,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.1</td>
 </tr>
 <tr class="odd">
-<td align="left">i_motivationChange</td>
+<td align="left">Motivation to avoid reoffending</td>
 <td align="left">0</td>
 <td align="right">504</td>
 <td align="right">234</td>
@@ -1280,7 +1302,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.9</td>
 </tr>
 <tr class="even">
-<td align="left">i_motivationChange</td>
+<td align="left">Motivation to avoid reoffending</td>
 <td align="left">1</td>
 <td align="right">188</td>
 <td align="right">187</td>
@@ -1290,7 +1312,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.2</td>
 </tr>
 <tr class="odd">
-<td align="left">i_motivationChange</td>
+<td align="left">Motivation to avoid reoffending</td>
 <td align="left">2</td>
 <td align="right">56</td>
 <td align="right">49</td>
@@ -1300,7 +1322,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.5</td>
 </tr>
 <tr class="even">
-<td align="left">i_othersView</td>
+<td align="left">Understanding of other people</td>
 <td align="left">0</td>
 <td align="right">485</td>
 <td align="right">284</td>
@@ -1310,7 +1332,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.2</td>
 </tr>
 <tr class="odd">
-<td align="left">i_othersView</td>
+<td align="left">Understanding of other people</td>
 <td align="left">1</td>
 <td align="right">212</td>
 <td align="right">161</td>
@@ -1320,7 +1342,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.6</td>
 </tr>
 <tr class="even">
-<td align="left">i_othersView</td>
+<td align="left">Understanding of other people</td>
 <td align="left">2</td>
 <td align="right">51</td>
 <td align="right">25</td>
@@ -1330,7 +1352,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.8</td>
 </tr>
 <tr class="odd">
-<td align="left">i_parenting</td>
+<td align="left">Parenting skills</td>
 <td align="left">0</td>
 <td align="right">588</td>
 <td align="right">326</td>
@@ -1340,7 +1362,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">13.2</td>
 </tr>
 <tr class="even">
-<td align="left">i_parenting</td>
+<td align="left">Parenting skills</td>
 <td align="left">1</td>
 <td align="right">68</td>
 <td align="right">82</td>
@@ -1350,7 +1372,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_parenting</td>
+<td align="left">Parenting skills</td>
 <td align="left">2</td>
 <td align="right">92</td>
 <td align="right">62</td>
@@ -1360,7 +1382,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.4</td>
 </tr>
 <tr class="even">
-<td align="left">i_partnerRelation</td>
+<td align="left">Relationship with partner</td>
 <td align="left">0</td>
 <td align="right">626</td>
 <td align="right">364</td>
@@ -1370,7 +1392,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.4</td>
 </tr>
 <tr class="odd">
-<td align="left">i_partnerRelation</td>
+<td align="left">Relationship with partner</td>
 <td align="left">1</td>
 <td align="right">91</td>
 <td align="right">84</td>
@@ -1380,7 +1402,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.6</td>
 </tr>
 <tr class="even">
-<td align="left">i_partnerRelation</td>
+<td align="left">Relationship with partner</td>
 <td align="left">2</td>
 <td align="right">31</td>
 <td align="right">22</td>
@@ -1390,7 +1412,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.5</td>
 </tr>
 <tr class="odd">
-<td align="left">i_peersCriminal</td>
+<td align="left">Criminal associates</td>
 <td align="left">0</td>
 <td align="right">296</td>
 <td align="right">68</td>
@@ -1400,7 +1422,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.3</td>
 </tr>
 <tr class="even">
-<td align="left">i_peersCriminal</td>
+<td align="left">Criminal associates</td>
 <td align="left">1</td>
 <td align="right">337</td>
 <td align="right">241</td>
@@ -1410,7 +1432,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.8</td>
 </tr>
 <tr class="odd">
-<td align="left">i_peersCriminal</td>
+<td align="left">Criminal associates</td>
 <td align="left">2</td>
 <td align="right">115</td>
 <td align="right">161</td>
@@ -1420,7 +1442,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.5</td>
 </tr>
 <tr class="even">
-<td align="left">i_problemSolving</td>
+<td align="left">Problem-solving skills</td>
 <td align="left">0</td>
 <td align="right">201</td>
 <td align="right">77</td>
@@ -1430,7 +1452,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.3</td>
 </tr>
 <tr class="odd">
-<td align="left">i_problemSolving</td>
+<td align="left">Problem-solving skills</td>
 <td align="left">1</td>
 <td align="right">426</td>
 <td align="right">277</td>
@@ -1440,7 +1462,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">10.4</td>
 </tr>
 <tr class="even">
-<td align="left">i_problemSolving</td>
+<td align="left">Problem-solving skills</td>
 <td align="left">2</td>
 <td align="right">121</td>
 <td align="right">116</td>
@@ -1450,7 +1472,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_readingProblem</td>
+<td align="left">Learning problems</td>
 <td align="left">0</td>
 <td align="right">638</td>
 <td align="right">377</td>
@@ -1460,7 +1482,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.4</td>
 </tr>
 <tr class="even">
-<td align="left">i_readingProblem</td>
+<td align="left">Learning problems</td>
 <td align="left">1</td>
 <td align="right">76</td>
 <td align="right">70</td>
@@ -1470,7 +1492,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.5</td>
 </tr>
 <tr class="odd">
-<td align="left">i_readingProblem</td>
+<td align="left">Learning problems</td>
 <td align="left">2</td>
 <td align="right">34</td>
 <td align="right">23</td>
@@ -1480,7 +1502,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.7</td>
 </tr>
 <tr class="even">
-<td align="left">i_remedialTeaching</td>
+<td align="left">History of remedial teaching</td>
 <td align="left">0</td>
 <td align="right">548</td>
 <td align="right">245</td>
@@ -1490,7 +1512,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.4</td>
 </tr>
 <tr class="odd">
-<td align="left">i_remedialTeaching</td>
+<td align="left">History of remedial teaching</td>
 <td align="left">2</td>
 <td align="right">200</td>
 <td align="right">225</td>
@@ -1500,7 +1522,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.2</td>
 </tr>
 <tr class="even">
-<td align="left">i_responsibility</td>
+<td align="left">Responsibility for offence</td>
 <td align="left">0</td>
 <td align="right">279</td>
 <td align="right">181</td>
@@ -1510,7 +1532,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.1</td>
 </tr>
 <tr class="odd">
-<td align="left">i_responsibility</td>
+<td align="left">Responsibility for offence</td>
 <td align="left">1</td>
 <td align="right">312</td>
 <td align="right">216</td>
@@ -1520,7 +1542,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">8.4</td>
 </tr>
 <tr class="even">
-<td align="left">i_responsibility</td>
+<td align="left">Responsibility for offence</td>
 <td align="left">2</td>
 <td align="right">157</td>
 <td align="right">73</td>
@@ -1530,7 +1552,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.1</td>
 </tr>
 <tr class="odd">
-<td align="left">i_riskSeeking</td>
+<td align="left">Risk-seeking behaviour</td>
 <td align="left">0</td>
 <td align="right">370</td>
 <td align="right">114</td>
@@ -1540,7 +1562,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.0</td>
 </tr>
 <tr class="even">
-<td align="left">i_riskSeeking</td>
+<td align="left">Risk-seeking behaviour</td>
 <td align="left">1</td>
 <td align="right">291</td>
 <td align="right">257</td>
@@ -1550,7 +1572,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.3</td>
 </tr>
 <tr class="odd">
-<td align="left">i_riskSeeking</td>
+<td align="left">Risk-seeking behaviour</td>
 <td align="left">2</td>
 <td align="right">87</td>
 <td align="right">99</td>
@@ -1560,7 +1582,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.3</td>
 </tr>
 <tr class="even">
-<td align="left">i_socialSkills</td>
+<td align="left">Interpersonal skills</td>
 <td align="left">0</td>
 <td align="right">626</td>
 <td align="right">385</td>
@@ -1570,7 +1592,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">13.8</td>
 </tr>
 <tr class="odd">
-<td align="left">i_socialSkills</td>
+<td align="left">Interpersonal skills</td>
 <td align="left">1</td>
 <td align="right">100</td>
 <td align="right">76</td>
@@ -1580,7 +1602,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.9</td>
 </tr>
 <tr class="even">
-<td align="left">i_socialSkills</td>
+<td align="left">Interpersonal skills</td>
 <td align="left">2</td>
 <td align="right">22</td>
 <td align="right">9</td>
@@ -1590,7 +1612,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_submissive</td>
+<td align="left">Easily influenced</td>
 <td align="left">0</td>
 <td align="right">602</td>
 <td align="right">346</td>
@@ -1600,7 +1622,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.6</td>
 </tr>
 <tr class="even">
-<td align="left">i_submissive</td>
+<td align="left">Easily influenced</td>
 <td align="left">1</td>
 <td align="right">127</td>
 <td align="right">102</td>
@@ -1610,7 +1632,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.3</td>
 </tr>
 <tr class="odd">
-<td align="left">i_submissive</td>
+<td align="left">Easily influenced</td>
 <td align="left">2</td>
 <td align="right">19</td>
 <td align="right">22</td>
@@ -1620,7 +1642,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.7</td>
 </tr>
 <tr class="even">
-<td align="left">i_workApplication</td>
+<td align="left">Work application management</td>
 <td align="left">0</td>
 <td align="right">618</td>
 <td align="right">322</td>
@@ -1630,7 +1652,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">12.0</td>
 </tr>
 <tr class="odd">
-<td align="left">i_workApplication</td>
+<td align="left">Work application management</td>
 <td align="left">1</td>
 <td align="right">71</td>
 <td align="right">77</td>
@@ -1640,7 +1662,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.2</td>
 </tr>
 <tr class="even">
-<td align="left">i_workApplication</td>
+<td align="left">Work application management</td>
 <td align="left">2</td>
 <td align="right">59</td>
 <td align="right">71</td>
@@ -1650,7 +1672,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.3</td>
 </tr>
 <tr class="odd">
-<td align="left">i_workAttitude</td>
+<td align="left">Attitude to employment</td>
 <td align="left">0</td>
 <td align="right">616</td>
 <td align="right">306</td>
@@ -1660,7 +1682,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">11.5</td>
 </tr>
 <tr class="even">
-<td align="left">i_workAttitude</td>
+<td align="left">Attitude to employment</td>
 <td align="left">1</td>
 <td align="right">107</td>
 <td align="right">123</td>
@@ -1670,7 +1692,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_workAttitude</td>
+<td align="left">Attitude to employment</td>
 <td align="left">2</td>
 <td align="right">25</td>
 <td align="right">41</td>
@@ -1680,7 +1702,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.1</td>
 </tr>
 <tr class="even">
-<td align="left">i_workHistory</td>
+<td align="left">Employment history</td>
 <td align="left">0</td>
 <td align="right">383</td>
 <td align="right">120</td>
@@ -1690,7 +1712,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.9</td>
 </tr>
 <tr class="odd">
-<td align="left">i_workHistory</td>
+<td align="left">Employment history</td>
 <td align="left">1</td>
 <td align="right">243</td>
 <td align="right">177</td>
@@ -1700,7 +1722,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.2</td>
 </tr>
 <tr class="even">
-<td align="left">i_workHistory</td>
+<td align="left">Employment history</td>
 <td align="left">2</td>
 <td align="right">122</td>
 <td align="right">173</td>
@@ -1710,7 +1732,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.5</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_againstOfficer</td>
+<td align="left">New offence: Offence against authorities</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">449</td>
@@ -1720,7 +1742,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">15.6</td>
 </tr>
 <tr class="even">
-<td align="left">newO_againstOfficer</td>
+<td align="left">New offence: Offence against authorities</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">21</td>
@@ -1730,7 +1752,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">2.9</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_assault</td>
+<td align="left">New offence: Assault</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">470</td>
@@ -1740,7 +1762,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.5</td>
 </tr>
 <tr class="even">
-<td align="left">newO_assault</td>
+<td align="left">New offence: Assault</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -1750,7 +1772,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">18.1</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_autoTheft</td>
+<td align="left">New offence: Auto theft</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">410</td>
@@ -1760,7 +1782,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.8</td>
 </tr>
 <tr class="even">
-<td align="left">newO_autoTheft</td>
+<td align="left">New offence: Auto theft</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">60</td>
@@ -1770,7 +1792,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.7</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_damage</td>
+<td align="left">New offence: Criminal damage</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">437</td>
@@ -1780,7 +1802,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.4</td>
 </tr>
 <tr class="even">
-<td align="left">newO_damage</td>
+<td align="left">New offence: Criminal damage</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">33</td>
@@ -1790,7 +1812,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.2</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_homicide</td>
+<td align="left">New offence: Homicide</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">470</td>
@@ -1800,7 +1822,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">17.2</td>
 </tr>
 <tr class="even">
-<td align="left">newO_homicide</td>
+<td align="left">New offence: Homicide</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -1810,7 +1832,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.3</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_narcotic</td>
+<td align="left">New offence: Narcotic offence</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">329</td>
@@ -1820,7 +1842,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">12.2</td>
 </tr>
 <tr class="even">
-<td align="left">newO_narcotic</td>
+<td align="left">New offence: Narcotic offence</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">141</td>
@@ -1830,7 +1852,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.4</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_other</td>
+<td align="left">New offence: Other offences</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">465</td>
@@ -1840,7 +1862,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">18.4</td>
 </tr>
 <tr class="even">
-<td align="left">newO_other</td>
+<td align="left">New offence: Other offences</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">5</td>
@@ -1850,7 +1872,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.2</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_otherPerson</td>
+<td align="left">New offence: Other offence against person</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">439</td>
@@ -1860,7 +1882,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">11.3</td>
 </tr>
 <tr class="even">
-<td align="left">newO_otherPerson</td>
+<td align="left">New offence: Other offence against person</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">31</td>
@@ -1870,7 +1892,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.3</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_otherProperty</td>
+<td align="left">New offence: Other property offence</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">394</td>
@@ -1880,7 +1902,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">13.7</td>
 </tr>
 <tr class="even">
-<td align="left">newO_otherProperty</td>
+<td align="left">New offence: Other property offence</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">76</td>
@@ -1890,7 +1912,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.9</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_robbery</td>
+<td align="left">New offence: Robbery</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">437</td>
@@ -1900,7 +1922,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">15.3</td>
 </tr>
 <tr class="even">
-<td align="left">newO_robbery</td>
+<td align="left">New offence: Robbery</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">33</td>
@@ -1910,7 +1932,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.3</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_sexual</td>
+<td align="left">New offence: Sexual offence</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">468</td>
@@ -1920,7 +1942,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">17.9</td>
 </tr>
 <tr class="even">
-<td align="left">newO_sexual</td>
+<td align="left">New offence: Sexual offence</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">2</td>
@@ -1930,7 +1952,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.7</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_theft</td>
+<td align="left">New offence: Theft</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">344</td>
@@ -1940,7 +1962,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">10.6</td>
 </tr>
 <tr class="even">
-<td align="left">newO_theft</td>
+<td align="left">New offence: Theft</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">126</td>
@@ -1950,7 +1972,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">8.0</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_traffic</td>
+<td align="left">New offence: Traffic offence</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">299</td>
@@ -1960,7 +1982,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.8</td>
 </tr>
 <tr class="even">
-<td align="left">newO_traffic</td>
+<td align="left">New offence: Traffic offence</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">171</td>
@@ -1970,7 +1992,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">8.8</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_weapon</td>
+<td align="left">New offence: Unlawful possession of weapon</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">409</td>
@@ -1980,7 +2002,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.6</td>
 </tr>
 <tr class="even">
-<td align="left">newO_weapon</td>
+<td align="left">New offence: Unlawful possession of weapon</td>
 <td align="left">1</td>
 <td align="right">0</td>
 <td align="right">61</td>
@@ -1990,7 +2012,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.9</td>
 </tr>
 <tr class="odd">
-<td align="left">newO_whitecollar</td>
+<td align="left">New offence: White-collar offence</td>
 <td align="left">0</td>
 <td align="right">748</td>
 <td align="right">470</td>
@@ -2000,7 +2022,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">18.6</td>
 </tr>
 <tr class="even">
-<td align="left">o_againstOfficer</td>
+<td align="left">Current offence: Offence against authorities</td>
 <td align="left">0</td>
 <td align="right">704</td>
 <td align="right">420</td>
@@ -2010,7 +2032,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">15.6</td>
 </tr>
 <tr class="odd">
-<td align="left">o_againstOfficer</td>
+<td align="left">Current offence: Offence against authorities</td>
 <td align="left">1</td>
 <td align="right">44</td>
 <td align="right">50</td>
@@ -2020,7 +2042,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.0</td>
 </tr>
 <tr class="even">
-<td align="left">o_assault</td>
+<td align="left">Current offence: Assault</td>
 <td align="left">0</td>
 <td align="right">335</td>
 <td align="right">161</td>
@@ -2030,7 +2052,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.1</td>
 </tr>
 <tr class="odd">
-<td align="left">o_assault</td>
+<td align="left">Current offence: Assault</td>
 <td align="left">1</td>
 <td align="right">413</td>
 <td align="right">309</td>
@@ -2040,7 +2062,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">13.4</td>
 </tr>
 <tr class="even">
-<td align="left">o_autoTheft</td>
+<td align="left">Current offence: Auto theft</td>
 <td align="left">0</td>
 <td align="right">683</td>
 <td align="right">370</td>
@@ -2050,7 +2072,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">12.5</td>
 </tr>
 <tr class="odd">
-<td align="left">o_autoTheft</td>
+<td align="left">Current offence: Auto theft</td>
 <td align="left">1</td>
 <td align="right">65</td>
 <td align="right">100</td>
@@ -2060,7 +2082,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.1</td>
 </tr>
 <tr class="even">
-<td align="left">o_damage</td>
+<td align="left">Current offence: Criminal damage</td>
 <td align="left">0</td>
 <td align="right">667</td>
 <td align="right">400</td>
@@ -2070,7 +2092,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">12.6</td>
 </tr>
 <tr class="odd">
-<td align="left">o_damage</td>
+<td align="left">Current offence: Criminal damage</td>
 <td align="left">1</td>
 <td align="right">81</td>
 <td align="right">70</td>
@@ -2080,7 +2102,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.9</td>
 </tr>
 <tr class="even">
-<td align="left">o_homicide</td>
+<td align="left">Current offence: Homicide</td>
 <td align="left">0</td>
 <td align="right">681</td>
 <td align="right">460</td>
@@ -2090,7 +2112,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">17.4</td>
 </tr>
 <tr class="odd">
-<td align="left">o_homicide</td>
+<td align="left">Current offence: Homicide</td>
 <td align="left">1</td>
 <td align="right">67</td>
 <td align="right">10</td>
@@ -2100,7 +2122,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">1.1</td>
 </tr>
 <tr class="even">
-<td align="left">o_narcotic</td>
+<td align="left">Current offence: Narcotic offence</td>
 <td align="left">0</td>
 <td align="right">581</td>
 <td align="right">334</td>
@@ -2110,7 +2132,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">12.6</td>
 </tr>
 <tr class="odd">
-<td align="left">o_narcotic</td>
+<td align="left">Current offence: Narcotic offence</td>
 <td align="left">1</td>
 <td align="right">167</td>
 <td align="right">136</td>
@@ -2120,7 +2142,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.9</td>
 </tr>
 <tr class="even">
-<td align="left">o_other</td>
+<td align="left">Current offence: Other offences</td>
 <td align="left">0</td>
 <td align="right">733</td>
 <td align="right">462</td>
@@ -2130,7 +2152,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">18.1</td>
 </tr>
 <tr class="odd">
-<td align="left">o_other</td>
+<td align="left">Current offence: Other offences</td>
 <td align="left">1</td>
 <td align="right">15</td>
 <td align="right">8</td>
@@ -2140,7 +2162,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.5</td>
 </tr>
 <tr class="even">
-<td align="left">o_otherPerson</td>
+<td align="left">Current offence: Other offence against person</td>
 <td align="left">0</td>
 <td align="right">635</td>
 <td align="right">409</td>
@@ -2150,7 +2172,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">11.4</td>
 </tr>
 <tr class="odd">
-<td align="left">o_otherPerson</td>
+<td align="left">Current offence: Other offence against person</td>
 <td align="left">1</td>
 <td align="right">113</td>
 <td align="right">61</td>
@@ -2160,7 +2182,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">7.2</td>
 </tr>
 <tr class="even">
-<td align="left">o_otherProperty</td>
+<td align="left">Current offence: Other property offence</td>
 <td align="left">0</td>
 <td align="right">638</td>
 <td align="right">364</td>
@@ -2170,7 +2192,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">12.2</td>
 </tr>
 <tr class="odd">
-<td align="left">o_otherProperty</td>
+<td align="left">Current offence: Other property offence</td>
 <td align="left">1</td>
 <td align="right">110</td>
 <td align="right">106</td>
@@ -2180,7 +2202,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.4</td>
 </tr>
 <tr class="even">
-<td align="left">o_robbery</td>
+<td align="left">Current offence: Robbery</td>
 <td align="left">0</td>
 <td align="right">681</td>
 <td align="right">427</td>
@@ -2190,7 +2212,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">13.6</td>
 </tr>
 <tr class="odd">
-<td align="left">o_robbery</td>
+<td align="left">Current offence: Robbery</td>
 <td align="left">1</td>
 <td align="right">67</td>
 <td align="right">43</td>
@@ -2200,7 +2222,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">5.0</td>
 </tr>
 <tr class="even">
-<td align="left">o_sexual</td>
+<td align="left">Current offence: Sexual offence</td>
 <td align="left">0</td>
 <td align="right">657</td>
 <td align="right">462</td>
@@ -2210,7 +2232,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">17.9</td>
 </tr>
 <tr class="odd">
-<td align="left">o_sexual</td>
+<td align="left">Current offence: Sexual offence</td>
 <td align="left">1</td>
 <td align="right">91</td>
 <td align="right">8</td>
@@ -2220,7 +2242,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.7</td>
 </tr>
 <tr class="even">
-<td align="left">o_theft</td>
+<td align="left">Current offence: Theft</td>
 <td align="left">0</td>
 <td align="right">611</td>
 <td align="right">310</td>
@@ -2230,7 +2252,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.1</td>
 </tr>
 <tr class="odd">
-<td align="left">o_theft</td>
+<td align="left">Current offence: Theft</td>
 <td align="left">1</td>
 <td align="right">137</td>
 <td align="right">160</td>
@@ -2240,7 +2262,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">9.5</td>
 </tr>
 <tr class="even">
-<td align="left">o_traffic</td>
+<td align="left">Current offence: Traffic offence</td>
 <td align="left">0</td>
 <td align="right">601</td>
 <td align="right">294</td>
@@ -2250,7 +2272,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">8.0</td>
 </tr>
 <tr class="odd">
-<td align="left">o_traffic</td>
+<td align="left">Current offence: Traffic offence</td>
 <td align="left">1</td>
 <td align="right">147</td>
 <td align="right">176</td>
@@ -2260,7 +2282,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">10.6</td>
 </tr>
 <tr class="even">
-<td align="left">o_weapon</td>
+<td align="left">Current offence: Unlawful possession of weapon</td>
 <td align="left">0</td>
 <td align="right">643</td>
 <td align="right">394</td>
@@ -2270,7 +2292,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.7</td>
 </tr>
 <tr class="odd">
-<td align="left">o_weapon</td>
+<td align="left">Current offence: Unlawful possession of weapon</td>
 <td align="left">1</td>
 <td align="right">105</td>
 <td align="right">76</td>
@@ -2280,7 +2302,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.9</td>
 </tr>
 <tr class="even">
-<td align="left">o_whitecollar</td>
+<td align="left">Current offence: White-collar offence</td>
 <td align="left">0</td>
 <td align="right">698</td>
 <td align="right">466</td>
@@ -2290,7 +2312,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">18.4</td>
 </tr>
 <tr class="odd">
-<td align="left">o_whitecollar</td>
+<td align="left">Current offence: White-collar offence</td>
 <td align="left">1</td>
 <td align="right">50</td>
 <td align="right">4</td>
@@ -2300,7 +2322,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.2</td>
 </tr>
 <tr class="even">
-<td align="left">openPrison</td>
+<td align="left">Placement in open prison</td>
 <td align="left">closed_prison</td>
 <td align="right">322</td>
 <td align="right">301</td>
@@ -2310,7 +2332,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">14.0</td>
 </tr>
 <tr class="odd">
-<td align="left">openPrison</td>
+<td align="left">Placement in open prison</td>
 <td align="left">open_prison</td>
 <td align="right">426</td>
 <td align="right">169</td>
@@ -2320,7 +2342,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">4.6</td>
 </tr>
 <tr class="even">
-<td align="left">ps_escapeHistory</td>
+<td align="left">Unlawful absence or attempt</td>
 <td align="left">No escape history</td>
 <td align="right">686</td>
 <td align="right">415</td>
@@ -2330,7 +2352,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">15.4</td>
 </tr>
 <tr class="odd">
-<td align="left">ps_escapeHistory</td>
+<td align="left">Unlawful absence or attempt</td>
 <td align="left">Unauthorized absence of any kind</td>
 <td align="right">62</td>
 <td align="right">55</td>
@@ -2340,7 +2362,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">3.1</td>
 </tr>
 <tr class="even">
-<td align="left">ps_info_missing</td>
+<td align="left">Missing info on previous sentences</td>
 <td align="left">0</td>
 <td align="right">721</td>
 <td align="right">458</td>
@@ -2350,7 +2372,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">18.2</td>
 </tr>
 <tr class="odd">
-<td align="left">ps_info_missing</td>
+<td align="left">Missing info on previous sentences</td>
 <td align="left">1</td>
 <td align="right">27</td>
 <td align="right">12</td>
@@ -2360,7 +2382,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">0.4</td>
 </tr>
 <tr class="even">
-<td align="left">supervisedParole</td>
+<td align="left">Parole supervised</td>
 <td align="left">no supervision</td>
 <td align="right">223</td>
 <td align="right">160</td>
@@ -2370,7 +2392,7 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">6.9</td>
 </tr>
 <tr class="odd">
-<td align="left">supervisedParole</td>
+<td align="left">Parole supervised</td>
 <td align="left">supervised parole</td>
 <td align="right">525</td>
 <td align="right">310</td>
@@ -2378,6 +2400,214 @@ knitr<span class="op">::</span><span class="kw">kable</span>(output_table, <span
 <td align="right">35.1</td>
 <td align="right">20.7</td>
 <td align="right">11.7</td>
+</tr>
+</tbody>
+</table>
+<h2 id="numerical-variables">Numerical variables</h2>
+<p><em>Means and standard deviations per reoffence group. Key: NoRe = No reoffence, NViolRe = Non-violent reoffence, VioRe = Violent Reoffence, M = Means, SD = Standard Deviations.</em></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">printed_num  &lt;-<span class="st"> </span>descriptive_stats_num
+<span class="kw">names</span>(printed_num) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Variable&quot;</span>,
+                         <span class="st">&quot;NoRe M&quot;</span>, <span class="st">&quot;NViolRe M&quot;</span>, <span class="st">&quot;VioRe M&quot;</span>,
+                         <span class="st">&quot;NoRr SD&quot;</span>, <span class="st">&quot;NViolRe SD&quot;</span>, <span class="st">&quot;VioRe SD&quot;</span>)
+
+
+
+printed_num<span class="op">$</span>Variable &lt;-<span class="st"> </span>variable_labels[printed_num<span class="op">$</span>Variable]
+
+
+knitr<span class="op">::</span><span class="kw">kable</span>(printed_num, <span class="dt">digits =</span> <span class="dv">1</span>)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Variable</th>
+<th align="right">NoRe M</th>
+<th align="right">NViolRe M</th>
+<th align="right">VioRe M</th>
+<th align="right">NoRr SD</th>
+<th align="right">NViolRe SD</th>
+<th align="right">VioRe SD</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Age at release</td>
+<td align="right">38.3</td>
+<td align="right">33.6</td>
+<td align="right">32.2</td>
+<td align="right">11.0</td>
+<td align="right">9.1</td>
+<td align="right">9.4</td>
+</tr>
+<tr class="even">
+<td align="left">Age at first term</td>
+<td align="right">29.5</td>
+<td align="right">22.8</td>
+<td align="right">22.4</td>
+<td align="right">11.5</td>
+<td align="right">6.3</td>
+<td align="right">6.4</td>
+</tr>
+<tr class="odd">
+<td align="left">Age at first term (missing replaced)</td>
+<td align="right">31.8</td>
+<td align="right">26.5</td>
+<td align="right">23.4</td>
+<td align="right">11.7</td>
+<td align="right">9.0</td>
+<td align="right">6.9</td>
+</tr>
+<tr class="even">
+<td align="left">Days to new offence</td>
+<td align="right">NaN</td>
+<td align="right">187.6</td>
+<td align="right">156.2</td>
+<td align="right">NA</td>
+<td align="right">202.5</td>
+<td align="right">204.0</td>
+</tr>
+<tr class="odd">
+<td align="left">Follow-up in years</td>
+<td align="right">3.7</td>
+<td align="right">3.6</td>
+<td align="right">3.7</td>
+<td align="right">1.0</td>
+<td align="right">1.0</td>
+<td align="right">1.1</td>
+</tr>
+<tr class="even">
+<td align="left">New sentence in months</td>
+<td align="right">NaN</td>
+<td align="right">22.1</td>
+<td align="right">38.5</td>
+<td align="right">NA</td>
+<td align="right">24.4</td>
+<td align="right">33.1</td>
+</tr>
+<tr class="odd">
+<td align="left">Community service terms</td>
+<td align="right">0.5</td>
+<td align="right">0.8</td>
+<td align="right">0.7</td>
+<td align="right">0.9</td>
+<td align="right">1.0</td>
+<td align="right">1.0</td>
+</tr>
+<tr class="even">
+<td align="left">Community service terms (missing replaced)</td>
+<td align="right">0.5</td>
+<td align="right">0.7</td>
+<td align="right">0.6</td>
+<td align="right">0.9</td>
+<td align="right">1.0</td>
+<td align="right">1.0</td>
+</tr>
+<tr class="odd">
+<td align="left">Terms for unpaid fines</td>
+<td align="right">0.3</td>
+<td align="right">0.5</td>
+<td align="right">0.5</td>
+<td align="right">1.0</td>
+<td align="right">1.0</td>
+<td align="right">0.8</td>
+</tr>
+<tr class="even">
+<td align="left">Terms for unpaid fines (missing replaced)</td>
+<td align="right">0.3</td>
+<td align="right">0.5</td>
+<td align="right">0.5</td>
+<td align="right">0.9</td>
+<td align="right">1.0</td>
+<td align="right">0.8</td>
+</tr>
+<tr class="odd">
+<td align="left">Prison terms</td>
+<td align="right">2.1</td>
+<td align="right">4.0</td>
+<td align="right">3.7</td>
+<td align="right">3.3</td>
+<td align="right">4.2</td>
+<td align="right">4.5</td>
+</tr>
+<tr class="even">
+<td align="left">Prison terms (missing replaced)</td>
+<td align="right">2.0</td>
+<td align="right">3.9</td>
+<td align="right">3.7</td>
+<td align="right">3.3</td>
+<td align="right">4.2</td>
+<td align="right">4.5</td>
+</tr>
+<tr class="odd">
+<td align="left">Remand terms</td>
+<td align="right">0.4</td>
+<td align="right">1.1</td>
+<td align="right">1.0</td>
+<td align="right">0.8</td>
+<td align="right">1.7</td>
+<td align="right">1.5</td>
+</tr>
+<tr class="even">
+<td align="left">Remand terms (missing replaced)</td>
+<td align="right">0.4</td>
+<td align="right">1.1</td>
+<td align="right">1.0</td>
+<td align="right">0.8</td>
+<td align="right">1.6</td>
+<td align="right">1.4</td>
+</tr>
+<tr class="odd">
+<td align="left">Aggressiveness</td>
+<td align="right">3.0</td>
+<td align="right">3.4</td>
+<td align="right">5.0</td>
+<td align="right">2.5</td>
+<td align="right">2.5</td>
+<td align="right">2.7</td>
+</tr>
+<tr class="even">
+<td align="left">Alcohol problems</td>
+<td align="right">3.6</td>
+<td align="right">4.6</td>
+<td align="right">5.9</td>
+<td align="right">3.4</td>
+<td align="right">3.5</td>
+<td align="right">3.3</td>
+</tr>
+<tr class="odd">
+<td align="left">Drug problems</td>
+<td align="right">1.5</td>
+<td align="right">3.3</td>
+<td align="right">4.5</td>
+<td align="right">3.2</td>
+<td align="right">4.4</td>
+<td align="right">4.8</td>
+</tr>
+<tr class="even">
+<td align="left">Problems managing economy</td>
+<td align="right">2.7</td>
+<td align="right">4.7</td>
+<td align="right">4.8</td>
+<td align="right">2.3</td>
+<td align="right">2.6</td>
+<td align="right">2.6</td>
+</tr>
+<tr class="odd">
+<td align="left">Employment problems</td>
+<td align="right">2.3</td>
+<td align="right">3.9</td>
+<td align="right">4.2</td>
+<td align="right">2.5</td>
+<td align="right">2.8</td>
+<td align="right">2.7</td>
+</tr>
+<tr class="even">
+<td align="left">Resistance to change</td>
+<td align="right">3.9</td>
+<td align="right">5.1</td>
+<td align="right">6.1</td>
+<td align="right">3.7</td>
+<td align="right">3.8</td>
+<td align="right">4.3</td>
 </tr>
 </tbody>
 </table>
