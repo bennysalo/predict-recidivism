@@ -17,9 +17,7 @@ A numerical vector (or single number) representing the probability
 Calculate probability from  logit (log odds)
 }
 \examples{
-calc_logit_from_p(0.2)
-
-probabilities <- c(0.00, 0.07, 0.12,0.74, 1.00)
-calc_logit_from_p(probabilities, offset_for_01 = 0.001)
+log_odds <- c(log(0.01/0.99), log(0.25/0.75), log(1/1), log(99/1))
+calc_p_from_logit(logit = log_odds)
 
 }

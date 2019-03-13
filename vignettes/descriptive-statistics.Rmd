@@ -1,18 +1,8 @@
 ---
 title: "Descriptive statistics"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Descriptive statistics}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: github_document
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
 
 This package includes the data objects with descriptive statistics: `descriptive_stats_cat` (for categorical variables) and `descriptive_stats_num` (for numerical variables. These objects are data frames that can be used for further analyzes such as mean differences and chi-square tables.
 

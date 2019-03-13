@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
-^not_public$
-^packrat/
+^not_public/
 ^\.Rprofile$
+^.*scraps/.*$
+^old results/

@@ -15,6 +15,7 @@
 #' probabilities <- c(0.00, 0.07, 0.12,0.74, 1.00)
 #' calc_logit_from_p(probabilities, offset_for_01 = 0.001)
 #'
+#' @export
 calc_logit_from_p <- function(probability, offset_for_01 = NULL) {
 
 # Use offset if provided
