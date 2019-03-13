@@ -2,3 +2,5 @@
 
 export(calc_logit_from_p)
 export(calc_p_from_logit)
+importFrom(stats,as.formula)
+importFrom(stats,qnorm)

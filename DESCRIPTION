@@ -4,6 +4,7 @@ Title: Analyses for prediction of recidivism in Finnish data using supervised le
 Version: 0.0.0.9000
 Authors@R: person("Benny", "Salo", email = "benny.salo@abo.fi", role = c("aut", "cre"))
 Description: Results and analyses of these results for a manuscript on prediction of recidivism in Finnish data using supervised learning.
+Depends: R (>= 2.10)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

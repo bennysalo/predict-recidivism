@@ -5,3 +5,8 @@
 ^\.Rprofile$
 ^.*scraps/.*$
 ^old results/
+vign_runlog.rds
+table_1_desciptive_statistics.md
+setup_packages.R
+computational_details.pdf
+output
