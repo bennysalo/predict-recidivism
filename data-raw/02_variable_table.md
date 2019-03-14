@@ -1,12 +1,9 @@
----
-title: "Creating data/variable_table.rda"
-author: "Benny Salo"
-date: "2019-02-14"
-output: github_document
----
+Creating data/variable\_table.rda
+================
+Benny Salo
+2019-03-14
 
-
-```r
+``` r
 variable_table <- 
   readr::read_delim("variable_table.csv",
                     ";",
@@ -16,7 +13,4 @@ variable_table <-
 usethis::use_data(variable_table, overwrite = TRUE)
 ```
 
-```
-## <U+2714> Saving 'variable_table' to 'data/variable_table.rda'
-```
 
