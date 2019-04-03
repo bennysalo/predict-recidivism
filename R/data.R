@@ -39,3 +39,44 @@
 #'   "data-raw/00_About_data_raw.Rmd"
 "model_perfs_training_set1000"
 
+
+#' Descriptive statistics for numerical variables
+#'
+#' #' @format A data frame with 20 rows and 7 variables: \describe{
+#' \item{variable}{Variable name as used in R scripts}
+#' \item{no_reoffence_mean}{Mean for the group of individuals that did not
+#' reoffend}
+#' \item{reoffence_nonviolent_mean}{Mean for the group of individuals
+#' that reoffended with a non-violent crime}
+#' \item{reoffence_violent_mean}{Mean for the group of individuals
+#' that reoffended with assault or homicide}
+#' \item{no_reoffence_sd}{Standard deviation for the group of individuals that
+#' did not reoffend}
+#' \item{reoffence_nonviolent_sd}{SD for the group of individuals
+#' that reoffended with a non-violent crime}
+#' \item{reoffence_violent_sd}{SD for the group of individuals
+#' that reoffended with assault or homicide} }
+#'
+#' @source data-raw/descriptives.Rmd
+"descriptive_stats_num"
+
+#' Descriptive statistics for categorical variables
+#'
+#' #' @format A data frame with 233 rows and 8 variables: \describe{
+#' \item{variable}{Variable name as used in R scripts}
+#' \item{var_level}{Level on the variable to which the frequencies and percentages refer}
+#' \item{no_reoffence_freq}{Frequency in the group of individuals that did not
+#' reoffend}
+#' \item{reoffence_nonviolent_freq}{Frequency in the group of individuals
+#' that reoffended with a non-violent crime}
+#' \item{reoffence_violent_freq}{Frequency in the group of individuals
+#' that reoffended with assault or homicide}
+#' \item{no_reoffence_perc}{Percentage in the group of individuals that
+#' did not reoffend}
+#' \item{reoffence_nonviolent_perc}{Percentage in the group of individuals
+#' that reoffended with a non-violent crime}
+#' \item{reoffence_violent_perc}{Percentage in the group of individuals
+#' that reoffended with assault or homicide} }
+#'
+#' @source data-raw/descriptives.Rmd
+"descriptive_stats_cat"

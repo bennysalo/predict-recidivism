@@ -1,23 +1,37 @@
 ---
-title: "Figure 1. Discrimination"
-output: html_notebook
+title: "Reproducing Figure 1"
+author: "Benny Salo"
 date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette reproduces Figure 1 in the article.
 
 
 ```{r message=FALSE, warning=FALSE}
-devtools::load_all(".")
+library(recidivismsl)
 library(dplyr)
 library(ggplot2)
 ```
 
 
-
+Create a data frame with median and 95% percintile confidence intervals for AUC.
 
 ```{r}
 # Functions from dplyr used (select, mutate, group_by, summarise)
 auc_tbl_cv <-
-model_perfs_training_set1000$values %>% 
+  model_perfs_training_set1000$values %>% 
   select(Resample, ends_with(match = "ROC")) %>% 
   tidyr::gather(-Resample, key = model, value = ROC) %>%
   group_by(model) %>% 
@@ -29,10 +43,10 @@ model_perfs_training_set1000$values %>%
 
 ```
 
-
+Create a data frame with median and 95% percintile confidence intervals for McFaddens Pseudo R2.
 
 ```{r}
-# Functions from dplyr used (select, mutate, group_by, summarise)
+
 McF_tbl_cv <-
 model_perfs_training_set1000$values %>% 
   select(Resample, ends_with(match = "McF_R2")) %>% 
@@ -49,6 +63,8 @@ model_perfs_training_set1000$values %>%
 
 ```
 
+Get some model descriptions for `model_grid` and join this with the two results tables above into `plot_data`
+
 ```{r}
 model_desc <- model_grid[c("model_name", "outcome", 
                            "predictors", "model_type")]
@@ -59,22 +75,22 @@ plot_data <- full_join(McF_tbl_cv, auc_tbl_cv, by = "model") %>%
 ```
 
 
-
+Limit `plot_data` to the "Main analyses" (exclude analyses of single dimensions using logistic regression). The apply levels that will appear in the figure.
 
 ```{r}
 main_models <- model_grid %>% 
   filter(analysis == "Main analyses") %>% 
-  select(model_name) %>% 
-  purrr::as_vector()
+  .[["model_name"]]
 
 
-plot_data <- filter(plot_data, model %in% main_models) %>% 
+plot_data <- 
+  filter(plot_data, model %in% main_models) %>% 
   mutate(predictors = factor(predictors,
-                                levels = c("Rita-items",
+                             levels = c("Rita-items",
                                            "Static",
                                            "All at start of sentence",
                                            "All including term"),
-                                labels = c("RITA", "Static", "Begin.", "All")),
+                             labels = c("RITA", "Static", "Begin.", "All")),
          model_type = factor(model_type,
                              levels = c("Logistic regression",
                                         "Random forest",
@@ -84,11 +100,14 @@ plot_data <- filter(plot_data, model %in% main_models) %>%
 levels(plot_data$model_type)
 ```
 
+Set up limits that will be used on axes in the figure.
+
 ```{r}
 McF_limits <- c(-0.45, 0.45)
 AUC_limits <- c(0.6, 0.9)
 ```
 
+Do the actual plotting. Begin by making plots for general recidivism. First make separete plots for McFadden Pseudo R-Squared and AUC and then combine them.
 
 ```{r}
 library(ggplot2)
@@ -134,8 +153,8 @@ gen_plot <- ggpubr::annotate_figure(gen_plot, top = "General recidivism")
   
 ```
 
+Do the same for violent recidivism.
 ```{r}
-library(ggplot2)
 
 plot_data_vio <-
   filter(plot_data, outcome == "Violent recidivism") 
@@ -174,7 +193,7 @@ vio_plot <- ggpubr::annotate_figure(vio_plot, top = "Violent recidivism")
   
 ```
 
-
+Combine the two plots.
 
 ```{r fig.height=5, fig.width=6.5}
 comb_plot <- ggpubr::ggarrange(gen_plot, vio_plot, ncol = 1, nrow = 2)
@@ -182,4 +201,3 @@ comb_plot <- ggpubr::ggarrange(gen_plot, vio_plot, ncol = 1, nrow = 2)
 comb_plot
 
 ```
-

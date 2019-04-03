@@ -1,8 +1,20 @@
 ---
 title: "Descriptive statistics"
-output: github_document
+author: "Benny Salo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 This package includes the data objects with descriptive statistics: `descriptive_stats_cat` (for categorical variables) and `descriptive_stats_num` (for numerical variables. These objects are data frames that can be used for further analyzes such as mean differences and chi-square tables.
 
@@ -36,25 +48,30 @@ printed_cat$Variable <- variable_labels[printed_cat$Variable]
 
 knitr::kable(printed_cat, digits = 1)
 
+``` 
+
+```{r, fig.show='hold'}
+plot(1:10)
+plot(10:1)
 ```
 
-## Numerical variables
-*Means and standard deviations per reoffence group. Key: NoRe = No reoffence, NViolRe = Non-violent reoffence, VioRe = Violent Reoffence, M = Means, SD = Standard Deviations.*
+You can enable figure captions by `fig_caption: yes` in YAML:
 
-```{r}
-printed_num  <- descriptive_stats_num
-names(printed_num) <- c("Variable",
-                         "NoRe M", "NViolRe M", "VioRe M",
-                         "NoRr SD", "NViolRe SD", "VioRe SD")
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
 
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
 
+## More Examples
 
-printed_num$Variable <- variable_labels[printed_num$Variable]
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
 
-
-knitr::kable(printed_num, digits = 1)
-
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
 ```
 
+Also a quote using `>`:
 
-
+> "He who gives up [code] safety for [code] speed deserves neither."
+([via](https://twitter.com/hadleywickham/status/504368538874703872))

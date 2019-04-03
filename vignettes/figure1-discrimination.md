@@ -1,24 +1,22 @@
----
-title: "R Notebook"
-output: html_notebook
----
+Reproducing Figure 1
+================
+Benny Salo
+2019-04-03
 
+This vignette reproduces Figure 1 in the article.
 
-
-```r
-devtools::load_all(".")
+``` r
+library(recidivismsl)
 library(dplyr)
 library(ggplot2)
 ```
 
+Create a data frame with median and 95% percintile confidence intervals for AUC.
 
-
-
-
-```r
+``` r
 # Functions from dplyr used (select, mutate, group_by, summarise)
 auc_tbl_cv <-
-model_perfs_training_set1000$values %>% 
+  model_perfs_training_set1000$values %>% 
   select(Resample, ends_with(match = "ROC")) %>% 
   tidyr::gather(-Resample, key = model, value = ROC) %>%
   group_by(model) %>% 
@@ -29,11 +27,10 @@ model_perfs_training_set1000$values %>%
   mutate(model = stringr::str_replace(model, pattern = "~ROC", ""))
 ```
 
+Create a data frame with median and 95% percintile confidence intervals for McFaddens Pseudo R2.
 
+``` r
 
-
-```r
-# Functions from dplyr used (select, mutate, group_by, summarise)
 McF_tbl_cv <-
 model_perfs_training_set1000$values %>% 
   select(Resample, ends_with(match = "McF_R2")) %>% 
@@ -49,8 +46,9 @@ model_perfs_training_set1000$values %>%
   mutate(model = stringr::str_replace(model, pattern = "~McF_R2", ""))
 ```
 
+Get some model descriptions for `model_grid` and join this with the two results tables above into `plot_data`
 
-```r
+``` r
 model_desc <- model_grid[c("model_name", "outcome", 
                            "predictors", "model_type")]
 
@@ -59,24 +57,22 @@ plot_data <- full_join(McF_tbl_cv, auc_tbl_cv, by = "model") %>%
   full_join(model_desc, plot_data, by = c("model" = "model_name"))
 ```
 
+Limit `plot_data` to the "Main analyses" (exclude analyses of single dimensions using logistic regression). The apply levels that will appear in the figure.
 
-
-
-
-```r
+``` r
 main_models <- model_grid %>% 
   filter(analysis == "Main analyses") %>% 
-  select(model_name) %>% 
-  purrr::as_vector()
+  .[["model_name"]]
 
 
-plot_data <- filter(plot_data, model %in% main_models) %>% 
+plot_data <- 
+  filter(plot_data, model %in% main_models) %>% 
   mutate(predictors = factor(predictors,
-                                levels = c("Rita-items",
+                             levels = c("Rita-items",
                                            "Static",
                                            "All at start of sentence",
                                            "All including term"),
-                                labels = c("RITA", "Static", "Begin.", "All")),
+                             labels = c("RITA", "Static", "Begin.", "All")),
          model_type = factor(model_type,
                              levels = c("Logistic regression",
                                         "Random forest",
@@ -84,21 +80,19 @@ plot_data <- filter(plot_data, model %in% main_models) %>%
                              labels = c("LR", "RF", "EN")))
 
 levels(plot_data$model_type)
+#> [1] "LR" "RF" "EN"
 ```
 
-```
-## [1] "LR" "RF" "EN"
-```
+Set up limits that will be used on axes in the figure.
 
-
-```r
+``` r
 McF_limits <- c(-0.45, 0.45)
 AUC_limits <- c(0.6, 0.9)
 ```
 
+Do the actual plotting. Begin by making plots for general recidivism. First make separete plots for McFadden Pseudo R-Squared and AUC and then combine them.
 
-
-```r
+``` r
 library(ggplot2)
 
 plot_data_gen <-
@@ -138,23 +132,13 @@ AUC_gen_plot <-
 
 
 gen_plot <- ggpubr::ggarrange(McF_gen_plot, AUC_gen_plot,ncol = 2, nrow = 1)
-```
-
-```
-## Error in loadNamespace(name): there is no package called 'ggpubr'
-```
-
-```r
 gen_plot <- ggpubr::annotate_figure(gen_plot, top = "General recidivism")
+  
 ```
 
-```
-## Error in loadNamespace(name): there is no package called 'ggpubr'
-```
+Do the same for violent recidivism.
 
-
-```r
-library(ggplot2)
+``` r
 
 plot_data_vio <-
   filter(plot_data, outcome == "Violent recidivism") 
@@ -189,36 +173,16 @@ AUC_vio_plot <-
   theme(strip.text.y = element_blank())
 
 vio_plot <- ggpubr::ggarrange(McF_vio_plot, AUC_vio_plot, ncol = 2, nrow = 1) 
-```
-
-```
-## Error in loadNamespace(name): there is no package called 'ggpubr'
-```
-
-```r
 vio_plot <- ggpubr::annotate_figure(vio_plot, top = "Violent recidivism")
+  
 ```
 
-```
-## Error in loadNamespace(name): there is no package called 'ggpubr'
-```
+Combine the two plots.
 
-
-
-
-```r
+``` r
 comb_plot <- ggpubr::ggarrange(gen_plot, vio_plot, ncol = 1, nrow = 2)
-```
 
-```
-## Error in loadNamespace(name): there is no package called 'ggpubr'
-```
-
-```r
 comb_plot
 ```
 
-```
-## Error in eval(expr, envir, enclos): object 'comb_plot' not found
-```
-
+![](figure1-discrimination_files/figure-markdown_github/unnamed-chunk-9-1.png)

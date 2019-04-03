@@ -1,5 +1,7 @@
 Descriptive statistics
 ================
+Benny Salo
+2019-04-02
 
 This package includes the data objects with descriptive statistics: `descriptive_stats_cat` (for categorical variables) and `descriptive_stats_num` (for numerical variables. These objects are data frames that can be used for further analyzes such as mean differences and chi-square tables.
 
@@ -270,44 +272,41 @@ knitr::kable(printed_cat, digits = 1)
 | Parole supervised                              | no supervision                   |     223|        160|      103|    14.9|       10.7|      6.9|
 | Parole supervised                              | supervised parole                |     525|        310|      175|    35.1|       20.7|     11.7|
 
-Numerical variables
--------------------
-
-*Means and standard deviations per reoffence group. Key: NoRe = No reoffence, NViolRe = Non-violent reoffence, VioRe = Violent Reoffence, M = Means, SD = Standard Deviations.*
-
 ``` r
-printed_num  <- descriptive_stats_num
-names(printed_num) <- c("Variable",
-                         "NoRe M", "NViolRe M", "VioRe M",
-                         "NoRr SD", "NViolRe SD", "VioRe SD")
-
-
-
-printed_num$Variable <- variable_labels[printed_num$Variable]
-
-
-knitr::kable(printed_num, digits = 1)
+plot(1:10)
+plot(10:1)
 ```
 
-| Variable                                   |  NoRe M|  NViolRe M|  VioRe M|  NoRr SD|  NViolRe SD|  VioRe SD|
-|:-------------------------------------------|-------:|----------:|--------:|--------:|-----------:|---------:|
-| Age at release                             |    38.3|       33.6|     32.2|     11.0|         9.1|       9.4|
-| Age at first term                          |    29.5|       22.8|     22.4|     11.5|         6.3|       6.4|
-| Age at first term (missing replaced)       |    31.8|       26.5|     23.4|     11.7|         9.0|       6.9|
-| Days to new offence                        |     NaN|      187.6|    156.2|       NA|       202.5|     204.0|
-| Follow-up in years                         |     3.7|        3.6|      3.7|      1.0|         1.0|       1.1|
-| New sentence in months                     |     NaN|       22.1|     38.5|       NA|        24.4|      33.1|
-| Community service terms                    |     0.5|        0.8|      0.7|      0.9|         1.0|       1.0|
-| Community service terms (missing replaced) |     0.5|        0.7|      0.6|      0.9|         1.0|       1.0|
-| Terms for unpaid fines                     |     0.3|        0.5|      0.5|      1.0|         1.0|       0.8|
-| Terms for unpaid fines (missing replaced)  |     0.3|        0.5|      0.5|      0.9|         1.0|       0.8|
-| Prison terms                               |     2.1|        4.0|      3.7|      3.3|         4.2|       4.5|
-| Prison terms (missing replaced)            |     2.0|        3.9|      3.7|      3.3|         4.2|       4.5|
-| Remand terms                               |     0.4|        1.1|      1.0|      0.8|         1.7|       1.5|
-| Remand terms (missing replaced)            |     0.4|        1.1|      1.0|      0.8|         1.6|       1.4|
-| Aggressiveness                             |     3.0|        3.4|      5.0|      2.5|         2.5|       2.7|
-| Alcohol problems                           |     3.6|        4.6|      5.9|      3.4|         3.5|       3.3|
-| Drug problems                              |     1.5|        3.3|      4.5|      3.2|         4.4|       4.8|
-| Problems managing economy                  |     2.7|        4.7|      4.8|      2.3|         2.6|       2.6|
-| Employment problems                        |     2.3|        3.9|      4.2|      2.5|         2.8|       2.7|
-| Resistance to change                       |     3.9|        5.1|      6.1|      3.7|         3.8|       4.3|
+![](descriptive-statistics_files/figure-markdown_github/unnamed-chunk-3-1.png)![](descriptive-statistics_files/figure-markdown_github/unnamed-chunk-3-2.png)
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+More Examples
+-------------
+
+You can write math expressions, e.g. *Y* = *X**β* + *ϵ*, footnotes[1], and tables, e.g. using `knitr::kable()`.
+
+|                   |   mpg|  cyl|   disp|   hp|  drat|     wt|   qsec|   vs|   am|  gear|  carb|
+|-------------------|-----:|----:|------:|----:|-----:|------:|------:|----:|----:|-----:|-----:|
+| Mazda RX4         |  21.0|    6|  160.0|  110|  3.90|  2.620|  16.46|    0|    1|     4|     4|
+| Mazda RX4 Wag     |  21.0|    6|  160.0|  110|  3.90|  2.875|  17.02|    0|    1|     4|     4|
+| Datsun 710        |  22.8|    4|  108.0|   93|  3.85|  2.320|  18.61|    1|    1|     4|     1|
+| Hornet 4 Drive    |  21.4|    6|  258.0|  110|  3.08|  3.215|  19.44|    1|    0|     3|     1|
+| Hornet Sportabout |  18.7|    8|  360.0|  175|  3.15|  3.440|  17.02|    0|    0|     3|     2|
+| Valiant           |  18.1|    6|  225.0|  105|  2.76|  3.460|  20.22|    1|    0|     3|     1|
+| Duster 360        |  14.3|    8|  360.0|  245|  3.21|  3.570|  15.84|    0|    0|     3|     4|
+| Merc 240D         |  24.4|    4|  146.7|   62|  3.69|  3.190|  20.00|    1|    0|     4|     2|
+| Merc 230          |  22.8|    4|  140.8|   95|  3.92|  3.150|  22.90|    1|    0|     4|     2|
+| Merc 280          |  19.2|    6|  167.6|  123|  3.92|  3.440|  18.30|    1|    0|     4|     4|
+
+Also a quote using `>`:
+
+> "He who gives up \[code\] safety for \[code\] speed deserves neither." ([via](https://twitter.com/hadleywickham/status/504368538874703872))
+
+[1] A footnote here.
