@@ -1,11 +1,11 @@
 Incremental validity in Cohen's d
 ================
 Benny Salo
-2019-04-02
+2019-04-04
 
-In this vignette we show how we used the results from the 1000 resamples in the training set to compare the overall performance of a two competing models. The comparisons are of two types: - for the models with the same predictor set but using different algorithms (elastic net vs. random forest) - for models using elastic net between models with an incremetally larger set of predictors. (These results are presented in Table 2.)
+In this vignette we show how we extracted incremental validity figures in Cohen's d that are reported in Table 2. We use the results from the 1000 resamples in the training set to compare the overall performance of a two competing models. The comparisons are of two types: - for the models with the same predictor set but using different algorithms (elastic net vs. random forest) - for models using elastic net between models with an incremetally larger set of predictors. (These results are presented in Table 2.)
 
-We use McFadden's pseudo R-squared as a measure of overall performance but transform these values to d before vomparing models.
+We use McFadden's pseudo R-squared as a measure of overall performance but transform these values to d before comparing models.
 
 ``` r
 library(recidivismsl)
