@@ -1,8 +1,20 @@
 ---
-title: "Table 2 - Pseudo R2"
+title: "Pseudo R-squared for Table 2"
+author: "Benny Salo"
 date: "`r Sys.Date()`"
-output: github_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 In this vignette we show how we extracted McFadden pseudo R2-values for Table 2. 
 
@@ -42,38 +54,3 @@ model_perfs_training_set1000$values %>%
 
 
 ```
-
-We can clean up this table a bit for printing.
-
-```{r}
-# Get som model descriptions from `model_grid`
-model_desc <- model_grid[c("model_name", "outcome", 
-                           "predictors", "model_type", "analysis")]
-
-
-table_2 <- 
-  # Add the descriptions
-  full_join(model_desc, McF_tbl_cv, by = c("model_name" = "model")) %>% 
-  # Only keep Elastic net models and the models using individual dimensions.
-  filter(model_type == "Elastic net" | analysis == "Dimension analyses") %>% 
-  # Sort the table
-  arrange(outcome, desc(analysis), predictors) %>% 
-  # Remove superfluous columns
-  select(-model_name, -analysis, -model_type) %>%
-  # Round to three digits
-  mutate_at(.vars = vars(3:5), round, 3)
-```
-
-Print the table.
-
-```{r}
-knitr::kable(table_2)
-```
-
-
-
-
-
-
-
-
