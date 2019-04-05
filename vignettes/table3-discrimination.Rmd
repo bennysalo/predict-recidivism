@@ -193,8 +193,8 @@ knitr::kable(table_2)
 ```
 
 ```{r eval=FALSE, include=FALSE}
-devtools::wd()
-write.csv2(table_2, "output/table2.csv")
+# devtools::wd()
+# write.csv2(table_2, "output/table2.csv")
 ```
 
 

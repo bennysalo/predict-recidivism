@@ -18,8 +18,12 @@ Imports: caret,
     pROC,
     stringr
 Suggests: 
+    ggpubr,
     knitr,
     markdown,
+    purrr,
     readr,
+    rmarkdown,
     testthat,
-    rmarkdown
+    tidyr
+    
