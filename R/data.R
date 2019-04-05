@@ -10,7 +10,7 @@
 #'   \item{Label}{Short descriptive label}
 #'   \item{Role}{The role the variable plays in the analyses.
 #'   Can be outcome, predictor_static, predictor_dynamic, predictor_term, or descriptive}
-#'   \item{Desriptives}{The type of descriptive statistics to produce for the variable}
+#'   \item{Descriptives}{The type of descriptive statistics to produce for the variable}
 #'   \item{Comment}{Additional comments}
 #'
 #' }
