@@ -20,7 +20,7 @@ This vingette reproduces Figure 2 in the article: a calibration plot. It uses th
 ## Setup
 ```{r}
 rm(list = ls())
-devtools::load_all(".")
+library(recidivismsl)
 library(dplyr)
 ```
 

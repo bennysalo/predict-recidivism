@@ -10,13 +10,7 @@ Setup
 
 ``` r
 rm(list = ls())
-devtools::load_all(".")
-#> Loading recidivismsl
-#> 
-#> Attaching package: 'testthat'
-#> The following object is masked from 'package:dplyr':
-#> 
-#>     matches
+library(recidivismsl)
 library(dplyr)
 ```
 
