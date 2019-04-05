@@ -1,17 +1,30 @@
 ---
-title: "Table 2"
+title: "Table 3. Discrimination in training and test sets."
+author: "Benny Salo"
 date: "`r Sys.Date()`"
-output: github_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-Table 2 displays the Estimated test discimination and Conditional test discimination of the Elastic net models for all predictor sets. For single dimensions the model is ordinary univariate logistic regression.
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
+Table 3 displays AUC values for *cross-validation in the training set* and for  *validation in a seperate test set*. It also gives the equivalent value in Cohen's d.
+
+This vignette reproduces those results from the data objects `model_perfs_training_set1000` and `test_set_predictions`
 
 
 ## Setup
 
 ```{r message=FALSE, warning=FALSE}
-devtools::load_all(".")
+library(recidivismsl)
 library(dplyr)
 library(ggplot2)
 ```
@@ -20,7 +33,7 @@ library(ggplot2)
 
 ## Discrimination in cross validated training set: `auc_tbl_cv`
 
-The discrimination varies widely over the 1000 cross-validation sets for all models. We are interested in the means and percentile confidence interval.
+The discrimination varies widely over the 1000 cross-validation sets for all models. We are interested in the means and percentile confidence interval. This is called the **Estimated test discimination***.
 
 (This is similar to a bootstrap except that we explicitely specify the number of observations, and base rate for the outcome in each validation set. All observations are also used as part of a validation set the same number of times.)
 
@@ -83,6 +96,7 @@ auc_ci_list   <-
 
 
 ```
+
 The results are at this point stored in a list (`auc_ci_list`). The following chunk places them in data_frame that we call `auc_tbl_ts`
 
 ```{r}
@@ -117,15 +131,9 @@ We add to this table figures for Cohen's d calculated from AUC using a formula i
 
 This is the formula assuming equal group sizes. This assumption does not hold for violent recidivism but retains the property of AUC of not being affected by base rates and thus makes comparison between violent and general recidivism more straight forward. 
 
-Cohen's d has the advantage over AUC in that it is an effect size that is linear. With that I mean that the difference between d = 0.1 and d = 0.2 is the same as the difference between d = 1.1 and d = 1.2. On the contrary, the difference between AUC = 0.60 and AUC = 0.65 is smaller than the difference between AUC = 0.90 and AUC = 0.95. This makes d more convinient for comparisons between pairs of models.
+Cohen's d has the advantage over AUC in that it is an effect size that is linear. With that we mean that the difference between d = 0.1 and d = 0.2 is the same as the difference between d = 1.1 and d = 1.2. On the contrary, the difference between AUC = 0.60 and AUC = 0.65 is smaller than the difference between AUC = 0.90 and AUC = 0.95. This makes d more convinient for comparisons between pairs of models.
 
-The function below can be used to transform any AUC value to Cohen's d.
-
-```{r}
-calc_d_from_AUC <- function(AUC) {
-  sqrt(2) * qnorm(AUC) 
-}
-```
+Thís package comes with the function `calc_d_from_AUC` that does a naive transformation from a AUC value to Cohen's d. (See ?calc_d_from_AUC.)
 
 We add Cohen's d calculated from the mean AUC in the training set and the estimated AUC in the test set.
 
@@ -146,8 +154,7 @@ auc_tbl <- auc_tbl %>%
 ```
 
 
-
-The `auc_tbl`now contains discimination values for all 36 models. In Table 2 we display the ealstic net models and the logistic regression models with simgle RITA-dimensions. We filter `auc_tbl` accordingly.
+The `auc_tbl`now contains discimination values for all 36 models. In Table 3 we only display the elastic net models and the logistic regression models with simgle RITA-dimensions. We filter `auc_tbl` accordingly.
 
 ```{r}
 
@@ -161,7 +168,7 @@ table2_models <- model_grid %>%
 table_2 <- filter(auc_tbl, model %in% table2_models)
 ```
 
-We edit Table 2 below. Remove the model_nbame column and round AUC values to 3 decimal places and d-values to two decimal places. 
+We edit Table 3 below. We rmove the model_name column and round **AUC** values to 3 decimal places and **d**-values to two decimal places. 
 
 
 ```{r}
