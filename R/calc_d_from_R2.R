@@ -6,7 +6,7 @@
 #'
 #' @param R2 R-squared value(s)
 #'
-#' @return Cohen's d
+#' @return Cohen's d value(s)
 #' @export
 #'
 #' @examples

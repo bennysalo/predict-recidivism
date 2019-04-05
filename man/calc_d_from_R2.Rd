@@ -10,7 +10,7 @@ calc_d_from_R2(R2)
 \item{R2}{R-squared value(s)}
 }
 \value{
-Cohen's d
+Cohen's d value(s)
 }
 \description{
 This function transforms R-squared values into Cohen's d assuming
